@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 *{
-    margin: 0;
+    /* margin: 0; */
     /* padding: 0; */
     box-sizing: border-box;
 }
@@ -9,10 +9,12 @@
 body {
     font-family: "Montserrat", sans-serif;
     font-optical-sizing: auto;
+    background: #f5f0f0;
+    color: rgba(0,0,0,0.9);
 }
 
 .container {
-    width: 90%;
+    width: 95%;
     margin: auto;
 }
 
@@ -27,3 +29,12 @@ body {
 .link:hover{color: #ff5252;}
 
 .MuiBadge-badge{background-color: #ff5252 !important;}
+
+nav ul button{
+    text-transform: capitalize !important;
+}
+
+nav ul button:hover{
+    background-color: none !important;
+
+}
