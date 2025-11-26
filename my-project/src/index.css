@@ -63,3 +63,25 @@ nav ul button:hover{
     font-size: 22px !important;
     color: #000 !important;
 }
+
+.homeCatSlider .swiper-button-prev {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+}
+.homeCatSlider .swiper-button-next {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+}
+
+.homeCatSlider .swiper-button-prev::after{
+    font-size: 18px !important;
+}
+.homeCatSlider .swiper-button-next::after{
+    font-size: 18px !important;
+}
+
+.homeCatSlider .item:hover img{
+    transform: scale(1.1);
+}
