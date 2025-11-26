@@ -20,7 +20,7 @@ const HomeSlider = () => {
                 className="sliderHome">
                     <SwiperSlide>
                         <div className='item rounded-[17px] overflow-hidden'>
-                            <img src="https://serviceapi.spicezgold.com/download/1763824421574_homeslide5.jpg" alt="Banner slide"
+                            <img src="https://serviceapi.spicezgold.com/download/1748955932914_NewProject(1).jpg" alt="Banner slide"
                             className='w-full' />
                         </div>
                     </SwiperSlide>

@@ -8,13 +8,14 @@ import { Navigation } from 'swiper/modules';
 
 const HomeCatSlider = () => {
   return (
-    <div className='homeCatSlider'>
-      <div className='container py-4'>
+    <div className='homeCatSlider py-8 pt-4'>
+      <div className='container'>
         <Swiper
           slidesPerView={8}
           spaceBetween={10}
-          modules={[Navigation]}
-          className='mySwiper'
+          navigation={true}
+          modules={[Navigation]}  
+          className='mySwiper '
         >
           <SwiperSlide>
             <Link to="/">

@@ -14,6 +14,18 @@ body {
     overflow-x: hidden;
 }
 
+::-webkit-scrollbar {
+    width: 7px !important;
+    height: 7px !important; 
+}
+
+::-webkit-scrollbar-thumb {
+    background: #ff5252
+}
+::-webkit-scrollbar-track {
+    background: #fff
+}
+
 .container {
     width: 95%;
     margin: auto;
@@ -50,8 +62,9 @@ nav ul button:hover{
     justify-content: center;
     background: #fff;
     border-radius: 100%;
+    padding: 7px;
     width: 35px;
-    height: 45px;
+    height: 35px !important;
     min-width: 35px;
     box-shadow: 0, 1px 3px #0000001f, 1 1px 2px #0000003d !important;
     --swiper-navigation-color: #000 !important;
@@ -62,6 +75,18 @@ nav ul button:hover{
 .swiper-button-prev::after, .swiper-button-next::after {
     font-size: 22px !important;
     color: #000 !important;
+}
+
+.smalBtn .swiper-button-prev, .smalBtn .swiper-button-next   {
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    top: 55% !important;
+}
+
+.swiper-button-prev::after, .swiper-button-next::after {
+    font-size: 22px !important;
+    color: #000;
 }
 
 .homeCatSlider .swiper-button-prev {
@@ -84,4 +109,19 @@ nav ul button:hover{
 
 .homeCatSlider .item:hover img{
     transform: scale(1.1);
+}
+
+
+.MuiTabs-indicator {
+    background-color: #ff5252 !important;
+}
+
+.MuiTab-textColorPrimary.Mui-selected {
+    color: #ff5252 !important;
+}
+
+.productsSlider .swiper-wrapper {
+    padding: 15px;
+    margin-left: -15px;
+    margin-right: -15px;
 }
