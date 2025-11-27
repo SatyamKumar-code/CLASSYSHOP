@@ -56,7 +56,7 @@ const Home = () => {
       </div>
     </section>
 
-    <section className='py-16 pt-0 bg-white'>
+    <section className='py-4 pt-2 bg-white'>
       <div className='container'>
         <div className='freeShipping w-[80%] m-auto p-4 py-4 border-2 border-[#ff5252] flex items-center justify-between rounded-md mb-7'>
           <div className='col1 flex items-center gap-4'>
@@ -65,7 +65,7 @@ const Home = () => {
           </div>
           
           <div className='col2'>
-            <p className='mb-0 font-[500]'>Free Delivery Now On Your First Order and over $200</p>
+            <p className='font-[500]'>Free Delivery Now On Your First Order and over $200</p>
           </div>
           <p className='font-bold text-[25px]'>- Only $200</p>
         </div>
@@ -73,6 +73,25 @@ const Home = () => {
         <AdsBannerSlider items={4} />
       </div>
     </section>
+
+    <section className='py-5 pt-0 bg-white'>
+      <div className='container'>
+        <h2 className='text-[20px] font-[600]'>Latest Products</h2>
+        <ProductsSlider items={6} />
+
+        <AdsBannerSlider items={4} />
+      </div>
+    </section>
+
+    <section className='py-5 pt-0 bg-white'>
+      <div className='container'>
+        <h2 className='text-[20px] font-[600]'>Featured Products</h2>
+        <ProductsSlider items={6} />
+
+        <AdsBannerSlider items={4} />
+      </div>
+    </section>
+
 
 
     <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
