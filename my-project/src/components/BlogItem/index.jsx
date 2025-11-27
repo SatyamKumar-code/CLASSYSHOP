@@ -16,7 +16,7 @@ const BlogItem = () => {
         </div>
 
         <div className='info py-4'>
-            <h2 className='text-[16px] font-[600] text-black'>
+            <h2 className='text-[15px] font-[600] text-black'>
                 <Link to="/" className='link'>Nullam ullamcorper ornare molestie</Link>
             </h2>
             <p className='text-[13px] font-[400] text-[rgba(0,0,0,0.8)] mb-4'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto odit itaque aspernatur. Lorem ipsum dolor sit amet consectetur adipisicing elit...</p>

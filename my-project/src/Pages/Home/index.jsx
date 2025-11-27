@@ -13,6 +13,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import { Navigation } from 'swiper/modules';
 import BlogItem from '../../components/BlogItem';
+import Footer from '../../components/Footer';
 
 const Home = () => {
 
@@ -139,8 +140,9 @@ const Home = () => {
     </section>
 
 
+    <Footer />
 
-    <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+
     </div>
   )
 }
