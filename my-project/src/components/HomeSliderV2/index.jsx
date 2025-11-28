@@ -18,7 +18,11 @@ const HomeBannerV2 = () => {
           pagination= {{
             clickable: true,
           }}
-          modules={[ EffectFade, Navigation, Pagination]}
+          autoplay={{
+            delay: 2500,
+            disableOnInteraction: false,
+          }}
+          modules={[ EffectFade, Navigation, Pagination, Autoplay]}
           className="HomeSliderV2">
           <SwiperSlide>
               <div className='item w-full rounded-md overflow-hidden relative'>
