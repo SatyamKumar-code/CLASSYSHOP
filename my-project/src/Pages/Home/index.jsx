@@ -3,6 +3,7 @@ import HomeSlider from '../../components/HomeSlider';
 import HomeCatSlider from '../../components/HomeCatSlider';
 import { LiaShippingFastSolid } from 'react-icons/lia';
 import AdsBannerSlider from '../../components/AdsBannerSlider';
+import AdsBannerSliderV2 from '../../components/AdsBannerSliderV2';
 
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -36,7 +37,7 @@ const Home = () => {
         </div>
 
         <div className='part2 w-[30%] flex flex-col items-center gap-5 justify-between'>
-          <BannerBoxV2 info="right" image={"https://serviceapi.spicezgold.com/download/1760160666204_1737020916820_New_Project_52.jpg"}/>
+          <BannerBoxV2  />
           <BannerBoxV2 info="right" image={"https://serviceapi.spicezgold.com/download/1741664665391_1741497254110_New_Project_50.jpg"}/>
         </div>
       </div>
@@ -91,7 +92,7 @@ const Home = () => {
           <p className='font-bold text-[25px]'>- Only $200</p>
         </div>
 
-        <AdsBannerSlider items={4} />
+        <AdsBannerSliderV2 items={4} />
       </div>
     </section>
 
