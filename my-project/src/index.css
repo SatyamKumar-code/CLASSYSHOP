@@ -46,6 +46,10 @@ body {
     font-size: 16px;
     padding: 7px 20px !important;
 }
+.btn-org:hover{
+    background: #171717 !important;
+    color: #fff !important;
+}
 
 /* header .top-strip{
     border-top: 1px solid rgba(0, 0, 0, 0.1);
@@ -205,4 +209,14 @@ footer form input::placeholder {
 
 .ReactCollapse--collapse {
     transition: height 400ms;
+}
+
+.itemViewActions button.active svg{
+    color: #ff5252 !important;
+    opacity: 1;
+}
+
+.Mui-selected.MuiPaginationItem-page{
+    background-color: #ff5252 !important;
+    color: #fff !important;
 }
