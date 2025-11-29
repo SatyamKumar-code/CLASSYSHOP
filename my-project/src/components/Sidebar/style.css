@@ -11,3 +11,16 @@
 .sidebar .scroll::-webkit-scrollbar-thumb {
     background: #ccc !important;
 }
+
+.range-slider {
+    height: 3px !important;
+}
+
+.range-slider .range-slider__thumb{
+    width: 14px !important;
+    height: 14px !important;
+}
+
+.range-slider .range-slider__thumb, .range-slider .range-slider__range{
+    background: #ff5252 !important;
+}
