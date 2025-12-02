@@ -41,7 +41,7 @@ const ProductItem = () => {
         </div>
 
         <div className='info p-3 py-5'>
-            <h6 className='text-[13px]'><Link to="/" className='link transition-all'>ftDiva</Link></h6>
+            <h6 className='text-[13px] !font-[400]'><Link to="/" className='link transition-all'>ftDiva</Link></h6>
             <h3 className='text-[13px] title mt-1 font-[500] mb-1 text-[#000]'><Link to="/" className='link transition-all'>mandarin collar printed anarkali kurta</Link></h3>
 
             <Rating name='size-small' defaultValue={4} size="small" readOnly />

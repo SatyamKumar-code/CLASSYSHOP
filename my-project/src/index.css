@@ -17,11 +17,25 @@ body {
 p{
     font-size: 14px;
     line-height: 25px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+h1,h2,h3,h4,h5,h6{
+    font-weight: 600;
 }
 
 ::-webkit-scrollbar {
     width: 7px !important;
     height: 7px !important; 
+}
+
+.Reviewscroll::-webkit-scrollbar {
+    width: 3.5px !important;
+    height: 7px !important; 
+}
+
+.reviewScroll::-webkit-scrollbar-thumb {
+    background: #ccc !important;
 }
 
 ::-webkit-scrollbar-thumb {

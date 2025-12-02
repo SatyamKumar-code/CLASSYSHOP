@@ -42,7 +42,7 @@ const ProductItem = () => {
         </div>
 
         <div className='info p-3 py-5 px-8 w-[75%]'>
-            <h6 className='text-[15px]'><Link to="/" className='link transition-all'>ftDiva</Link></h6>
+            <h6 className='text-[15px] !font-[400]'><Link to="/" className='link transition-all'>ftDiva</Link></h6>
             <h3 className='text-[18px] title mt-3 mb-3 font-[500] mb-1 text-[#000]'><Link to="/" className='link transition-all'>mandarin collar printed anarkali kurta</Link></h3>
             <p className='text-[14px] mb-3'>We dennounce with rihghteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire theat they cannot. </p>
 
