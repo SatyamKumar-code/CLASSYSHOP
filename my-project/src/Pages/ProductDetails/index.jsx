@@ -9,6 +9,7 @@ import { MdOutlineShoppingCart } from 'react-icons/md';
 import { FaRegHeart } from "react-icons/fa6";
 import { IoGitCompareOutline } from "react-icons/io5";
 import TextField from '@mui/material/TextField';
+import ProductsSlider from '../../components/ProductsSlider';
 
 export const ProductDetails = () => {
 
@@ -68,7 +69,7 @@ export const ProductDetails = () => {
               <span className='text-[14px]'>Available In Stock: <span className='text-green-600 text-[14px] font-bold'>147 Items</span></span>
             </div>
 
-            <p className='mt-3 pr-10 mb-5'>This Sling Bag Is Made From The House Of LIVE FASHION. It's made from PU leather material.Very poor quality which will be available at road side. Already the stitches have gotten loose. The handle of the bag is secured with a stapler pin which is disappointing. the inside of the bag might poke which is dangerous</p>
+            <p className='mt-3 pr-10 mb-5'>This Sling Bag Is Made From The House Of LIVE FASHION. It's made from PU leather material.Very poor quality which will be available at road side. Already the stitches have gotten loose. The handle of the bag is secured with a stapler pin which is disappointing. the inside of the bag might poke which is dangerous bag might poke which is dangerous bag might poke which is dangerous bag might poke which is dangerous</p>
 
             <div className='flex items-center gap-3'>
               <span className='text-[16px]'>Size: </span>
@@ -81,8 +82,8 @@ export const ProductDetails = () => {
               </div>
             </div>
 
-            <p className='text-[14px] mt-4 mb-2'>Free Shipping (Est. Delivery Time 2-3 Days)</p>
-            <div className='flex items-center gap-4'>
+            <p className='text-[14px] mt-5 mb-2 text-[#000]'>Free Shipping (Est. Delivery Time 2-3 Days)</p>
+            <div className='flex items-center gap-4 py-4'>
               <div className='qtyBoxWrapper w-[70px]'>
                 <QtyBox />
               </div>
@@ -92,7 +93,7 @@ export const ProductDetails = () => {
 
             </div>
 
-            <div className='flex items-center gap-4 mt-6'>
+            <div className='flex items-center gap-4 mt-4'>
               <span className='flex items-center gap-2 text-[15px] link cursor-pointer font-[500]'>
                 <FaRegHeart className='text-[18px]' /> Add to Wishlist
               </span>
@@ -354,6 +355,12 @@ export const ProductDetails = () => {
           }
 
 
+        </div>
+
+
+        <div className='container pt-8'>
+          <h2 className='text-[20px] font-[600] pb-0'>Related Products</h2>
+          <ProductsSlider items={6} />
         </div>
       </section>
     </>
