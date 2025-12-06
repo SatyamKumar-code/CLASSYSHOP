@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import{ LiaShippingFastSolid } from 'react-icons/lia'
 import { PiKeyReturnLight } from 'react-icons/pi'
 import { BsWallet2 } from 'react-icons/bs'
@@ -11,13 +11,21 @@ import { FaFacebook } from 'react-icons/fa'
 import { AiOutlineYoutube } from 'react-icons/ai'
 import { FaPinterest } from 'react-icons/fa'
 import { FaInstagram } from 'react-icons/fa'
+import { IoCloseSharp } from 'react-icons/io5'
 
 
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
+import Checkbox from '@mui/material/Checkbox';    
+
+import Drawer from '@mui/material/Drawer'
+import CartPanel from '../CartPanel'
+import { MyContext } from '../../App'
 
 
 const Footer = () => {
+
+
+    const context = useContext(MyContext);
   return (
     <>
     <footer className='py-6 bg-[#fafafa]'>
@@ -185,6 +193,19 @@ const Footer = () => {
             </div>
         </div>
     </div>
+
+
+
+     <Drawer open={context.openCartPanel} onClose={context.toggleCartPanel(false)} anchor='right'
+      className='cartPanel'>
+        <div className='flex items-center justify-between py-3 px-4 gap-3 border-b border-[rgba(0,0,0,0.1)]'>
+          <h4>Shopping Cart (1)</h4>
+          <IoCloseSharp className='text-[20px] cursor-pointer' onClick={context.toggleCartPanel(false)} />
+        </div>
+
+        <CartPanel />
+        
+      </Drawer>
     </>
   )
 }

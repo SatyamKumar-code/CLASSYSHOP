@@ -26,15 +26,22 @@ function App() {
   const [openProductDetailsModal, setOpenProductDetailsModal] = useState(false);
   const [maxWidth, setMaxWidth] = useState('lg');
   const [fullWidth, setFullWidth] = useState(true);
-
+  const [openCartPanel, setOpenCartPanel] = useState(false);
   
 
   const handleCloseProductDetailsModal = () => {
     setOpenProductDetailsModal(false);
   };
 
+  const toggleCartPanel = (newOpen) => () => {
+    setOpenCartPanel(newOpen);
+  }
+
   const values = {
-    setOpenProductDetailsModal
+    setOpenProductDetailsModal,
+    setOpenCartPanel,
+    toggleCartPanel,
+    openCartPanel
   }
 
   return (
@@ -76,8 +83,10 @@ function App() {
             </div>
           </div>
         </DialogContent>
-        
       </Dialog>
+
+
+     
     </>
   )
 }
