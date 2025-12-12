@@ -160,7 +160,7 @@ const CartPanel = () => {
 
             <div className='flex items-center justify-between w-full gap-5'>
                 <Link to="/cart" className='w-[50%]'><Button className='btn-org btn-lg w-full'>View Cart</Button></Link>
-                <Link to="/checkout" className='w-[50%]'><Button className='btn-org btn-lg w-full'>Checkout</Button></Link>
+                <Link to="/checkout" className='w-[50%]'><Button className='btn-org btn-border btn-lg w-full'>Checkout</Button></Link>
             </div>
 
         </div>
