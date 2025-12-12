@@ -23,6 +23,7 @@ import MyAccount from './Pages/MyAccount'
 
 import toast, { Toaster } from 'react-hot-toast';
 import Checkout from './Pages/Checkout'
+import MyList from './Pages/MyList'
 
 
 
@@ -82,6 +83,7 @@ function App() {
         <Route path={"/forgot-password"} exact={true} element={ <ForgotPassword />} />
         <Route path={"/checkout"} exact={true} element={ <Checkout />} />
         <Route path={"/my-account"} exact={true} element={ <MyAccount />} />
+        <Route path={"/my-list"} exact={true} element={ <MyList />} />
       </Routes>
       <Footer />
       </MyContext.Provider>

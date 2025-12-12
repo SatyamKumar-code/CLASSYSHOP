@@ -82,12 +82,17 @@ h1,h2,h3,h4,h5,h6{
 .btn-org.btn-border:hover{
     background: #171717 !important;
     color: #fff !important;
-    border: 1px solid #ff5252 !important;
+    border: 1px solid #ff5252 !important; 
 }
 
 .btn-lg{
     font-size: 18px;
     padding: 10px 20px !important;
+}
+
+.btn-sm{
+    font-size: 12px;
+    padding: 5px 20px !important;
 }
 
 /* header .top-strip{
