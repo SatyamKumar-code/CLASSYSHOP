@@ -29,6 +29,10 @@ h1,h2,h3,h4,h5,h6{
     height: 7px !important; 
 }
 
+.overflow-x-auto::-webkit-scrollbar-thumb {
+    background: #ccc ;
+}
+
 .Reviewscroll::-webkit-scrollbar {
     width: 3.5px !important;
     height: 7px !important; 
