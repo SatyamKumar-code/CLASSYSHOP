@@ -10,6 +10,9 @@ body {
     color: #3872fa !important;
 
 }
+.hovertext-primary:hover {
+    color: #3872fa !important;
+}
 
 .bg-primary{
     background: #3872fa !important;

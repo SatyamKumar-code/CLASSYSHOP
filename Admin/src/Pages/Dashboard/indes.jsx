@@ -4,6 +4,10 @@ import Button from '@mui/material/Button';
 import { FaPlus } from 'react-icons/fa6';
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
 import Badge from '../../Components/Badge'
+import Checkbox from '@mui/material/Checkbox';
+import { Link } from 'react-router-dom';
+
+const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 const Dashboard = () => {
 
@@ -20,7 +24,7 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className='w-full py-2 px-5 border bg-white border-[rgba(0,0,0,0.1)] flex items-center gap-8 mb-5 justify-between rounded-md'>
+      <div className='w-full py-2 px-5 border bg-[#f1faff] border-[rgba(0,0,0,0.1)] flex items-center gap-8 mb-5 justify-between rounded-md'>
         <div className='info'>
           <h1 className='text-[35px] font-bold leading-10 mb-3'>Good Morning, <br /> Cameron👋 </h1>
           <p>Hear's What happening on your store today. See the statistics at once.</p>
@@ -31,6 +35,112 @@ const Dashboard = () => {
         <img src="/shop-illustration.webp" className='w-[250px]' />
       </div>
       <DashboardBoxes />
+
+      <div className='card my-4 shadow-md sm:rounded-lg bg-white'>
+        <div className='flex items-center justify-between px-5 py-5'>
+          <h2 className='text-[18px] font-[600]'>Products</h2>
+        </div>
+
+        <div className="relative overflow-x-auto mt-5 pb-5">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+              <tr>
+                <th scope="col" className="px-6 py-3" width="10%">
+                  <div className='w-[60px]'>
+                    <Checkbox {...label} size='small' />
+                  </div>
+                </th>
+                <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                  Product
+                </th>
+                <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                  Category
+                </th>
+                <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                  Sub Category
+                </th>
+               
+                <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                  Price
+                </th>
+                <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                  SALES
+                </th>
+                <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                  Action
+                </th>
+                
+              </tr>
+            </thead>
+            <tbody>
+              <tr className='odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700'>
+                <td className='px-6 py-2'>
+                  <div className='w-[60px]'>
+                    <Checkbox {...label} size='small' />
+                  </div>
+                </td>
+
+                <td className='px-6 py-2'>
+                  <div className='flex items-center gap-4 w-[350px]'>
+                    <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
+                      <Link to="/product/45745">
+                      <img src='https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/15.webp'
+                       className='w-full group-hover:scale-105 transition-all'
+                       />
+                       </Link>
+                      </div>
+
+                      <div className='info w-[75%]'>
+                        <h3 className='font-[600] text-[12px] leading-4 hovertext-primary'>
+                          <Link to="/product/45745">
+                          Electronic Rubber Table
+                          </Link>
+                          </h3>
+                        <span className='text-[12px]'>Books</span>
+                      </div>
+                  </div>
+                </td>
+
+                <td className='px-6 py-2'>
+                  Electronics
+                </td>
+
+                <td className='px-6 py-2'>
+                  Women
+                </td>
+
+                <td className='px-6 py-2'>
+                  <div className='flex gap-1 flex-col'>
+                    <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
+                      $58.00
+                    </span>
+                    <span className='price text-primary text-[14px] font-[600] text-green-600'>
+                      $45.00
+                    </span>
+                  </div>
+                </td>
+
+                <td className='px-6 py-2'>
+                  <p className='text-[14px] w-[150px]'><span className='font-[600]'>234</span> sale</p>
+                </td>
+
+                <td className='px-6 py-2'>
+                   
+                </td>
+
+                
+              </tr>
+
+
+
+
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+
 
       <div className='card my-4 shadow-md sm:rounded-lg bg-white'>
         <div className='flex items-center justify-between px-5 py-5'>
