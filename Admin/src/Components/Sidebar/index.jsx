@@ -34,9 +34,11 @@ const  Sidebar = () => {
 
       <ul className='mt-4'>
         <li>
+          <Link to="/">
         <Button className='w-full capitalize! justify-start! flex gap-3 text-[14px] text-[rgba(0,0,0,0.8)]! font-medium! items-center py-2! hover:bg-[#f1f1f1]!'>
             <RxDashboard className='text-[18px]'/> <span>Dashboard</span>
           </Button>
+          </Link>
         </li>
 
         <li>
@@ -67,9 +69,11 @@ const  Sidebar = () => {
         </li>
 
         <li>
+          <Link to="/users">
           <Button className='w-full capitalize! justify-start! flex gap-3 text-[14px] text-[rgba(0,0,0,0.8)]! font-medium! items-center py-2! hover:bg-[#f1f1f1]!'>
             <FiUsers className='text-[18px]'/> <span>Users</span>
           </Button>
+          </Link>
         </li>
 
         <li>
@@ -86,17 +90,21 @@ const  Sidebar = () => {
           <Collapse isOpened={submenuIndex === 3 ? true : false}>
             <ul className='w-full'>
               <li className='w-full'>
+                <Link to="/products">
                 <Button className='text-[rgba(0,0,0,0.7)]! capitalize! justify-start! w-full! text-[13px]! font-medium! pl-9! flex gap-3'>
                   <span className='block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]'></span>
                   Products List
                 </Button>
+                </Link>
               </li>
 
               <li className='w-full'>
+                <Link to="/product/upload">
                 <Button className='text-[rgba(0,0,0,0.7)]! capitalize! justify-start! w-full! text-[13px]! font-medium! pl-9! flex gap-3'>
                   <span className='block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]'>
                     </span>Product Upload
                   </Button>
+                </Link>
               </li>
 
             </ul>
@@ -119,31 +127,39 @@ const  Sidebar = () => {
           <Collapse isOpened={submenuIndex === 4 ? true : false}>
             <ul className='w-full'>
               <li className='w-full'>
+                <Link to="/categories">
                 <Button className='text-[rgba(0,0,0,0.7)]! capitalize! justify-start! w-full! text-[13px]! font-medium! pl-9! flex gap-3'>
                   <span className='block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]'></span>
                   Categories List
                 </Button>
+                </Link>
               </li>
 
               <li className='w-full'>
+                <Link to="/category/add">
                 <Button className='text-[rgba(0,0,0,0.7)]! capitalize! justify-start! w-full! text-[13px]! font-medium! pl-9! flex gap-3'>
                   <span className='block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]'></span>
                   Add a Category
                 </Button>
+                </Link>
               </li>
 
               <li className='w-full'>
+                <Link to="/category/subCat">
                 <Button className='text-[rgba(0,0,0,0.7)]! capitalize! justify-start! w-full! text-[13px]! font-medium! pl-9! flex gap-3'>
                   <span className='block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]'></span>
                   Sub Category List
                 </Button>
+                </Link>
               </li>
 
               <li className='w-full'>
+                <Link to="/category/subCat/add">
                 <Button className='text-[rgba(0,0,0,0.7)]! capitalize! justify-start! w-full! text-[13px]! font-medium! pl-9! flex gap-3'>
                   <span className='block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]'></span>
                   Add a Sub Category
                 </Button>
+                </Link>
               </li>
 
             </ul>
@@ -153,9 +169,11 @@ const  Sidebar = () => {
         </li>
 
         <li>
+          <Link to="/orders">
           <Button className='w-full capitalize! justify-start! flex gap-3 text-[14px] text-[rgba(0,0,0,0.8)]! font-medium! items-center py-2! hover:bg-[#f1f1f1]!'>
             <IoBagCheckOutline className='text-[20px]'/> <span>Orders</span>
           </Button>
+          </Link>
         </li>
 
         <li>

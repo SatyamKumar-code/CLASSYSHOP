@@ -8,13 +8,13 @@ const Orders = () => {
 
     const [isOpenOrderdProduct, setIsOpenOrderdProduct] = useState(null);
 
-const isShowOrderdProduct = (index) => {
-    if(isOpenOrderdProduct === index){
-        setIsOpenOrderdProduct(null);
-    }else{
-        setIsOpenOrderdProduct(index);
+    const isShowOrderdProduct = (index) => {
+        if (isOpenOrderdProduct === index) {
+            setIsOpenOrderdProduct(null);
+        } else {
+            setIsOpenOrderdProduct(index);
+        }
     }
-}
 
 
     return (
