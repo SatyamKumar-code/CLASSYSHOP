@@ -40,3 +40,9 @@ body {
 .btn-blue:hover{
     background: #3067e5 !important;
 }
+
+th.MuiTableCell-root{
+    @apply bg-[#f1f1f1];
+    padding-top: 4px!important;
+    padding-bottom: 4px!important;
+} 
