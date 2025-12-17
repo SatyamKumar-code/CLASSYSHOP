@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import Button from '@mui/material/Button'
 import { RiMenu2Line } from "react-icons/ri";
 import Badge from '@mui/material/Badge';
@@ -10,6 +10,7 @@ import Menu from '@mui/material/Menu';
 import Divider from '@mui/material/Divider';
 import { FaRegUser } from 'react-icons/fa6';
 import { IoMdLogOut } from 'react-icons/io';
+import { MyContext } from '../../App';
 
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -32,14 +33,16 @@ const Header = () => {
     setAnchorMyAcc(null);
   };
 
+  const context = useContext(MyContext);
 
   return (
-    <header className='w-full h-auto py-2 pl-72 shadow-md pr-7 bg-white flex items-center justify-between'>
+    <header className={`w-full h-auto py-2 shadow-md pr-7 bg-white flex items-center justify-between ${context.isSidebarOpen===true ? 'pl-80' : 'pl-5'} transition-all duration-300`}>
       <div className='part1'>
-        <Button className='w-10! min-w-10! h-10! rounded-full! text-[rgba(0,0,0,0.7)]!'>
+        <Button className='w-10! min-w-10! h-10! rounded-full! text-[rgba(0,0,0,0.7)]!'
+          onClick={() => context.setisSidebarOpen(!context.isSidebarOpen)} >
           <RiMenu2Line className='text-[18px] text-[rgba(0,0,0,0.7)]'/>
         </Button>
-      </div>
+      </div> 
 
 
       <div className='part2 w-[40%] flex items-center justify-end gap-5'>
