@@ -5,6 +5,8 @@ import Header from './Components/Header'
 import Sidebar from './Components/Sidebar'
 import Dashboard from './Pages/Dashboard'
 import { createContext } from 'react'
+import Login from './Pages/Login'
+import SignUp from './Pages/SignUp'
 
 const MyContext = createContext();
 
@@ -12,6 +14,7 @@ const MyContext = createContext();
 function App() {
 
   const [isSidebarOpen, setisSidebarOpen] = useState(true);
+  const [ isLogin, setisLogin ] = useState(false);
 
   
   
@@ -35,11 +38,33 @@ function App() {
       </>
       ),
     },
+
+    {
+      path: '/login',
+      exaxt: true,
+      element: ( 
+      <>
+        <Login />
+      </>
+      ),
+    },
+
+    {
+      path: '/sign-up',
+      exaxt: true,
+      element: ( 
+      <>
+        <SignUp />
+      </>
+      ),
+    },
   ])
 
   const value = {
     isSidebarOpen,
-    setisSidebarOpen
+    setisSidebarOpen,
+    isLogin,
+    setisLogin
   };
 
   return (

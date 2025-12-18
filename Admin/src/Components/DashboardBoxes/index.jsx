@@ -4,11 +4,11 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 
 import { Navigation } from 'swiper/modules';
-import { AiTwotoneGift } from 'react-icons/ai';
+import { FiPieChart } from "react-icons/fi";
 import { IoStatsChartSharp } from 'react-icons/io5';
-import { AiTwotonePieChart } from 'react-icons/ai';
 import { BsBank } from 'react-icons/bs';
 import { RiProductHuntLine } from 'react-icons/ri';
+import { GoGift } from "react-icons/go";
 
 const DashboardBoxes = () => {
   return (
@@ -21,46 +21,46 @@ const DashboardBoxes = () => {
         className="dashboardBoxesSlider"
     >
         <SwiperSlide>
-            <div className='box bg-white p-5 cursor-pointer hover:bg-[#fafafa] rounded-md border border-[rgba(0,0,0,0.1)] flex items-center gap-4'>
-                <AiTwotoneGift className='text-[40px] text-[#3872fa]' />
+            <div className='box bg-[#3872fa] p-5 cursor-pointer hover:bg-[#3d6dde] rounded-md border border-[rgba(0,0,0,0.1)] flex items-center gap-4'>
+                <GoGift className='text-[40px] text-white' />
                 <div className='info w-[70%]'>
                     <h3>New Orders</h3>
                     <b>1,390</b>
                 </div>
-                <IoStatsChartSharp className='text-[50px] ml-auto text-[#3872fa]' />
+                <IoStatsChartSharp className='text-[50px] ml-auto text-white' />
             </div>
         </SwiperSlide>
 
          <SwiperSlide>
-            <div className='box bg-white p-5 cursor-pointer hover:bg-[#fafafa] rounded-md border border-[rgba(0,0,0,0.1)] flex items-center gap-4'>
-                <AiTwotonePieChart className='text-[40px] text-[#10b981]' />
+            <div className='box bg-[#10b981] p-5 cursor-pointer hover:bg-[#1fab7c] rounded-md border border-[rgba(0,0,0,0.1)] flex items-center gap-4'>
+                <FiPieChart className='text-[40px] text-white' />
                 <div className='info w-[70%]'>
                     <h3>Sales</h3>
                     <b>$57,890</b>
                 </div>
-                <IoStatsChartSharp className='text-[50px] ml-auto text-[#10b981]' />
+                <IoStatsChartSharp className='text-[50px] ml-auto text-white' />
             </div>
         </SwiperSlide>
 
          <SwiperSlide>
-            <div className='box bg-white p-5 cursor-pointer hover:bg-[#fafafa] rounded-md border border-[rgba(0,0,0,0.1)] flex items-center gap-4'>
-                <BsBank className='text-[30px] text-[#7928ca]' />
+            <div className='box bg-[#ca289f] p-5 cursor-pointer hover:bg-[#bb3698] rounded-md border border-[rgba(0,0,0,0.1)] flex items-center gap-4'>
+                <BsBank className='text-[30px] text-white' />
                 <div className='info w-[70%]'>
                     <h3>Revenue</h3>
                     <b>$12,390</b>
                 </div>
-                <IoStatsChartSharp className='text-[50px] ml-auto text-[#7928ca]' />
+                <IoStatsChartSharp className='text-[50px] ml-auto text-white' />
             </div>
         </SwiperSlide>
 
          <SwiperSlide>
-            <div className='box bg-white p-5 cursor-pointer hover:bg-[#fafafa] rounded-md border border-[rgba(0,0,0,0.1)] flex items-center gap-4'>
-                <RiProductHuntLine className='text-[40px] text-[#312be1d8]' />
+            <div className='box bg-[#312be1d8] p-5 cursor-pointer hover:bg-[#2a27c1] rounded-md border border-[rgba(0,0,0,0.1)] flex items-center gap-4'>
+                <RiProductHuntLine className='text-[40px] text-white' />
                 <div className='info w-[70%]'>
                     <h3>Total Product</h3>
                     <b>1,390</b>
                 </div>
-                <IoStatsChartSharp className='text-[50px] ml-auto text-[#312be1d8]' />
+                <IoStatsChartSharp className='text-[50px] ml-auto text-white' />
             </div>
         </SwiperSlide>
 

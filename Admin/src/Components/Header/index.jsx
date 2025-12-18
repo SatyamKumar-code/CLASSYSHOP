@@ -52,7 +52,9 @@ const Header = () => {
           </StyledBadge>
         </IconButton>
 
-        <div className='relative'>
+        {
+          context.isLogin === true ? (
+            <div className='relative'>
           <div className='rounded-full w-[35px] h-[35px] overflow-hidden cursor-pointer'
             onClick={handleClickMyAcc}
           >
@@ -125,6 +127,14 @@ const Header = () => {
             
           </Menu>
         </div>
+          )
+          : (
+            <Button className='btn-blue btn-sm rounded-full!'
+            >
+              Sign In
+            </Button>
+          )
+        }
       </div>
     </header>
   )

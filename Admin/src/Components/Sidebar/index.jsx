@@ -30,8 +30,8 @@ const  Sidebar = () => {
     <div className={`sidebar fixed top-0 left-0 bg-[#fff] h-full border-r border-[rgba(0,0,0,0.1)] py-2 px-4 ${context.isSidebarOpen===true ? 'w-[18%]' : 'w-[0%] opacity-0'} transition-all duration-300 overflow-hidden`}>
       <div className='py-2 w-full'>
         <Link to="/">
-          <img src="https://ecme-react.themenate.net/img/logo/logo-light-full.png"
-          className='w-[120px]'/>
+          <img src="/logo1.svg" alt="Logo"
+          className='w-[200px]'/>
         </Link>
       </div>
 
