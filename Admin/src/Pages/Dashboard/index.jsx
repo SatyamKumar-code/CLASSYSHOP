@@ -15,7 +15,7 @@ import Pagination from '@mui/material/Pagination';
 import { BiExport } from 'react-icons/bi';
 
 
-import Paper from '@mui/material/Paper';
+
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -1775,7 +1775,7 @@ const Dashboard = () => {
         </div>
 
           <LineChart
-           width={1300}
+           width={1200}
            height={500}
             data={chart1Data}
             margin={{
