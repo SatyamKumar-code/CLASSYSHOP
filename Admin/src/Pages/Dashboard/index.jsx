@@ -1,4 +1,4 @@
-import React, { useState, PureComponent } from 'react'
+import React, { useState, PureComponent, useContext } from 'react'
 import DashboardBoxes from '../../Components/DashboardBoxes';
 import Button from '@mui/material/Button';
 import { FaPlus } from 'react-icons/fa6';
@@ -27,6 +27,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { MyContext } from '../../App';
 
 
 
@@ -161,6 +162,8 @@ const Dashboard = () => {
   }
 ]);
 
+  const context = useContext(MyContext);
+
   const handleChangeCatFilter = (event, newPage) => {
     setCategoryFilterVal(event.target.value);
   };
@@ -181,7 +184,15 @@ const Dashboard = () => {
           <h1 className='text-[35px] font-bold leading-10 mb-3'>Good Morning, <br /> Cameron👋 </h1>
           <p>Hear's What happening on your store today. See the statistics at once.</p>
           <br />
-          <Button className="btn-blue capitalize!"><FaPlus /> Add product</Button>
+          <Button className="btn-blue capitalize!"
+          onClick={()=> context.setIsOpenFullScreenPanel({
+            open:true,
+            model:"Add Product"
+          })}
+          >
+            <FaPlus />
+             Add product
+          </Button>
         </div>
 
         <img src="/shop-illustration.webp" className='w-[250px]' />
@@ -219,7 +230,13 @@ const Dashboard = () => {
             <Button className='btn bg-green-600! text-white! btn-sm'>
                Export
             </Button>
-            <Button className='btn-blue text-white! btn-sm'>Add Product</Button>
+            <Button className='btn-blue text-white! btn-sm'
+              onClick={()=> context.setIsOpenFullScreenPanel({
+                open:true,
+                model:"Add Product"
+              })}
+            >
+              Add Product</Button>
           </div>
         </div> 
 
@@ -972,10 +989,16 @@ const Dashboard = () => {
             <Button className='btn bg-green-600! text-white! btn-sm'>
                Export
             </Button>
-            <Button className='btn-blue text-white! btn-sm'>Add Product</Button>
+            <Button className='btn-blue text-white! btn-sm'
+            onClick={()=> context.setIsOpenFullScreenPanel({
+              open:true,
+              model:"Add Product"
+            })}
+            >
+              Add Product</Button>
           </div>
         </div> 
-        <br />
+        <br /> 
 
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">
