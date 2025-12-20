@@ -26,6 +26,9 @@ import SubCategoryList from './Pages/Categegory/subCatList'
 import AddSubCategory from './Pages/Categegory/addSubCategory'
 import Users from './Pages/Users'
 import Orders from './Pages/Orders'
+import ForgotPassword from './Pages/ForgotPassword'
+import VerifyAccount from './Pages/VerifyAccount'
+import ChangePassword from './Pages/ChangePassword'
 
 
 
@@ -87,6 +90,35 @@ function App() {
       element: ( 
       <>
         <SignUp />
+      </>
+      ),
+    },
+
+    {
+      path: '/forgot-password',
+      exaxt: true,
+      element: ( 
+      <>
+        <ForgotPassword />
+      </>
+      ),
+    },
+
+    {
+      path: '/verify-account',
+      exaxt: true,
+      element: ( 
+      <>
+        <VerifyAccount />
+      </>
+      ),
+    },
+    {
+      path: '/change-password',
+      exaxt: true,
+      element: ( 
+      <>
+        <ChangePassword />
       </>
       ),
     },
