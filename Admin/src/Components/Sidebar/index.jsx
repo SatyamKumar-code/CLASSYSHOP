@@ -156,7 +156,7 @@ const Sidebar = () => {
               </li>
 
               <li className='w-full'>
-                <Link to="/category/subCat">
+                <Link to="/subCategory/list">
                   <Button className='text-[rgba(0,0,0,0.7)]! capitalize! justify-start! w-full! text-[13px]! font-medium! pl-9! flex gap-3'>
                     <span className='block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]'></span>
                     Sub Category List

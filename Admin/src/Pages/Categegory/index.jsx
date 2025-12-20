@@ -28,7 +28,8 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 const columns = [
-    { id: 'image', label: 'IMAGE', minWidth: 250 },
+    { id: 'image', label: 'IMAGE', minWidth: 150 },
+    { id: 'catName', label: 'CATEGORY NAME', minWidth: 150 },
     { id: 'action', label: 'Action', minWidth: 100 },
    
 ];
@@ -119,100 +120,7 @@ const CategoryList = () => {
                                 </TableCell>
 
                                 <TableCell width={100} >
-                                    <div className='flex items-center gap-1'>
-                                        <TooltipMUI title="Edit Product" placement='top'>
-                                            <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                                                <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-
-                                        <TooltipMUI title="View Product Dtails" placement='top'>
-                                            <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                                                <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[18px]' />
-                                            </Button>
-                                        </TooltipMUI>
-
-                                        <TooltipMUI title="Remove Product" placement='top'>
-                                            <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                                                <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-
-
-
-                                    </div>
-                                </TableCell>
-
-                                
-
-                            </TableRow>
-
-                            <TableRow>
-                                <TableCell >
-                                    <Checkbox {...label} size='small' />
-                                </TableCell>
-
-                                <TableCell width={100} >
-                                    <div className='flex items-center gap-4 w-[80px]'>
-                                        <div className='img w-full rounded-md overflow-hidden group'>
-                                            <Link to="/product/45745">
-                                                <img src='https://ecme-react.themenate.net/img/products/product-1.jpg'
-                                                    className='w-full group-hover:scale-105 transition-all'
-                                                />
-                                            </Link>
-                                        </div>
-
-                                        
-                                    </div>
-                                </TableCell>
-
-                                <TableCell width={100} >
-                                    <div className='flex items-center gap-1'>
-                                        <TooltipMUI title="Edit Product" placement='top'>
-                                            <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                                                <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-
-                                        <TooltipMUI title="View Product Dtails" placement='top'>
-                                            <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                                                <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[18px]' />
-                                            </Button>
-                                        </TooltipMUI>
-
-                                        <TooltipMUI title="Remove Product" placement='top'>
-                                            <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                                                <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-
-
-
-                                    </div>
-                                </TableCell>
-
-                                
-
-                            </TableRow>
-
-
-                            <TableRow>
-                                <TableCell >
-                                    <Checkbox {...label} size='small' />
-                                </TableCell>
-
-                                <TableCell width={100} >
-                                    <div className='flex items-center gap-4 w-[80px]'>
-                                        <div className='img w-full rounded-md overflow-hidden group'>
-                                            <Link to="/product/45745">
-                                                <img src='https://ecme-react.themenate.net/img/products/product-1.jpg'
-                                                    className='w-full group-hover:scale-105 transition-all'
-                                                />
-                                            </Link>
-                                        </div>
-
-                                        
-                                    </div>
+                                    Fashion
                                 </TableCell>
 
                                 <TableCell width={100} >
@@ -261,6 +169,10 @@ const CategoryList = () => {
 
                                         
                                     </div>
+                                </TableCell>
+
+                                <TableCell width={100} >
+                                    Fashion
                                 </TableCell>
 
                                 <TableCell width={100} >
@@ -313,6 +225,10 @@ const CategoryList = () => {
                                 </TableCell>
 
                                 <TableCell width={100} >
+                                    Fashion
+                                </TableCell>
+
+                                <TableCell width={100} >
                                     <div className='flex items-center gap-1'>
                                         <TooltipMUI title="Edit Product" placement='top'>
                                             <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
@@ -339,7 +255,114 @@ const CategoryList = () => {
 
                                 
 
-                            </TableRow> 
+                            </TableRow>
+
+
+
+                            <TableRow>
+                                <TableCell >
+                                    <Checkbox {...label} size='small' />
+                                </TableCell>
+
+                                <TableCell width={100} >
+                                    <div className='flex items-center gap-4 w-[80px]'>
+                                        <div className='img w-full rounded-md overflow-hidden group'>
+                                            <Link to="/product/45745">
+                                                <img src='https://ecme-react.themenate.net/img/products/product-1.jpg'
+                                                    className='w-full group-hover:scale-105 transition-all'
+                                                />
+                                            </Link>
+                                        </div>
+
+                                        
+                                    </div>
+                                </TableCell>
+
+                                <TableCell width={100} >
+                                    Fashion
+                                </TableCell>
+
+                                <TableCell width={100} >
+                                    <div className='flex items-center gap-1'>
+                                        <TooltipMUI title="Edit Product" placement='top'>
+                                            <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
+                                                <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
+                                            </Button>
+                                        </TooltipMUI>
+
+                                        <TooltipMUI title="View Product Dtails" placement='top'>
+                                            <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
+                                                <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[18px]' />
+                                            </Button>
+                                        </TooltipMUI>
+
+                                        <TooltipMUI title="Remove Product" placement='top'>
+                                            <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
+                                                <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
+                                            </Button>
+                                        </TooltipMUI>
+
+
+
+                                    </div>
+                                </TableCell>
+
+                                
+
+                            </TableRow>
+
+
+                            <TableRow>
+                                <TableCell >
+                                    <Checkbox {...label} size='small' />
+                                </TableCell>
+
+                                <TableCell width={100} >
+                                    <div className='flex items-center gap-4 w-[80px]'>
+                                        <div className='img w-full rounded-md overflow-hidden group'>
+                                            <Link to="/product/45745">
+                                                <img src='https://ecme-react.themenate.net/img/products/product-1.jpg'
+                                                    className='w-full group-hover:scale-105 transition-all'
+                                                />
+                                            </Link>
+                                        </div>
+
+                                        
+                                    </div>
+                                </TableCell>
+
+                                <TableCell width={100} >
+                                    Fashion
+                                </TableCell>
+
+                                <TableCell width={100} >
+                                    <div className='flex items-center gap-1'>
+                                        <TooltipMUI title="Edit Product" placement='top'>
+                                            <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
+                                                <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
+                                            </Button>
+                                        </TooltipMUI>
+
+                                        <TooltipMUI title="View Product Dtails" placement='top'>
+                                            <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
+                                                <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[18px]' />
+                                            </Button>
+                                        </TooltipMUI>
+
+                                        <TooltipMUI title="Remove Product" placement='top'>
+                                            <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
+                                                <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
+                                            </Button>
+                                        </TooltipMUI>
+
+
+
+                                    </div>
+                                </TableCell>
+
+                                
+
+                            </TableRow>
                             
 
                             
