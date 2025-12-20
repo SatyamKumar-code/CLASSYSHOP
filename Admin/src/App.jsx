@@ -18,6 +18,12 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { IoMdClose } from 'react-icons/io'
 import Slide from '@mui/material/Slide';
+import HomeSliderBanners from './Pages/HomeSliderBanners'
+import AddHomeSlide from './Pages/HomeSliderBanners/addHomeSlide'
+import CategoryList from './Pages/Categegory'
+import AddCategory from './Pages/Categegory/addCategory'
+import SubCategoryList from './Pages/Categegory/subCatList'
+import AddSubCategory from './Pages/Categegory/addSubCategory'
 
 
 
@@ -102,6 +108,66 @@ function App() {
       </>
       ),
     },
+
+    {
+      path: '/homeSlider/list',
+      exaxt: true,
+      element: ( 
+      <>
+        <section className='main'>
+          <Header />
+          <div className='contentMain flex'>
+            <div className={`overflow-hidden sidebarWrapper ${isSidebarOpen===true ? 'w-[18%]' : 'w-[0%] opacity-0'} transition-all duration-300`}>
+              <Sidebar />
+            </div>
+            <div className={`contentRight py-4 px-5 ${isSidebarOpen===false ? 'w-[100%]' : 'w-[82%]'} transition-all duration-300`}>
+              <HomeSliderBanners />
+            </div>
+          </div>
+        </section>
+      </>
+      ),
+    },
+
+    {
+      path: '/category/list',
+      exaxt: true,
+      element: ( 
+      <>
+        <section className='main'>
+          <Header />
+          <div className='contentMain flex'>
+            <div className={`overflow-hidden sidebarWrapper ${isSidebarOpen===true ? 'w-[18%]' : 'w-[0%] opacity-0'} transition-all duration-300`}>
+              <Sidebar />
+            </div>
+            <div className={`contentRight py-4 px-5 ${isSidebarOpen===false ? 'w-[100%]' : 'w-[82%]'} transition-all duration-300`}>
+              <CategoryList />
+            </div>
+          </div>
+        </section>
+      </>
+      ),
+    },
+
+    {
+      path: '/subCategory/list',
+      exaxt: true,
+      element: ( 
+      <>
+        <section className='main'>
+          <Header />
+          <div className='contentMain flex'>
+            <div className={`overflow-hidden sidebarWrapper ${isSidebarOpen===true ? 'w-[18%]' : 'w-[0%] opacity-0'} transition-all duration-300`}>
+              <Sidebar />
+            </div>
+            <div className={`contentRight py-4 px-5 ${isSidebarOpen===false ? 'w-[100%]' : 'w-[82%]'} transition-all duration-300`}>
+              <SubCategoryList />
+            </div>
+          </div>
+        </section>
+      </>
+      ),
+    },
   ])
 
   const value = {
@@ -150,6 +216,16 @@ function App() {
         
         {
           isOpenFullScreenPanel.model === 'Add Product' && <AddProduct />
+        }
+        
+        {
+          isOpenFullScreenPanel.model === 'Add Home Slide' && <AddHomeSlide/>
+        }
+        {
+          isOpenFullScreenPanel.model === 'Add New Category' && <AddCategory/>
+        }
+        {
+          isOpenFullScreenPanel.model === 'Add New Sub Category' && <AddSubCategory/>
         }
 
       </Dialog>
