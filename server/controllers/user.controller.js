@@ -87,7 +87,7 @@ export async function verifyEmailController(req, res) {
         const isCodeValid = user.otp === otp;
         const isNotExpired = user.otp_expiry > Date.now();
 
-        if(!isCodeValid && isNotExpired) {
+        if(isCodeValid && isNotExpired) {
             user.verify_email = true;
             user.otp = null;
             user.otp_expiry = null;
