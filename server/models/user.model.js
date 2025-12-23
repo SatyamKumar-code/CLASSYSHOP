@@ -26,7 +26,15 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    last_login : {
+    access_token : {
+        type: String,
+        default: ""
+    },
+    refresh_token : {
+        type: String,
+        default: ""
+    },
+    last_login_date : {
         type: Date,
         default: ""
     },
