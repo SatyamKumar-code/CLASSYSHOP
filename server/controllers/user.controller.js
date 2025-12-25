@@ -518,7 +518,7 @@ export async function verifyForgotPasswordOtp(req, res) {
 }
 
 export async function resetpassword(req, res) {
-    try {   
+    try {
         const { email, newPassword, confirmPassword } = req.body;
         if (!email || !newPassword || !confirmPassword) {
             return res.status(400).json({
@@ -558,6 +558,58 @@ export async function resetpassword(req, res) {
         })
 
     }catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+export async function refreshToken(req, res) {
+    try {
+        const refreshToken = req.cookies.refreshToken || req?.headers?.authorization?.split(" ")[1];
+
+        if (!refreshToken) {
+            return res.status(401).json({
+                message: "Invalid token",
+                error: true,
+                success: false
+            })
+        }
+
+        const verified = await jwt.verify(refreshToken, process.env.SECRET_KEY_REFRESH_TOKEN);
+
+        if (!verified) {
+            return res.status(401).json({
+                message: "token is expired",
+                error: true,
+                success: false
+            })
+        }
+
+        const userId = verifyToken?._id;
+        const newAccessToken = await generateAccessToken(userId);
+
+        const cookiesOptions = {
+            httpOnly: true,
+            secure: true,
+            sameSite: "None"
+        }
+
+        res.cookie('accessToken', newAccessToken, cookiesOptions);
+        
+        return res.status(200).json({
+            message: "New access token generated successfully",
+            error: false,
+            success: true,
+            data: {
+                accessToken: newAccessToken
+            }
+        })
+
+
+    } catch (error) {
         return res.status(500).json({
             message: error.message || error,
             error: true,
