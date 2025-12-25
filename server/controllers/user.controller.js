@@ -153,6 +153,14 @@ export async function loginUserController( req, res ) {
             })
         }
 
+        if (user.verify_email !== true) {
+            return res.status(400).json({
+                message: "Your Email is not verified yet. Please verify your email first.",
+                error: true,
+                success: false
+            })
+        }
+
         const CheckPassword = await bcrypt.compare(password, user.password);
 
         if (!CheckPassword) {
@@ -333,6 +341,69 @@ export async function removeImageFromCloudinary( request, response ) {
 
     } catch (error) {
         return response.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+export async function updateUserDetails(req, res) {
+    try {
+        const userId = req.userId;
+        const { name, email, mobile , password } = req.body;
+
+        const userExist = await UserModel.findById(userId);
+        if (!userExist) {
+            return res.status(400).send('The user cannot be Updated/1');
+        }
+        let verifyCode = "";
+
+
+        if ( email !== userExist.email ) {
+            verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
+        }
+        let hashedPassword ="";
+
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            hashedPassword = await bcrypt.hash(password, salt);
+        } else {
+            hashedPassword = userExist.password;
+        }
+
+        const updateUser = await UserModel.findByIdAndUpdate(
+            userId,
+            {
+                name: name,
+                mobile: mobile,
+                email: email,
+                verify_email: email !== userExist.email ? false : true,
+                password: hashedPassword,
+                otp: verifyCode !== "" ? verifyCode : null,
+                otp_expiry: verifyCode !== "" ? Date.now() + 600000 : ''
+            },
+            { new: true } 
+        )
+
+        if (email !== userExist.email ) {
+            await sendEmailFun({
+                to : email,
+                subject : "verify email from Classifyshop App",
+                text : "",
+                html : VerificationEmail(name, verifyCode)
+            })
+        }
+
+        return res.status(200).json({
+            message: "User Updated Successfully",
+            success: true,
+            error: false,
+            user: updateUser
+        })
+
+    } catch (error) {
+        return res.status(500).json({
             messsage: error.message || error,
             error: true,
             success: false
