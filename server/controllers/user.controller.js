@@ -7,6 +7,7 @@ import generateAccessToken from '../utils/generatedAccessToken.js';
 import generateRefreshToken from '../utils/generatedRefreshToken.js';
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
+import { error } from 'console';
 
 cloudinary.config({
 cloud_name: process.env.cloudinary_Config_Cloud_Name,
@@ -405,6 +406,52 @@ export async function updateUserDetails(req, res) {
     } catch (error) {
         return res.status(500).json({
             messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+export async function forgotPasswordController( req, res ) {
+    try {
+        const { email } = req.body;
+
+        const user = await UserModel.findOne({ email });
+
+        if (!user) {
+            return res.status(400).json({
+                message: "Email not available",
+                error: true,
+                success: false
+            })
+        } else {
+            let verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+            user.otp = verifyCode;
+            user.otp_expiry = Date.now() + 10 * 60 * 1000; // 10 minutes from now
+
+            await user.save();
+
+
+            await sendEmailFun({
+                to: email,
+                subject: "Reset Password - Classifyshop App",
+                text: "",
+                html: VerificationEmail(user?.name, verifyCode)
+            })
+
+            return res.status(200).json({
+                message: "Check your email",
+                error: false,
+                success: true
+            })
+        }
+
+       
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: "uu",
             error: true,
             success: false
         })
