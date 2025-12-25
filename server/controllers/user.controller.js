@@ -10,17 +10,17 @@ import fs from 'fs';
 import { error } from 'console';
 
 cloudinary.config({
-cloud_name: process.env.cloudinary_Config_Cloud_Name,
+    cloud_name: process.env.cloudinary_Config_Cloud_Name,
     api_key: process.env.cloudinary_Config_api_key,
     api_secret: process.env.cloudinary_Config_api_secret,
     secure: true,
 })
 
-export async function registerUserController( req, res ) {
+export async function registerUserController(req, res) {
     try {
         let user;
         const { name, email, password } = req.body;
-        if( !name || !email || !password ) {
+        if (!name || !email || !password) {
             return res.status(400).json({
                 message: "provide all required fields",
                 error: true,
@@ -30,7 +30,7 @@ export async function registerUserController( req, res ) {
 
         user = await UserModel.findOne({ email });
 
-        if( user ) {
+        if (user) {
             return res.status(409).json({
                 message: "User already Registered with this email",
                 error: true,
@@ -39,26 +39,26 @@ export async function registerUserController( req, res ) {
         }
 
         const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
-       
+
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
         user = new UserModel({
             name,
-            email, 
+            email,
             password: hashedPassword,
             otp: verifyCode,
             otp_expiry: Date.now() + 10 * 60 * 1000 // 10 minutes from now
         });
 
         await user.save();
-        
+
         await sendEmailFun({
-            to : email,
-            subject : "Verify email from Classifyshop App",
-            text : "",
-            html : VerificationEmail(name, verifyCode)
+            to: email,
+            subject: "Verify email from Classifyshop App",
+            text: "",
+            html: VerificationEmail(name, verifyCode)
         })
 
         const token = jwt.sign(
@@ -71,10 +71,10 @@ export async function registerUserController( req, res ) {
             error: false,
             message: "User registered successfully! Please verify your email.",
             token: token
-            
+
         });
     } catch (error) {
-        return res.status(500).json({ 
+        return res.status(500).json({
             messsage: error.message || error,
             error: true,
             success: false
@@ -88,7 +88,7 @@ export async function verifyEmailController(req, res) {
         const { email, otp } = req.body;
         const user = await UserModel.findOne({ email });
 
-        if(!user) {
+        if (!user) {
             return res.status(400).json({
                 message: "User not found",
                 error: true,
@@ -99,7 +99,7 @@ export async function verifyEmailController(req, res) {
         const isCodeValid = user.otp === otp;
         const isNotExpired = user.otp_expiry > Date.now();
 
-        if(isCodeValid && isNotExpired) {
+        if (isCodeValid && isNotExpired) {
             user.verify_email = true;
             user.otp = null;
             user.otp_expiry = null;
@@ -109,13 +109,13 @@ export async function verifyEmailController(req, res) {
                 error: false,
                 message: "Email verified successfully!"
             })
-        }else if (!isCodeValid) {
+        } else if (!isCodeValid) {
             return res.status(400).json({
                 error: true,
                 success: false,
                 message: "Invalid  OTP"
             })
-        }else {
+        } else {
             return res.status(400).json({
                 error: true,
                 success: false,
@@ -123,7 +123,7 @@ export async function verifyEmailController(req, res) {
             })
         }
     } catch (error) {
-        return res.status(500).json({ 
+        return res.status(500).json({
             messsage: error.message || error,
             error: true,
             success: false
@@ -131,7 +131,7 @@ export async function verifyEmailController(req, res) {
     }
 }
 
-export async function loginUserController( req, res ) {
+export async function loginUserController(req, res) {
     try {
         const { email, password } = req.body;
 
@@ -206,30 +206,30 @@ export async function loginUserController( req, res ) {
 }
 
 
-export async function logoutController(req, res)  {
+export async function logoutController(req, res) {
     try {
         const userid = req.userId
 
         const cookiesOptions = {
             httpOnly: true,
-            secure : true,
+            secure: true,
             sameSite: "None"
         }
 
         res.clearCookie("accessToken", cookiesOptions);
         res.clearCookie("refreshToken", cookiesOptions);
 
-        const removeRefreshToken = await UserModel.findByIdAndUpdate( userid, {
-            refresh_token : ""
+        const removeRefreshToken = await UserModel.findByIdAndUpdate(userid, {
+            refresh_token: ""
         })
 
         return res.status(200).json({
-            message : "Logout successfully",
-            error : false,
-            success : true
+            message: "Logout successfully",
+            error: false,
+            success: true
         })
 
-        
+
     } catch (error) {
         return res.status(500).json({
             messsage: error.message || error,
@@ -249,16 +249,16 @@ export async function userAvatarController(req, res) {
         const userId = req.userId;
         const image = req.files;
 
-        const user = await UserModel.findById( { _id: userId });
+        const user = await UserModel.findById({ _id: userId });
 
-        if ( !user ) {
+        if (!user) {
             return res.status(404).json({
                 message: "User not found",
                 error: true,
                 success: false
             });
         }
-        
+
         //first remove image from cloudinary
         const imgUrl = user.avatar;
 
@@ -267,17 +267,17 @@ export async function userAvatarController(req, res) {
 
         const imageName = avatar_image.split(".")[0];
 
-        if ( imageName ) {
+        if (imageName) {
             const res = await cloudinary.uploader.destroy(
                 imageName,
                 (error, result) => {
-                    
+
                 }
             );
         }
 
 
-        if ( !user ) {
+        if (!user) {
             return res.status(404).json({
                 message: "User not found",
                 error: true,
@@ -291,7 +291,7 @@ export async function userAvatarController(req, res) {
             overwrite: true,
         };
 
-        for (let i= 0; i< image?.length; i++) {
+        for (let i = 0; i < image?.length; i++) {
             const img = await cloudinary.uploader.upload(
                 image[i].path,
                 option,
@@ -319,7 +319,7 @@ export async function userAvatarController(req, res) {
     }
 }
 
-export async function removeImageFromCloudinary( request, response ) {
+export async function removeImageFromCloudinary(request, response) {
     try {
         const imgUrl = request.query.img;
 
@@ -328,14 +328,14 @@ export async function removeImageFromCloudinary( request, response ) {
 
         const imageName = image.split(".")[0];
 
-        if ( imageName ) {
+        if (imageName) {
             const res = await cloudinary.uploader.destroy(
                 imageName,
                 (error, result) => {
-                    
+
                 }
             );
-            if ( res ) {
+            if (res) {
                 response.status(200).send(res);
             }
         }
@@ -352,7 +352,7 @@ export async function removeImageFromCloudinary( request, response ) {
 export async function updateUserDetails(req, res) {
     try {
         const userId = req.userId;
-        const { name, email, mobile , password } = req.body;
+        const { name, email, mobile, password } = req.body;
 
         const userExist = await UserModel.findById(userId);
         if (!userExist) {
@@ -361,10 +361,10 @@ export async function updateUserDetails(req, res) {
         let verifyCode = "";
 
 
-        if ( email !== userExist.email ) {
+        if (email !== userExist.email) {
             verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
         }
-        let hashedPassword ="";
+        let hashedPassword = "";
 
         if (password) {
             const salt = await bcrypt.genSalt(10);
@@ -384,15 +384,15 @@ export async function updateUserDetails(req, res) {
                 otp: verifyCode !== "" ? verifyCode : null,
                 otp_expiry: verifyCode !== "" ? Date.now() + 600000 : ''
             },
-            { new: true } 
+            { new: true }
         )
 
-        if (email !== userExist.email ) {
+        if (email !== userExist.email) {
             await sendEmailFun({
-                to : email,
-                subject : "verify email from Classifyshop App",
-                text : "",
-                html : VerificationEmail(name, verifyCode)
+                to: email,
+                subject: "verify email from Classifyshop App",
+                text: "",
+                html: VerificationEmail(name, verifyCode)
             })
         }
 
@@ -412,7 +412,7 @@ export async function updateUserDetails(req, res) {
     }
 }
 
-export async function forgotPasswordController( req, res ) {
+export async function forgotPasswordController(req, res) {
     try {
         const { email } = req.body;
 
@@ -447,11 +447,70 @@ export async function forgotPasswordController( req, res ) {
             })
         }
 
-       
+
 
     } catch (error) {
         return res.status(500).json({
             messsage: "uu",
+            error: true,
+            success: false
+        })
+    }
+}
+
+export async function verifyForgotPasswordOtp(req, res) {
+    try {
+        const { email, otp } = req.body;
+
+        const user = await UserModel.findOne({ email });
+
+        if (!user) {
+            return res.status(400).json({
+                message: "Email not available",
+                error: true,
+                success: false
+            })
+        }
+
+        if (!email || !otp) {
+            return res.status(400).json({
+                message: "Provide all required fields",
+                error: true,
+                success: false
+            })
+        }
+
+        if (otp !== user.otp) {
+            return res.status(400).json({
+                message: "Invalid OTP",
+                error: true,
+                success: false
+            })
+        }
+
+        const currentTime = new Date().toISOString();
+
+        if (user.otp_expiry < currentTime) {
+            return res.status(400).json({
+                message: "OTP expired",
+                error: true,
+                success: false
+            })
+        }
+
+        user.otp = null;
+        user.otp_expiry = "";
+
+        await user.save();
+
+        return res.status(200).json({
+            message: "Verify  OTP Successfully",
+            error: false,
+            success: true
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
             error: true,
             success: false
         })
