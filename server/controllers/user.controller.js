@@ -617,3 +617,27 @@ export async function refreshToken(req, res) {
         })
     }
 }
+
+export async function userDetails( req, res ) {
+    try {
+        const userId = req.userId;
+
+        console.log(userId);
+
+        const user = await UserModel.findById(userId).select('-password -refresh_token');
+
+        return res.status(200).json({
+            message: "User details",
+            data: user,
+            error: false,
+            success: true,
+        })
+        
+    } catch (error) {
+        return res.status(500).json({
+            message: "something went wrong",
+            error: true,
+            success: false
+        })
+    }
+}
