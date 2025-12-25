@@ -5,6 +5,15 @@ import sendEmailFun from '../config/sendEmail.js';
 import VerificationEmail from '../utils/verifyEmailTemplate.js';
 import generateAccessToken from '../utils/generatedAccessToken.js';
 import generateRefreshToken from '../utils/generatedRefreshToken.js';
+import { v2 as cloudinary } from 'cloudinary';
+import fs from 'fs';
+
+cloudinary.config({
+cloud_name: process.env.cloudinary_Config_Cloud_Name,
+    api_key: process.env.cloudinary_Config_api_key,
+    api_secret: process.env.cloudinary_Config_api_secret,
+    secure: true,
+})
 
 export async function registerUserController( req, res ) {
     try {
@@ -214,6 +223,116 @@ export async function logoutController(req, res)  {
         
     } catch (error) {
         return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+// image upload
+var imagesArr = [];
+
+export async function userAvatarController(req, res) {
+    try {
+        imagesArr = [];
+
+        const userId = req.userId;
+        const image = req.files;
+
+        const user = await UserModel.findById( { _id: userId });
+
+        if ( !user ) {
+            return res.status(404).json({
+                message: "User not found",
+                error: true,
+                success: false
+            });
+        }
+        
+        //first remove image from cloudinary
+        const imgUrl = user.avatar;
+
+        const urlArr = imgUrl.split("/");
+        const avatar_image = urlArr[urlArr.length - 1];
+
+        const imageName = avatar_image.split(".")[0];
+
+        if ( imageName ) {
+            const res = await cloudinary.uploader.destroy(
+                imageName,
+                (error, result) => {
+                    
+                }
+            );
+        }
+
+
+        if ( !user ) {
+            return res.status(404).json({
+                message: "User not found",
+                error: true,
+                success: false
+            });
+        }
+
+        const option = {
+            use_filename: true,
+            unique_filename: false,
+            overwrite: true,
+        };
+
+        for (let i= 0; i< image?.length; i++) {
+            const img = await cloudinary.uploader.upload(
+                image[i].path,
+                option,
+                function (error, result) {
+                    imagesArr.push(result.secure_url);
+                    fs.unlinkSync(`uploads/${req.files[i].filename}`);
+                }
+            );
+        }
+
+        user.avatar = imagesArr[0];
+        await user.save();
+
+        return res.status(200).json({
+            _id: userId,
+            avatar: imagesArr[0],
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+export async function removeImageFromCloudinary( request, response ) {
+    try {
+        const imgUrl = request.query.img;
+
+        const urlArr = imgUrl.split("/");
+        const image = urlArr[urlArr.length - 1];
+
+        const imageName = image.split(".")[0];
+
+        if ( imageName ) {
+            const res = await cloudinary.uploader.destroy(
+                imageName,
+                (error, result) => {
+                    
+                }
+            );
+            if ( res ) {
+                response.status(200).send(res);
+            }
+        }
+
+    } catch (error) {
+        return response.status(500).json({
             messsage: error.message || error,
             error: true,
             success: false
