@@ -1,6 +1,7 @@
 import CategoryModel from '../models/category.model.js';
 
 import { v2 as cloudinary } from 'cloudinary';
+import { error } from 'console';
 import fs from 'fs';
 
 
@@ -166,6 +167,127 @@ export async function getSubCategoriesCount(req, res) {
                 subCategoriesCount: subCatList.length,
             })
         }
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+export async function getCategory(req, res) {
+    try {
+        const category = await CategoryModel.findById(req.params.id);
+
+        if(!category) {
+            res.status(500).json({
+                message: "the category with the given ID was not found.",
+                success: false,
+                error: true,
+            });
+        } 
+
+        res.status(200).json({
+            error: false,
+            success: true,
+            category: category,
+        })
+
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+export async function removeImageFromCloudinary(request, response) {
+    try {
+        const imgUrl = request.query.img;
+
+        const urlArr = imgUrl.split("/");
+        const image = urlArr[urlArr.length - 1];
+
+        const imageName = image.split(".")[0];
+
+        if (imageName) {
+            const res = await cloudinary.uploader.destroy(
+                imageName,
+                (error, result) => {
+
+                }
+            );
+            if (res) {
+                response.status(200).send(res);
+            }
+        }
+
+    } catch (error) {
+        return response.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}    
+
+export async function deleteCategory(req, res) {
+    try {
+        const category = await CategoryModel.findById(req.params.id);
+        const images = category.images;
+
+        let img = "";
+        for (img of images) {
+            const imgUrl = img;
+            const urlArr = imgUrl.split("/");
+            const image = urlArr[urlArr.length - 1];
+
+            const imageName = image.split(".")[0];
+
+            if (imageName) {
+                cloudinary.uploader.destroy(imageName, (error, result) => {
+                    //console.log(result, error);
+                });
+            }
+        }
+
+        const subCategory = await CategoryModel.find({
+            parentId: req.params.id
+        });
+
+        for (let i=0; i<subCategory.length; i++) {
+            console.log(subCategory[i]._id)
+
+            const thirdsubCategory = await CategoryModel.find({
+                parentId: subCategory[i]._id
+            })
+
+            for (let i=0; i < thirdsubCategory.length; i++) {
+                const deletedThirdSubCat = await CategoryModel.findByIdAndDelete(thirdsubCategory[i]._id);
+            }
+
+            const deletedSubCat = await CategoryModel.findByIdAndDelete(subCategory[i]._id);
+        }
+
+        const deletedCat = await CategoryModel.findByIdAndDelete(req.params.id);
+
+        if(!deletedCat) {
+            return res.status(400).json({
+                message: "Category not deleted",
+                error: true,
+                success: false
+            })
+        }
+
+        res.status(200).json({
+            message: "Category deleted!",
+            error: false,
+            success: true
+        });
+        
     } catch (error) {
         return res.status(500).json({
             messsage: error.message || error,
