@@ -87,3 +87,38 @@ export async function createCategory(req, res) {
         })
     }
 }
+
+export async function getCategories(req, res) {
+    try {
+        const categories = await CategoryModel.find();
+        const categoryMap = {};
+
+        categories.forEach(cat => {
+            categoryMap[cat._id] = { ...cat._doc, Children: [] };
+        })
+
+        const rootCategories = [];
+
+        categories.forEach(cat => {
+            if (cat.parentId) {
+                categoryMap[cat.parentId].Children.push(categoryMap[cat._id]);
+            } else {
+                rootCategories.push(categoryMap[cat._id]);
+            }
+        })
+
+        return res.status(200).json({
+            error: false,
+            success: true,
+            categories: rootCategories,
+        });
+
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
