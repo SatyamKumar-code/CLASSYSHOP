@@ -259,7 +259,6 @@ export async function deleteCategory(req, res) {
         });
 
         for (let i=0; i<subCategory.length; i++) {
-            console.log(subCategory[i]._id)
 
             const thirdsubCategory = await CategoryModel.find({
                 parentId: subCategory[i]._id
@@ -294,5 +293,44 @@ export async function deleteCategory(req, res) {
             error: true,
             success: false
         })
+    }
+}
+
+export async function updatedCategory(req, res) {
+    try {
+        const category = await CategoryModel.findByIdAndUpdate(
+            req.params.id,
+            {
+                name: req.body.name,
+                images: imagesArr.length > 0 ? imagesArr[0] : req.body.images,
+                parentId: req.body.parentId,
+                parentCatName: req.body.parentCatName,
+            },
+            { new: true }
+        );
+
+        if (!category) {
+            return res.status(400).json({
+                message: "Category not updated",
+                error: true,
+                success: false
+            });
+        }
+
+        imagesArr = [];
+
+        res.status(200).json({
+            error: false,
+            success: true,
+            category: category,
+        });
+
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        });
     }
 }
