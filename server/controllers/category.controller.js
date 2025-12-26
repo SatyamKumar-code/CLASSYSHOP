@@ -122,3 +122,55 @@ export async function getCategories(req, res) {
         })
     }
 }
+
+export async function getCategoriesCount(req, res) {
+    try {
+        const categoriesCount = await CategoryModel.countDocuments({ parentId: undefined });
+
+        if(!categoriesCount) {
+            return res.status(500).json({
+                success: false,
+                error: true,
+            });
+        }else{
+            res.send({
+                categoryCount: categoriesCount,
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+export async function getSubCategoriesCount(req, res) {
+    try {
+        const categories = await CategoryModel.find();
+
+        if(!categories) {
+            return res.status(500).json({
+                success: false,
+                error: true,
+            });
+        }else{
+            const subCatList = [];
+            for (let cat of categories) {
+                if(cat.parentId !== undefined) {
+                    subCatList.push(cat);
+                }
+            }
+            res.send({
+                subCategoriesCount: subCatList.length,
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
