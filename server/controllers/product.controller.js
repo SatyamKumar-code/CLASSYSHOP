@@ -615,3 +615,32 @@ export async function getAllProductsByPrice(req, res) {
         })
     }
 }
+
+//get all products count 
+export async function getProductsCount(req, res ) {
+    try {
+        const productCount = await ProductModel.countDocuments();
+
+        if(!productCount) {
+            return res.status(404).json({
+                message: "No products found",
+                error: true,
+                success: false
+            });
+        }
+
+        return res.status(200).json({
+            error: false,
+            success: true,
+            productCount: productCount
+        })
+
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
