@@ -264,3 +264,269 @@ export async function getAllProductsByCatName(req, res) {
         })
     }
 }
+
+
+//get all products by Sub category id
+export async function getAllProductsBySubCatId(req, res) {
+    try {
+
+        const page = parseInt(req.query.page) || 1;
+        const perPage = parseInt(req.query.perPage) || 1000;
+
+
+        const totalPosts = await ProductModel.countDocuments();
+        const totalPages = Math.ceil(totalPosts / perPage);
+
+
+        if(page > totalPages) {
+            return res.status(404).json({
+                message: "Page not found",
+                success: false,
+                error: true
+            })
+        }
+
+
+
+        const products = await ProductModel.find({
+            subCatId: req.params.id
+        }).populate("category")
+            .skip((page -1) * perPage)
+            .limit(perPage)
+            .exec();
+
+        if(!products) {
+            return res.status(404).json({
+                error: true,
+                success: false
+            });
+        }
+
+        return res.status(200).json({
+            error: false,
+            success: true,
+            products: products,
+            totalPages: totalPages,
+            page: page,
+        });
+
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+//get all products by Sub category name
+export async function getAllProductsBySubCatName(req, res) {
+    try {
+
+        const page = parseInt(req.query.page) || 1;
+        const perPage = parseInt(req.query.perPage) || 1000;
+
+
+        const totalPosts = await ProductModel.countDocuments();
+        const totalPages = Math.ceil(totalPosts / perPage);
+
+
+        if(page > totalPages) {
+            return res.status(404).json({
+                message: "Page not found",
+                success: false,
+                error: true
+            })
+        }
+
+
+
+        const products = await ProductModel.find({
+            subCatName: req.query.subCatName
+        }).populate("category")
+            .skip((page -1) * perPage)
+            .limit(perPage)
+            .exec();
+
+        if(!products) {
+            return res.status(404).json({
+                error: true,
+                success: false
+            });
+        }
+
+        return res.status(200).json({
+            error: false,
+            success: true,
+            products: products,
+            totalPages: totalPages,
+            page: page,
+        });
+
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+
+
+//get all products by ThirdLavel category id
+export async function getAllProductsByThirdLavelCatId(req, res) {
+    try {
+
+        const page = parseInt(req.query.page) || 1;
+        const perPage = parseInt(req.query.perPage) || 1000;
+
+
+        const totalPosts = await ProductModel.countDocuments();
+        const totalPages = Math.ceil(totalPosts / perPage);
+
+
+        if(page > totalPages) {
+            return res.status(404).json({
+                message: "Page not found",
+                success: false,
+                error: true
+            })
+        }
+
+
+
+        const products = await ProductModel.find({
+            thirdLavelCatId: req.params.id
+        }).populate("category")
+            .skip((page -1) * perPage)
+            .limit(perPage)
+            .exec();
+
+        if(!products) {
+            return res.status(404).json({
+                error: true,
+                success: false
+            });
+        }
+
+        return res.status(200).json({
+            error: false,
+            success: true,
+            products: products,
+            totalPages: totalPages,
+            page: page,
+        });
+
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+//get all products by ThirdLavel category Name
+        export async function getAllProductsByThirdLavelCatName(req, res) {
+            try {
+
+        const page = parseInt(req.query.page) || 1;
+        const perPage = parseInt(req.query.perPage) || 1000;
+
+
+        const totalPosts = await ProductModel.countDocuments();
+        const totalPages = Math.ceil(totalPosts / perPage);
+
+
+        if(page > totalPages) {
+            return res.status(404).json({
+                message: "Page not found",
+                success: false,
+                error: true
+            })
+        }
+
+
+
+        const products = await ProductModel.find({
+            thirdsubCat: req.query.thirdsubCat
+        }).populate("category")
+            .skip((page -1) * perPage)
+            .limit(perPage)
+            .exec();
+
+        if(!products) {
+            return res.status(404).json({
+                error: true,
+                success: false
+            });
+        }
+
+        return res.status(200).json({
+            error: false,
+            success: true,
+            products: products,
+            totalPages: totalPages,
+            page: page,
+        });
+
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+//get all products by price
+export async function getAllProductsByPrice(req, res) {
+    let productList = [];
+
+    if (req.query.catId !== "" && req.query.catId !== undefined) {
+        const productListArr = await ProductModel.find({
+            catId: req.query.catId,
+        }).populate("category");
+
+        productList = productListArr;
+    }
+
+    if (req.query.subCatId !== "" && req.query.subCatId !== undefined) {
+        const productListArr = await ProductModel.find({
+            subCatId: req.query.subCatId,
+        }).populate("category");
+
+        productList = productListArr;
+    }
+
+    if (req.query.thirdsubCatId !== "" && req.query.thirdsubCatId !== undefined) {
+        const productListArr = await ProductModel.find({
+            thirdsubCatId: req.query.thirdsubCatId,
+        }).populate("category");
+
+        productList = productListArr;
+    }
+
+    const filteredProducts = productList.filter((product) => {
+        if (req.query.minPrice && product.price < parseInt(+req.query.minPrice)) {
+            return false;
+        }
+        if (req.query.maxPrice && product.price > parseInt(+req.query.maxPrice)) {
+            return false;
+        }
+        return true;
+    });
+
+    return res.status(200).json({
+        error: false,
+        success: true,
+        products: filteredProducts,
+        totalPages: 0,
+        page: 0,
+    });
+}
