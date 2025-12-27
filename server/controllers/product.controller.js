@@ -644,3 +644,34 @@ export async function getProductsCount(req, res ) {
         })
     }
 }
+
+//get all featured products
+export async function getAllFeaturedProducts(req, res) {
+    try {
+
+        const products = await ProductModel.find({
+            isFeatured: true
+        }).populate("category");
+
+        if (!products) {
+            return res.status(404).json({
+                error: true,
+                success: false
+            });
+        }
+
+        return res.status(200).json({
+            error: false,
+            success: true,
+            products: products,
+        });
+
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
