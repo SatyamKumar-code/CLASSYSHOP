@@ -530,3 +530,88 @@ export async function getAllProductsByPrice(req, res) {
         page: 0,
     });
 }
+
+
+
+//get all products by Rating
+        export async function getAllProductsByRating(req, res) {
+            try {
+
+        const page = parseInt(req.query.page) || 1;
+        const perPage = parseInt(req.query.perPage) || 1000;
+
+
+        const totalPosts = await ProductModel.countDocuments();
+        const totalPages = Math.ceil(totalPosts / perPage);
+
+
+        if(page > totalPages) {
+            return res.status(404).json({
+                message: "Page not found",
+                success: false,
+                error: true
+            })
+        }
+
+
+        let products = [];
+
+        if (req.query.catId !== undefined) {
+            products = await ProductModel.find({
+                rating: req.query.rating,
+                catId: req.query.catId,
+
+            }).populate("category")
+                .skip((page - 1) * perPage)
+                .limit(perPage)
+                .exec();
+        }
+
+        if (req.query.subCatId !== undefined) {
+            products = await ProductModel.find({
+                rating: req.query.rating,
+                subCatId: req.query.subCatId,
+                
+            }).populate("category")
+                .skip((page - 1) * perPage)
+                .limit(perPage)
+                .exec();
+        }
+
+        if (req.query.thirdsubCatId !== undefined) {
+            products = await ProductModel.find({
+                rating: req.query.rating,
+                thirdsubCatId: req.query.thirdsubCatId,
+                
+            }).populate("category")
+                .skip((page - 1) * perPage)
+                .limit(perPage)
+                .exec();
+        }
+
+        
+
+        if(!products) {
+            return res.status(404).json({
+                error: true,
+                success: false
+            });
+        }
+
+        return res.status(200).json({
+            error: false,
+            success: true,
+            products: products,
+            totalPages: totalPages,
+            page: page,
+        });
+
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
