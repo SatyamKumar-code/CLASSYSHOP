@@ -675,3 +675,163 @@ export async function getAllFeaturedProducts(req, res) {
         })
     }
 }
+
+// delete product
+export async function deleteProduct(req, res) {
+    const product = await ProductModel.findById(req.params.id);
+
+    if (!product) {
+        return res.status(404).json({
+            message: "Product not found",
+            error: true,
+            success: false
+        });
+    }
+
+    const images = product.images;
+
+    let img="";
+    for (img of images) {
+        const imgUrl = img;
+        const urlArr = imgUrl.split("/");
+        const image = urlArr[urlArr.length - 1];
+
+        const publicId = image.split(".")[0];
+
+        if ( imageName ) {
+            cloudinary.uploader.destroy(imageName, (error, result) => {
+                //console.log(result, error);
+            });
+        } 
+    }
+
+    const deletedProduct = await ProductModel.findByIdAndDelete(req.params.id);
+
+    if (!deletedProduct) {
+        return res.status(400).json({
+            message: "Product not deleted! ",
+            error: true,
+            success: false
+        });
+    }
+
+    return res.status(200).json({
+        message: "Product deleted!",
+        error: false,
+        success: true
+    });
+}
+
+//get single product by id
+export async function getProduct(req, res) {
+    try {
+        const product = await ProductModel.findById(req.params.id).populate("category");
+
+        if(!product) {
+            return res.status(404).json({
+                message: "Product not found",
+                error: true,
+                success: false
+            });
+        }
+        return res.status(200).json({
+            error: false,
+            success: true,
+            product: product
+        });
+
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+//remove image from cloudinary
+export async function removeImageFromCloudinary(request, response) {
+    try {
+        const imgUrl = request.query.img;
+
+        const urlArr = imgUrl.split("/");
+        const image = urlArr[urlArr.length - 1];
+
+        const imageName = image.split(".")[0];
+
+        if (imageName) {
+            const res = await cloudinary.uploader.destroy(
+                imageName,
+                (error, result) => {
+
+                }
+            );
+            if (res) {
+                response.status(200).send(res);
+            }
+        }
+
+    } catch (error) {
+        return response.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+} 
+
+// Update Product
+export async function updateProduct(req, res) {
+    try {
+        const product = await ProductModel.findByIdAndUpdate(
+            req.params.id,
+            {
+                name: req.body.name,
+                subCat: req.body.subCat,
+                description: req.body.description,
+                images: req.body.images,
+                brand: req.body.brand,
+                price: req.body.price,
+                oldPrice: req.body.oldPrice,
+                catId: req.body.catId,
+                catName: req.body.catName,
+                subCat: req.body.subCat,
+                subCatId: req.body.subCatId,
+                category: req.body.category,
+                thirdsubCat: req.body.thirdsubCat,
+                thirdsubCatId: req.body.thirdsubCatId,
+                countInStock: req.body.countInStock,
+                rating: req.body.rating,
+                isFeatured: req.body.isFeatured,
+                productRam: req.body.productRam,
+                size: req.body.size,
+                productWeight: req.body.productWeight,
+            },
+            { new: true }
+        )
+
+        if (!product) {
+            return res.status(400).json({
+                message: "Product not updated",
+                error: true,
+                success: false
+            });
+        }
+
+        imagesArr = [];
+
+        return res.status(200).json({
+            message: "Product updated",
+            error: false,
+            success: true,
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
