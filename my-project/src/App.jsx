@@ -25,6 +25,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import Checkout from './Pages/Checkout'
 import MyList from './Pages/MyList'
 import Orders from './Pages/Orders'
+import { fetchDataFromApi } from './utils/api'
 
 
 
@@ -36,6 +37,7 @@ function App() {
   const [maxWidth, setMaxWidth] = useState('lg');
   const [fullWidth, setFullWidth] = useState(true);
   const [isLogin, setIsLogin] = useState(false);
+  const [userData, setUserData] = useState(null);
 
 
   const [openCartPanel, setOpenCartPanel] = useState(false);
@@ -54,6 +56,12 @@ function App() {
 
     if(token !== undefined && token !== null && token !== ""){
       setIsLogin(true);
+
+      fetchDataFromApi(`/api/user/user-details?token=${token}`).then((res) => {
+        console.log(res);
+        setUserData(res.data);
+      })
+
     }else{
       setIsLogin(false);
     }
@@ -75,7 +83,9 @@ function App() {
     openCartPanel,
     alertBox,
     isLogin,
-    setIsLogin
+    setIsLogin,
+    setUserData,
+    userData
   }
 
   return (
