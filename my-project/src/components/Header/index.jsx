@@ -20,6 +20,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import { IoIosLogOut, IoMdHeartEmpty } from 'react-icons/io';
+import { fetchDataFromApi } from '../../utils/api';
 
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -38,12 +39,26 @@ const Header = () => {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const logout = () => {
+        setAnchorEl(null);
+        fetchDataFromApi(`/api/user/logout?token=${localStorage.getItem('accesstoken')}`, { withCredentials: true }).then((res) => {
+            console.log(res);
+            if(res?.error===false){
+                localStorage.removeItem("accesstoken");
+                localStorage.removeItem("refreshToken");
+                context.alertBox("Success", res?.message);
+                context.setIsLogin(false);
+            }
+        })
+    }
     
 
     return (
@@ -156,7 +171,7 @@ const Header = () => {
                                                     </MenuItem>
                                                 </Link>
                                                 
-                                                    <MenuItem onClick={handleClose} className='flex gap-2 !py-2'>
+                                                    <MenuItem onClick={logout} className='flex gap-2 !py-2'>
                                                         <IoIosLogOut className='text-[18px]' /> <span className='text-[14px]'>Logout</span>
                                                     </MenuItem>
                                                 

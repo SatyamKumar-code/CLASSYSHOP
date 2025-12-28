@@ -5,10 +5,13 @@ import { IoMdEye, IoMdEyeOff } from 'react-icons/io';
 import { Link, useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import { MyContext } from '../../App';
+import CircularProgress from '@mui/material/CircularProgress';
+import { postData } from '../../utils/api';
 
 
 const Login = () => {
 
+    const [isLoading, setIsLoading] = useState(false);
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [formFields, setFormFields] = useState({
         email: '',
@@ -22,9 +25,54 @@ const Login = () => {
 
         context.openAlertBox("Success", "OTP Send")
         history("/verify");   
-              
-       
         
+    }
+
+    const onChangeInput = (e) => {
+        const { name, value } = e.target;
+        setFormFields({
+            ...formFields,
+            [name]: value
+        });
+    }
+
+    const valideValue = Object.values(formFields).every(el => el);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        setIsLoading(true);
+
+        if (formFields.email === "") {
+            context.alertBox("error", "Please enter email")
+            return false
+        }
+        if (formFields.password === "") {
+            context.alertBox("error", "Please enter password")
+            return false
+        }
+
+        postData("/api/user/login", formFields, { withCredentials: true }).then((res) => {
+            setIsLoading(false);
+            if (res?.error !== true) {
+                setIsLoading(false);
+                context.alertBox("Success", res?.message);
+                setFormFields({
+                    email: '',
+                    password: ''
+                });
+                localStorage.setItem("accesstoken", res?.user?.accesstoken);
+                localStorage.setItem("refreshToken", res?.user?.refreshToken);
+
+                context.setIsLogin(true);
+
+                history('/');
+            } else {
+                context.alertBox("error", res?.message); 
+                setIsLoading(false);
+            }
+
+        })
     }
 
 
@@ -34,15 +82,18 @@ const Login = () => {
             <div className='card shadow-md w-[400px] m-auto rounded-md bg-white p-5 px-10'>
                 <h3 className='text-center text-[18px] text-black'>Login to your accont</h3>
 
-                <form action="/" className='w-full mt-5'>
+                <form action="/" className='w-full mt-5' onSubmit={handleSubmit}>
                     <div className='form-group w-full mb-5'>
                         <TextField
                             type='email'
                            id="email"
+                           name='email'
+                            value={formFields.email}
+                            disabled={isLoading===true ? true : false}
                            label="Email Id *"
                            variant="outlined"
                            className='w-full'
-                           name='name'
+                           onChange={onChangeInput}
                         />
                     </div>
 
@@ -54,8 +105,11 @@ const Login = () => {
                            variant="outlined"
                            className='w-full'
                            name='password'
+                            value={formFields.password}
+                            disabled={isLoading===true ? true : false}
+                            onChange={onChangeInput}
                         />
-                        <Button type='submit' className='!absolute top-[10px] right-[10px] z-50 !w-[35px] !h-[35px] !min-w-[35px] !rounded-full !text-black'
+                        <Button className='!absolute top-[10px] right-[10px] z-50 !w-[35px] !h-[35px] !min-w-[35px] !rounded-full !text-black'
                         onClick={()=> setIsShowPassword(!isShowPassword)}>
                             {
                                 isShowPassword === false ? <IoMdEye className='text-[20px] opacity-75' /> : <IoMdEyeOff className='text-[20px] opacity-75' />
@@ -68,7 +122,18 @@ const Login = () => {
 
 
                     <div className='flex items-center w-full mt-3 mb-3'>
-                        <Button className='btn-org btn-lg w-full'>Login</Button>
+                        <Button 
+                        type='submit' 
+                        disabled={!valideValue}
+                        className='btn-org btn-lg w-full flex gap-3'
+                        >
+                            {
+                                isLoading === true ? <CircularProgress color='inherit' />
+                                :
+                                "Login"
+                            }
+                            
+                        </Button>
                     </div>
 
                     <p className='text-center'>Not Registered? <Link className='link text-[14px] font-[600] text-primary' to="/register">Sign UP</Link></p>

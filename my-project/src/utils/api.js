@@ -26,3 +26,18 @@ export const postData = async (url, formData) => {
         console.log(error);
     }
 }
+
+export const fetchDataFromApi = async (url) => {
+    try {
+        const { data } = await axios.get(apiUrl + url, {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+        );
+        return data; 
+
+    } catch (error) {
+        console.log(error);
+        return error;
+    }
+}
