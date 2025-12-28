@@ -35,7 +35,7 @@ function App() {
   const [openProductDetailsModal, setOpenProductDetailsModal] = useState(false);
   const [maxWidth, setMaxWidth] = useState('lg');
   const [fullWidth, setFullWidth] = useState(true);
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
 
 
   const [openCartPanel, setOpenCartPanel] = useState(false);
@@ -49,11 +49,11 @@ function App() {
     setOpenCartPanel(newOpen);
   }
 
-  const openAlertBox = (status, msg) => {
-    if(status === "Success"){
+  const alertBox = (type, msg) => {
+    if(type === "Success"){
       toast.success(msg)
     }
-    if(status === "error"){
+    if(type === "error"){
       toast.error(msg);
     }
   }
@@ -63,7 +63,7 @@ function App() {
     setOpenCartPanel,
     toggleCartPanel,
     openCartPanel,
-    openAlertBox,
+    alertBox,
     isLogin,
     setIsLogin
   }
