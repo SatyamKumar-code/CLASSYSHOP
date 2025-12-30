@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import Search from '../Search';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
@@ -36,6 +36,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 const Header = () => {
 
     const context = useContext(MyContext);
+    const history = useNavigate(); 
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -50,12 +51,13 @@ const Header = () => {
     const logout = () => {
         setAnchorEl(null);
         fetchDataFromApi(`/api/user/logout?token=${localStorage.getItem('accesstoken')}`, { withCredentials: true }).then((res) => {
-            console.log(res);
+
             if(res?.error===false){
                 localStorage.removeItem("accesstoken");
                 localStorage.removeItem("refreshToken");
                 context.alertBox("Success", res?.message);
                 context.setIsLogin(false);
+                history("/")
             }
         })
     }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, {useEffect, useState } from 'react'
 import './App.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Header from './Components/Header'
@@ -29,6 +29,8 @@ import Orders from './Pages/Orders'
 import ForgotPassword from './Pages/ForgotPassword'
 import VerifyAccount from './Pages/VerifyAccount'
 import ChangePassword from './Pages/ChangePassword'
+import { fetchDataFromApi } from '../../my-project/src/utils/api'
+import toast, { Toaster } from 'react-hot-toast';
 
 
 
@@ -44,12 +46,39 @@ const MyContext = createContext();
 function App() {
 
   const [isSidebarOpen, setisSidebarOpen] = useState(true);
-  const [ isLogin, setisLogin ] = useState(false);
+  const [ isLogin, setIsLogin ] = useState(false);
+  const [userData, setUserData] = useState(null);
 
   const [ isOpenFullScreenPanel, setIsOpenFullScreenPanel ] = useState({
     open: false,
     Modal:''
   });
+
+
+  useEffect(() => {
+    const token = localStorage.getItem("accesstoken");
+
+    if(token !== undefined && token !== null && token !== ""){
+      setIsLogin(true);
+
+      fetchDataFromApi(`/api/user/user-details`).then((res) => {
+        console.log(res);
+        setUserData(res.data);
+      })
+
+    }else{
+      setIsLogin(false);
+    }
+  }, [isLogin]);
+
+  const alertBox = (type, msg) => {
+    if(type === "Success"){
+      toast.success(msg)
+    }
+    if(type === "error"){
+      toast.error(msg);
+    }
+  }
 
   
   
@@ -246,9 +275,12 @@ function App() {
     isSidebarOpen,
     setisSidebarOpen,
     isLogin,
-    setisLogin,
+    setIsLogin,
     isOpenFullScreenPanel,
-    setIsOpenFullScreenPanel
+    setIsOpenFullScreenPanel,
+    alertBox,
+    userData,
+    setUserData
   };
 
   return (
@@ -256,6 +288,7 @@ function App() {
     <MyContext.Provider value={value}>
       <RouterProvider router={router} />
 
+      <Toaster />
 
       <Dialog
         fullScreen

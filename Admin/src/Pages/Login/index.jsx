@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button';
 import React, { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom';
+import { Link,useNavigate, NavLink } from 'react-router-dom';
 import { CgLogIn } from 'react-icons/cg';
 import { FaRegEye, FaRegUser, FaEyeSlash } from 'react-icons/fa';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -8,11 +8,96 @@ import { FcGoogle } from 'react-icons/fc';
 import { BsFacebook } from 'react-icons/bs';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import { useContext } from 'react';
+import { MyContext } from '../../App';
+import CircularProgress from '@mui/material/CircularProgress';
+import { postData } from '../../utils/api';
 
 const Login = () => {
+    const [isLoading, setIsLoading] = useState(false);
     const [loadingGoogle, setLoadingGoogle] = useState(false);
     const [loadingFb, setLoadingFb] = useState(false);
     const [isPasswordShow, setisPasswordShow] = useState(false);
+    const [formFields, setFormFields] = useState({
+        email: '',
+        password: ''
+    });
+
+    const context = useContext(MyContext);
+    const history = useNavigate();
+
+    const forgotPassword = () => {
+
+        if (formFields.email === "") {
+            context.alertBox("error", "Please enter email id")
+            return false
+        } else {
+            context.alertBox("Success", `OTP send to ${formFields.email}`)
+            localStorage.setItem("userEmail", formFields.email);
+            localStorage.setItem("actionType", "forgot-password");
+
+            postData("/api/user/forget-password", {
+                email: formFields.email
+            }).then((res) => {
+                if (res?.error === false) {
+                    context.alertBox("Success", res?.message);
+                    history('/verify-account');
+                } else {
+                    context.alertBox("error", res?.message);
+                }
+            })
+        }
+
+    }
+
+    const onChangeInput = (e) => {
+        const { name, value } = e.target;
+        setFormFields({
+            ...formFields,
+            [name]: value
+        });
+    }
+
+    const valideValue = Object.values(formFields).every(el => el);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        setIsLoading(true);
+
+        if (formFields.email === "") {
+            context.alertBox("error", "Please enter email")
+            return false
+        }
+        if (formFields.password === "") {
+            context.alertBox("error", "Please enter password")
+            return false
+        }
+
+        postData("/api/user/login", formFields, { withCredentials: true }).then((res) => {
+            setIsLoading(false);
+            if (res?.error !== true) {
+                setIsLoading(false);
+                context.alertBox("Success", res?.message);
+                setFormFields({
+                    email: '',
+                    password: ''
+                });
+                localStorage.setItem("accesstoken", res?.user?.accesstoken);
+                localStorage.setItem("refreshToken", res?.user?.refreshToken);
+
+                context.setIsLogin(true);
+
+                history('/');
+            } else {
+                context.alertBox("error", res?.message);
+                setIsLoading(false);
+            }
+
+        })
+    }
+
+
 
     function handleClickGoogle() {
         setLoadingGoogle(true);
@@ -96,13 +181,18 @@ const Login = () => {
 
             <br />
 
-            <form className='w-full px-8 mt-3'>
+            <form className='w-full px-8 mt-3' onSubmit={handleSubmit}>
                 <div className='form-group mb-4 w-full'>
                     <h4 className='text-[14px] font-[500] mb-1'>
                         Email
                     </h4>
                     <input 
                     type="email" 
+                    id="email"
+                    name='email'
+                    value={formFields.email}
+                    disabled={isLoading === true ? true : false}
+                    onChange={onChangeInput}
                     className='w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3'
                     />
                 </div>
@@ -113,6 +203,11 @@ const Login = () => {
                     </h4>
                     <div className='relative w-full'>
                         <input
+                            id="password"
+                            name='password'
+                            value={formFields.password}
+                            disabled={isLoading === true ? true : false}
+                            onChange={onChangeInput}
                             type={ isPasswordShow===false ? "password" : "text" }
                             className='w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3'
                         />
@@ -136,15 +231,26 @@ const Login = () => {
                         control={<Checkbox defaultChecked/>}
                         label="Remember me"
                     />
-                    <Link to="/forgot-password" className='text-primary text-[15px] font-[700] text-[rgba(0,0,0,0.7)] hover:underline hover:text-gray-700!'>
+                    <Link to='/forgot-password' className='text-primary text-[15px] font-[700] text-[rgba(0,0,0,0.7)] hover:underline hover:text-gray-700!'>
                         Forgot Password?
                     </Link>
                 </div>
 
-                <Button className='btn-blue w-full '>Sign In</Button>
+                <Button 
+                type='submit'
+                disabled={!valideValue}
+                className='btn-blue w-full '
+                >
+                {
+                    isLoading === true ? <CircularProgress color='inherit' />
+                    :
+                    "Sign In"
+                }
+                    
+                </Button>
             </form>
 
-        </div>
+        </div> 
     </section>
   )
 }

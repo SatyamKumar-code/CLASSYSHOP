@@ -12,6 +12,7 @@ import { FaRegUser } from 'react-icons/fa6';
 import { IoMdLogOut } from 'react-icons/io';
 import { MyContext } from '../../App';
 import { Link } from 'react-router-dom';
+import { fetchDataFromApi } from '../../utils/api';
 
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -35,6 +36,20 @@ const Header = () => {
   };
 
   const context = useContext(MyContext);
+
+  const logout = () => {
+    // setAnchorEl(null);
+    setAnchorMyAcc(null);
+    fetchDataFromApi(`/api/user/logout?token=${localStorage.getItem('accesstoken')}`, { withCredentials: true }).then((res) => {
+      console.log(res);
+      if (res?.error === false) {
+        localStorage.removeItem("accesstoken");
+        localStorage.removeItem("refreshToken");
+        context.alertBox("Success", res?.message);
+        context.setIsLogin(false);
+      }
+    })
+  }
 
   return (
     <header className={`w-full h-auto py-2 shadow-md pr-7 bg-white flex items-center justify-between ${context.isSidebarOpen===true ? 'pl-80' : 'pl-5'} transition-all duration-300`}>
@@ -109,8 +124,8 @@ const Header = () => {
                 </div>
 
                 <div className='info'>
-                  <h3 className='text-[15px] font-[500] leading-5'>Satyam kumar</h3>
-                  <p className='text-[12px] font-[400] opacity-70'>admin-01@gmail.com</p>
+                  <h3 className='text-[15px] font-[500] leading-5'>{context?.userData?.name}</h3>
+                  <p className='text-[12px] font-[400] opacity-70'>{context?.userData?.email}</p>
                 </div>
               </div>
             </MenuItem>
@@ -121,7 +136,7 @@ const Header = () => {
               <span className='text-[14px]'>My Profile</span>
             </MenuItem>
 
-            <MenuItem onClick={handleCloseMyAcc} className='flex itrems-center gap-3'>
+            <MenuItem onClick={() => { logout(); handleCloseMyAcc(); }} className='flex itrems-center gap-3'>
               <IoMdLogOut className='text-[18px]' />
               <span className='text-[14px]'>Sign Out</span>
             </MenuItem>
