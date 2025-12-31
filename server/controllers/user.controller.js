@@ -399,7 +399,13 @@ export async function updateUserDetails(req, res) {
             message: "User Updated Successfully",
             success: true,
             error: false,
-            user: updateUser
+            user: {
+                _id: updateUser?._id,
+                name: updateUser?.name,
+                email: updateUser?.email,
+                mobile: updateUser?.mobile,
+                avatar: updateUser?.avatar
+            }
         })
 
     } catch (error) {

@@ -6,7 +6,7 @@ import { IoBagCheckOutline } from 'react-icons/io5';
 import { NavLink } from 'react-router-dom';
 import { MyContext } from '../../App';
 import CircularProgress from '@mui/material/CircularProgress';
-import { editData } from '../../utils/api';
+import {  uploadImage } from '../../utils/api';
 
 const AccountSidebar  = () => {
 
@@ -24,8 +24,6 @@ const AccountSidebar  = () => {
         
     },[context?.userData])
 
-    let img_arr = [];
-    let uniqueArray = [];
     let selectedImages = [];
 
     const formData = new FormData();
@@ -49,7 +47,7 @@ const AccountSidebar  = () => {
                     selectedImages.push(file);
                     formData.append("avatar", file);
 
-                    editData("/api/user/user-avatar", formData).then((res) => {
+                    uploadImage("/api/user/user-avatar", formData).then((res) => {
                         setUploading(false);
                         let avatar=[];
                         avatar.push(res?.data?.avatar);

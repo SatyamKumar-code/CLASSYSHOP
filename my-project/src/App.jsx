@@ -58,9 +58,20 @@ function App() {
       setIsLogin(true);
 
       fetchDataFromApi(`/api/user/user-details`).then((res) => {
-        
         setUserData(res.data);
+       
+        if(res?.response?.data?.error === true){
+          if(res?.response?.data?.message === "You have not login"){
+            localStorage.removeItem("accesstoken");
+            localStorage.removeItem("refreshtoken");
+
+            alertBox("error", "Session expired. Please login again.");
+
+            setIsLogin(false);
+          }
+        }
       })
+      
 
     }else{
       setIsLogin(false);
