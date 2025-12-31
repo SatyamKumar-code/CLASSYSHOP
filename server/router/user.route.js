@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { forgotPasswordController, loginUserController, logoutController, refreshToken, registerUserController, removeImageFromCloudinary, resetpassword, updateUserDetails, userAvatarController, userDetails, verifyEmailController, verifyForgotPasswordOtp } from "../controllers/user.controller.js";
+import { forgotPasswordController, loginUserController, logoutController, refreshToken, registerUserController, removeImageFromCloudinary, resetpassword, resetpasswordOtp, updateUserDetails, userAvatarController, userDetails, verifyEmailController, verifyForgotPasswordOtp } from "../controllers/user.controller.js";
 import auth from "../middlewares/auth.js";
 import upload from "../middlewares/multer.js";
 
@@ -15,6 +15,7 @@ userRouter.put("/:id", auth, updateUserDetails);
 userRouter.post('/forget-password', forgotPasswordController);
 userRouter.post('/verify-forgot-password-otp', verifyForgotPasswordOtp);
 userRouter.post("/reset-password", resetpassword);
+userRouter.post("/reset-passwordwithotp", resetpasswordOtp)
 userRouter.post("/refresh-token", refreshToken);
 userRouter.get("/user-details", auth, userDetails);
 

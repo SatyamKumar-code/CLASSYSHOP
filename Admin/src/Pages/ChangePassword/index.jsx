@@ -1,17 +1,69 @@
 import Button from '@mui/material/Button';
-import React, { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom';
+import React, { useContext, useState } from 'react'
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { CgLogIn } from 'react-icons/cg';
 import { FaRegEye, FaRegUser, FaEyeSlash } from 'react-icons/fa';
-import LoadingButton from '@mui/lab/LoadingButton';
-import { FcGoogle } from 'react-icons/fc';
-import { BsFacebook } from 'react-icons/bs';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
+import { MyContext } from '../../App';
+import CircularProgress from '@mui/material/CircularProgress';
+import { postData } from '../../utils/api';
 
 const ChangePassword = () => {
     const [isPasswordShow, setisPasswordShow] = useState(false);
     const [isPasswordShow2, setisPasswordShow2] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const [formFields, setFormFields] = useState({
+        email: localStorage.getItem("userEmail"),
+        newPassword: '',
+        confirmPassword: ''
+    });
+   
+
+    const context = useContext(MyContext);
+    const history = useNavigate();
+
+
+    const onChangeInput = (e) => {
+        const { name, value } = e.target;
+        setFormFields({
+            ...formFields,
+            [name]: value
+        });
+    }
+
+    const valideValue = Object.values(formFields).every(el => el);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        setIsLoading(true);
+
+        if (formFields.newPassword === "") {
+            context.alertBox("error", "Please enter new password")
+            setIsLoading(false);
+            return false
+        }
+        if (formFields.confirmPassword !== formFields.newPassword) {
+            context.alertBox("error", "Passeord and confirm password not matched")
+            setIsLoading(false);
+            return false
+        }
+
+        postData("/api/user/reset-passwordwithotp", formFields ).then((res) => {
+            if (res?.error === false) {
+                context.alertBox("Success", res?.message);
+                localStorage.removeItem("userEmail");
+                localStorage.removeItem("actionType");
+                setIsLoading(false);
+                history('/login');
+            } else {
+                context.alertBox("error", res?.message);
+                setIsLoading(false);
+            }
+        })
+
+
+    }
 
 
 
@@ -55,7 +107,7 @@ const ChangePassword = () => {
 
             <br />
 
-            <form className='w-full px-8 mt-3'>
+            <form className='w-full px-8 mt-3' onSubmit={handleSubmit}>
 
                 <div className='form-group mb-4 w-full'>
                     <h4 className='text-[14px] font-[500] mb-1'>
@@ -65,6 +117,10 @@ const ChangePassword = () => {
                         <input
                             type={ isPasswordShow===false ? "password" : "text" }
                             className='w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3'
+                            name='newPassword'
+                            value={formFields.newPassword}
+                           disabled={isLoading===true ? true : false}
+                           onChange={onChangeInput}
                         />
                         <Button className='absolute! top-[7px] right-[10px] z-50 rounded-full! w-[35px]! h-[35px]! min-w-[35px]! text-gray-600!'
                             onClick={() => setisPasswordShow(!isPasswordShow)}
@@ -89,6 +145,10 @@ const ChangePassword = () => {
                         <input
                             type={ isPasswordShow2===false ? "password" : "text" }
                             className='w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3'
+                             name='confirmPassword'
+                           value={formFields.confirmPassword}
+                           disabled={isLoading===true ? true : false}
+                            onChange={onChangeInput}
                         />
                         <Button className='absolute! top-[7px] right-[10px] z-50 rounded-full! w-[35px]! h-[35px]! min-w-[35px]! text-gray-600!'
                             onClick={() => setisPasswordShow2(!isPasswordShow2)}
@@ -105,7 +165,16 @@ const ChangePassword = () => {
                     
                 </div>
 
-                <Button className='btn-blue w-full '>Change Password</Button>
+                <Button 
+                type='submit'
+                disabled={!valideValue}
+                className='btn-blue w-full '>
+                    {
+                        isLoading === true ? <CircularProgress color='inherit' />
+                            :
+                            "Change Password"
+                    }
+                </Button>
             </form>
 
         </div>

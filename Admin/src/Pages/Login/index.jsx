@@ -231,9 +231,11 @@ const Login = () => {
                         control={<Checkbox defaultChecked/>}
                         label="Remember me"
                     />
-                    <Link to='/forgot-password' className='text-primary text-[15px] font-[700] text-[rgba(0,0,0,0.7)] hover:underline hover:text-gray-700!'>
+                    <a
+                        onClick={forgotPassword}
+                        className='text-primary text-[15px] font-[700] text-[rgba(0,0,0,0.7)] hover:underline hover:text-gray-700! cursor-pointer'>
                         Forgot Password?
-                    </Link>
+                    </a>
                 </div>
 
                 <Button 

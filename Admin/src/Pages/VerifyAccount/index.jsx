@@ -7,12 +7,14 @@ import OtpBox from '../../Components/OtpBox';
 import { postData } from '../../utils/api';
 import { useNavigate } from 'react-router-dom';
 import { MyContext } from '../../App';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 
 const VerifyAccount = () => {
     
     const [otp, setOtp] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleOtpChange = (value) => {
         setOtp(value);
@@ -24,33 +26,41 @@ const VerifyAccount = () => {
   const verifyOTP = (e) => {
     e.preventDefault();
 
-    const actionType = localStorage.getItem("actionType");
+    if (otp !== "") {
+      setIsLoading(true);
+      const actionType = localStorage.getItem("actionType");
 
-    if (actionType !== "forgot-password") {
-      postData("/api/user/verifyEmail", {
-        email: localStorage.getItem("userEmail"),
-        otp: otp
-      }).then((res) => {
-        if (res?.error === false) {
-          context.alertBox("Success", res?.message);
-          localStorage.removeItem("userEmail");
-          history('/login');
-        } else {
-          context.alertBox("error", res?.message);
-        }
-      })
+      if (actionType !== "forgot-password") {
+        postData("/api/user/verifyEmail", {
+          email: localStorage.getItem("userEmail"),
+          otp: otp
+        }).then((res) => {
+          if (res?.error === false) {
+            context.alertBox("Success", res?.message);
+            localStorage.removeItem("userEmail");
+            setIsLoading(false);
+            history('/login');
+          } else {
+            context.alertBox("error", res?.message);
+            setIsLoading(false);    
+          }
+        })
+      } else {
+        postData("/api/user/verify-forgot-password-otp", {
+          email: localStorage.getItem("userEmail"),
+          otp: otp
+        }).then((res) => {
+          if (res?.error === false) {
+            context.alertBox("Success", res?.message);
+            history('/change-password');
+          } else {
+            context.alertBox("error", res?.message);
+            setIsLoading(false);
+          }
+        })
+      }
     } else {
-      postData("/api/user/verify-forgot-password-otp", {
-        email: localStorage.getItem("userEmail"),
-        otp: otp
-      }).then((res) => {
-        if (res?.error === false) {
-          context.alertBox("Success", res?.message);
-          history('/forgot-password');
-        } else {
-          context.alertBox("error", res?.message);
-        }
-      })
+      context.alertBox("error", "Please enter OTP");
     }
 
 
@@ -108,8 +118,10 @@ const VerifyAccount = () => {
           <br />
 
           <div className='w-[300px] m-auto'>
-            <Button type='submit' className='btn-blue w-full'>Verify OTP</Button>
-          </div>
+            <Button type='submit' className='btn-blue w-full'>
+              {isLoading === true ? <CircularProgress size={24} color="inherit" /> : "Verify OTP"}
+            </Button>
+          </div> 
         </form>
 
       </div>

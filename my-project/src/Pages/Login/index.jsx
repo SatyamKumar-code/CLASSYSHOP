@@ -36,7 +36,7 @@ const Login = () => {
             }).then((res) => {
                 if (res?.error === false) {
                     context.alertBox("Success", res?.message);
-                    history('/verify');
+                    history('/verify-account');
                 } else {
                     context.alertBox("error", res?.message);
                 }

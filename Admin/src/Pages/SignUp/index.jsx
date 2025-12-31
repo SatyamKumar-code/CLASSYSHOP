@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button';
-import React, { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom';
+import React, { useContext, useState } from 'react'
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { CgLogIn } from 'react-icons/cg';
 import { FaRegEye, FaRegUser, FaEyeSlash } from 'react-icons/fa';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -8,11 +8,74 @@ import { FcGoogle } from 'react-icons/fc';
 import { BsFacebook } from 'react-icons/bs';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import CircularProgress from '@mui/material/CircularProgress';
+import { postData } from '../../utils/api';
+import { MyContext } from '../../App';
 
 const SignUp = () => {
     const [loadingGoogle, setLoadingGoogle] = useState(false);
     const [loadingFb, setLoadingFb] = useState(false);
     const [isPasswordShow, setisPasswordShow] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const [formFields, setFormFields] = useState({
+        name: '',
+        email: '',
+        password: ''
+    });
+
+    const context = useContext(MyContext);
+    const history = useNavigate();
+
+    const onChangeInput = (e) => {
+        const { name, value } = e.target;
+        setFormFields(() => {
+            return {
+                ...formFields,
+                [name]: value
+            }
+        })
+    }
+
+    const valideValue = Object.values(formFields).every(el => el);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        setIsLoading(true);
+
+        if (formFields.name === "") {
+            context.alertBox("error", "Please enter full name")
+            return false
+        }
+        if (formFields.email === "") {
+            context.alertBox("error", "Please enter email")
+            return false
+        }
+        if (formFields.password === "") {
+            context.alertBox("error", "Please enter password")
+            return false
+        }
+
+        postData("/api/user/register", formFields).then((res) => {
+            setIsLoading(false);
+            if (res?.error !== true) {
+                setIsLoading(false);
+                context.alertBox("Success", res?.message);
+                localStorage.setItem("userEmail", formFields.email);
+                setFormFields({
+                    name: '',
+                    email: '',
+                    password: ''
+                });
+                history('/verify-account');
+            } else {
+                context.alertBox("error", res?.message);
+                setIsLoading(false);
+            }
+
+        })
+    }
 
     function handleClickGoogle() {
         setLoadingGoogle(true);
@@ -96,7 +159,7 @@ const SignUp = () => {
 
             <br />
 
-            <form className='w-full px-8 mt-3'>
+            <form className='w-full px-8 mt-3' onSubmit={handleSubmit}>
 
                 <div className='form-group mb-4 w-full'>
                     <h4 className='text-[14px] font-[500] mb-1'>
@@ -104,6 +167,10 @@ const SignUp = () => {
                     </h4>
                     <input 
                     type="text" 
+                    name='name'
+                    value={formFields.name}
+                    disabled={isLoading===true ? true : false}
+                    onChange={onChangeInput}
                     className='w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3'
                     />
                 </div>
@@ -113,7 +180,11 @@ const SignUp = () => {
                         Email
                     </h4>
                     <input 
-                    type="email" 
+                    type="email"
+                    name='email'
+                    value={formFields.email}
+                    disabled={isLoading===true ? true : false}
+                    onChange={onChangeInput} 
                     className='w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3'
                     />
                 </div>
@@ -125,6 +196,10 @@ const SignUp = () => {
                     <div className='relative w-full'>
                         <input
                             type={ isPasswordShow===false ? "password" : "text" }
+                            name='password'
+                            value={formFields.password}
+                            disabled={isLoading===true ? true : false}
+                            onChange={onChangeInput}
                             className='w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3'
                         />
                         <Button className='absolute! top-[7px] right-[10px] z-50 rounded-full! w-[35px]! h-[35px]! min-w-[35px]! text-gray-600!'
@@ -152,7 +227,15 @@ const SignUp = () => {
                     </Link>
                 </div>
 
-                <Button className='btn-blue w-full '>Sign Up</Button>
+                <Button
+                    type="submit"
+                    className='btn-blue w-full '
+                    disabled={!valideValue}>
+                    {
+                        isLoading === true ? (
+                            <CircularProgress color='inherit' />) : "Sign Up"
+                    }
+                </Button>
             </form>
 
         </div>

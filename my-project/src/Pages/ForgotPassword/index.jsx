@@ -84,7 +84,7 @@ const ForgotPassword = () => {
                            className='w-full'
                            name='newPassword'
                            value={formFields.newPassword}
-                           disabled={setIsLoading===true ? true : false}
+                           disabled={isLoading===true ? true : false}
                            onChange={onChangeInput}
                         />
 
@@ -105,7 +105,7 @@ const ForgotPassword = () => {
                            className='w-full'
                            name='confirmPassword'
                            value={formFields.confirmPassword}
-                           disabled={setIsLoading===true ? true : false}
+                           disabled={isLoading===true ? true : false}
                             onChange={onChangeInput}
                         />
                         <Button className='!absolute top-[10px] right-[10px] z-50 !w-[35px] !h-[35px] !min-w-[35px] !rounded-full !text-black'
