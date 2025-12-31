@@ -524,10 +524,10 @@ export async function verifyForgotPasswordOtp(req, res) {
 
 export async function resetpassword(req, res) {
     try {
-        const { email, newPassword, confirmPassword } = req.body;
-        if (!email || !newPassword || !confirmPassword) {
+        const { email, oldPassword, newPassword, confirmPassword } = req.body;
+        if (!email || !oldPassword || !newPassword || !confirmPassword) {
             return res.status(400).json({
-                message: "Provide required fields email, newPassword, confirmPassword",
+                message: "Provide required fields email, oldPassword, newPassword, confirmPassword",
                 error: true,
                 success: false
             })
@@ -537,6 +537,16 @@ export async function resetpassword(req, res) {
         if (!user) {
             return res.status(400).json({
                 message: "Email is not available",
+                error: true,
+                success: false
+            })
+        }
+
+        const checkPassword = await bcrypt.compare(oldPassword, user.password);
+
+        if(!checkPassword) {
+            return res.status(400).json({
+                message: "your old password is worng",
                 error: true,
                 success: false
             })
