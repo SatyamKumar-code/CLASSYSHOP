@@ -31,6 +31,8 @@ import VerifyAccount from './Pages/VerifyAccount'
 import ChangePassword from './Pages/ChangePassword'
 import { fetchDataFromApi } from '../../my-project/src/utils/api'
 import toast, { Toaster } from 'react-hot-toast';
+import Profile from './Pages/Profile'
+import AddAddress from './Pages/Address/addAddress'
 
 
 
@@ -63,6 +65,19 @@ function App() {
 
       fetchDataFromApi(`/api/user/user-details`).then((res) => {
         setUserData(res.data);
+        if(res?.response?.data?.error === true){
+          if(res?.response?.data?.message === "You have not login"){
+            localStorage.removeItem("accesstoken");
+            localStorage.removeItem("refreshtoken");
+
+            alertBox("error", "Session expired. Please login again.");
+
+            window.location.href = '/login';
+
+            setIsLogin(false);
+            
+          }
+        }
       })
 
     }else{
@@ -268,6 +283,25 @@ function App() {
       </>
       ),
     },
+    {
+      path: '/profile',
+      exaxt: true,
+      element: ( 
+      <>
+        <section className='main'>
+          <Header />
+          <div className='contentMain flex'>
+            <div className={`overflow-hidden sidebarWrapper ${isSidebarOpen===true ? 'w-[18%]' : 'w-[0%] opacity-0'} transition-all duration-300`}>
+              <Sidebar />
+            </div>
+            <div className={`contentRight py-4 px-5 ${isSidebarOpen===false ? 'w-[100%]' : 'w-[82%]'} transition-all duration-300`}>
+              <Profile />
+            </div>
+          </div>
+        </section>
+      </>
+      ),
+    },
   ])
 
   const value = {
@@ -319,17 +353,20 @@ function App() {
         </AppBar>
         
         {
-          isOpenFullScreenPanel.model === 'Add Product' && <AddProduct />
+          isOpenFullScreenPanel?.model === 'Add Product' && <AddProduct />
         }
         
         {
-          isOpenFullScreenPanel.model === 'Add Home Slide' && <AddHomeSlide/>
+          isOpenFullScreenPanel?.model === 'Add Home Slide' && <AddHomeSlide/>
         }
         {
-          isOpenFullScreenPanel.model === 'Add New Category' && <AddCategory/>
+          isOpenFullScreenPanel?.model === 'Add New Category' && <AddCategory/>
         }
         {
-          isOpenFullScreenPanel.model === 'Add New Sub Category' && <AddSubCategory/>
+          isOpenFullScreenPanel?.model === 'Add New Sub Category' && <AddSubCategory/>
+        }
+        {
+          isOpenFullScreenPanel?.model === 'Add New Address' && <AddAddress/>
         }
 
       </Dialog>

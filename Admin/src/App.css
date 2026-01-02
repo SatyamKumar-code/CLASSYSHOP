@@ -108,3 +108,18 @@ input[type=number]::-webkit-outer-spin-button {
 .MuiTableBody-root tr:nth-child(even){
      background: #f9f9f9 !important;
 }
+
+input[type="text"]:disabled, input[type="email"]:disabled {
+    pointer-events: none;
+    background: #f1f1f1 !important;
+}
+
+.react-international-phone-input {
+    width: 84% !important;
+}
+.react-international-phone-country-selector-button {
+    width: 55px !important;
+}
+/* .react-international-phone-input-container {
+    border: 1px solid rgba(0,0,0,0.1) !important;
+} */

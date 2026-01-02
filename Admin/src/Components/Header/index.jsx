@@ -130,10 +130,12 @@ const Header = () => {
             </MenuItem>
             <Divider />
 
-            <MenuItem onClick={handleCloseMyAcc} className='flex itrems-center gap-3'>
-              <FaRegUser className='text-[16px]' />
-              <span className='text-[14px]'>My Profile</span>
-            </MenuItem>
+            <Link to="/profile">
+              <MenuItem onClick={handleCloseMyAcc} className='flex itrems-center gap-3'>
+                <FaRegUser className='text-[16px]' />
+                <span className='text-[14px]'>My Profile</span>
+              </MenuItem>
+            </Link>
 
             <MenuItem onClick={() => { logout(); handleCloseMyAcc(); }} className='flex itrems-center gap-3'>
               <IoMdLogOut className='text-[18px]' />

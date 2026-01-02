@@ -67,6 +67,8 @@ function App() {
 
             alertBox("error", "Session expired. Please login again.");
 
+            window.location.href = "/login";
+
             setIsLogin(false);
           }
         }
