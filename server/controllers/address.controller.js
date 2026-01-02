@@ -49,3 +49,41 @@ export const AddAddressesController = async (req, res) => {
     }
 }
 
+
+export const getAddressesController = async (req, res) => {
+    try {
+        const address = await AddressModel.find({ userId: req?.query?.userId });
+
+        if( !address ){
+            return res.status(404).json({
+                message: "No addresses found",
+                error: true,
+                success: false,
+            });
+        } else {
+            const updateUser = await UserModel.updateOne({ _id: req?.query?.userId }, {
+                $push: {
+                    address_details: address?._id
+                }
+            });
+
+            return res.status(200).json({
+                message: "Addresses fetched successfully",
+                error: false,
+                success: true,
+                address: address
+            });
+                
+        }
+
+        
+
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false,
+        })
+    }
+}

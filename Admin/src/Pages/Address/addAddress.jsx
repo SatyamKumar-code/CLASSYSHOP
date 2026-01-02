@@ -6,7 +6,7 @@ import 'react-international-phone/style.css'
 import { useState } from 'react';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { postData } from '../../utils/api';
+import { fetchDataFromApi, postData } from '../../utils/api';
 import { useContext } from 'react';
 import { MyContext } from '../../App';
 import { useEffect } from 'react';

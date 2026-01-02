@@ -2,19 +2,23 @@ import React, { useContext, useEffect, useState } from "react";
 import { MyContext } from "../../App";
 import CircularProgress from "@mui/material/CircularProgress";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import { editData, postData, uploadImage } from "../../utils/api";
+import { editData, fetchDataFromApi, postData, uploadImage } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { PhoneInput } from "react-international-phone"
 import 'react-international-phone/style.css'
 import { Collapse } from "react-collapse";
+import Radio from '@mui/material/Radio';
+
+const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 const Profile = () => {
 
     const [previews, setPreviews] = useState([]);
     const [uploading, setUploading] = useState(false);
+    const [address, setAddress] = useState([]);
 
     const [isLoading, setIsLoading] = useState(false);
     const [isLoading2, setIsLoading2] = useState(false);
@@ -38,6 +42,12 @@ const Profile = () => {
     const context = useContext(MyContext);
     const history = useNavigate();
 
+    const [selectedValue, setSelectedValue] = useState('');
+
+    const handleChange = (event) => {
+        setSelectedValue(event.target.value);
+    }
+
     useEffect(() => {
         const token = localStorage.getItem("accesstoken");
         if (token === null) {
@@ -47,6 +57,12 @@ const Profile = () => {
 
     useEffect(() => {
         if (context?.userData?._id !== "" && context?.userData?._id !== undefined) {
+
+            fetchDataFromApi(`/api/address/get?userId=${context?.userData?._id}`).then((res) => {
+                setAddress(res?.address); 
+            })
+
+
             setUserId(context?.userData?._id);
             setFormFields({
                 name: context?.userData?.name,
@@ -319,13 +335,54 @@ const Profile = () => {
 
                 <br />
 
-                <div className="flex items-center justify-center p-5 border border-dashed border-[rgba(0,0,0,0.2)] bg-[#f1faff] hover:bg-[#e7f3f9] cursor-pointer"
+                <div className="flex items-center justify-center p-5 rounded-md border border-dashed border-[rgba(0,0,0,0.2)] bg-[#f1faff] hover:bg-[#e7f3f9] cursor-pointer"
                     onClick={() => context.setIsOpenFullScreenPanel({
                         open: true,
                         model: "Add New Address"
                     })} >
                     <span className="text-[14px] font-[500]">Add Address </span>
                 </div>
+
+                <div className="flex gap-2 flex-col mt-4">
+
+                    {
+                        address?.length > 0 && address?.map((address, index) => {
+                            return (
+                                <>
+                                    <label className="addressBox w-full rounded-md border border-dashed border-[rgba(0,0,0,0.2)] flex items-center justify-center bg-[#f1f1f1] p-3 rounded-md cursor-pointer">
+                                        <Radio {...label} name="address" 
+                                        checked={
+                                            selectedValue === (
+                                                address?.address_line1 +
+                                                address?.city +
+                                                address?.country +
+                                                address?.state +
+                                                address?.pincode
+                                            ) 
+                                        } 
+                                        value={address?.address_line1 +
+                                                address?.city +
+                                                address?.country +
+                                                address?.state +
+                                                address?.pincode
+                                            } 
+                                        onChange={handleChange} />
+                                        <span className="text-[12px]">
+                                            {
+                                                address?.city + " " +
+                                                address?.country + " " +
+                                                address?.state + " " +
+                                                address?.pincode
+                                            }
+                                        </span>
+                                    </label>
+                                </>
+                            )
+                        })
+                    }
+                </div>
+
+               
 
                 <br />
 

@@ -688,7 +688,7 @@ export async function userDetails( req, res ) {
 
         console.log(userId);
 
-        const user = await UserModel.findById(userId).select('-password -refresh_token');
+        const user = await UserModel.findById(userId).select('-password -refresh_token').populate('address_details');
 
         return res.status(200).json({
             message: "User details",
