@@ -29,7 +29,16 @@ const AddAddress = () => {
         country: '',
         mobile: '',
         status: '',
+        userId: '',
+        selected:false
     });
+
+    useEffect(() => {
+        setFormFields((prevState) => ({
+            ...prevState,
+            userId: context?.userData?._id
+        }))
+    },[context?.userData]);
 
 
   const handleChangeStatus = (event) => {
@@ -95,6 +104,11 @@ const AddAddress = () => {
                 context?.setIsOpenFullScreenPanel({
                     open: false,
                 })
+
+                fetchDataFromApi(`/api/address/get?userId=${context?.userData?._id}`).then((res) => {
+                    context?.setAddress(res?.address);
+                })
+
 
             } else {
                 context.alertBox("error", res?.data?.message);

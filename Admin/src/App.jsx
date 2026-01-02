@@ -50,6 +50,7 @@ function App() {
   const [isSidebarOpen, setisSidebarOpen] = useState(true);
   const [ isLogin, setIsLogin ] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [address, setAddress] = useState([]);
 
   const [ isOpenFullScreenPanel, setIsOpenFullScreenPanel ] = useState({
     open: false,
@@ -313,7 +314,9 @@ function App() {
     setIsOpenFullScreenPanel,
     alertBox,
     userData,
-    setUserData
+    setUserData,
+    setAddress,
+    address
   };
 
   return (

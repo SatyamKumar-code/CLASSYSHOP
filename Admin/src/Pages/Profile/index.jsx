@@ -60,6 +60,7 @@ const Profile = () => {
 
             fetchDataFromApi(`/api/address/get?userId=${context?.userData?._id}`).then((res) => {
                 setAddress(res?.address); 
+                context?.setAddress(res?.address);
             })
 
 
@@ -353,18 +354,10 @@ const Profile = () => {
                                         <Radio {...label} name="address" 
                                         checked={
                                             selectedValue === (
-                                                address?.address_line1 +
-                                                address?.city +
-                                                address?.country +
-                                                address?.state +
-                                                address?.pincode
+                                                address?._id
                                             ) 
                                         } 
-                                        value={address?.address_line1 +
-                                                address?.city +
-                                                address?.country +
-                                                address?.state +
-                                                address?.pincode
+                                        value={address?._id
                                             } 
                                         onChange={handleChange} />
                                         <span className="text-[12px]">
