@@ -19,7 +19,7 @@ const addressSchema = new mongoose.Schema({
     country : {
         type : String,
     },
-    mobaile : {
+    mobile : {
         type : Number,
         default : null
     },

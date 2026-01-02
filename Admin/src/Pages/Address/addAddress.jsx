@@ -6,7 +6,10 @@ import 'react-international-phone/style.css'
 import { useState } from 'react';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { editData } from '../../utils/api';
+import { postData } from '../../utils/api';
+import { useContext } from 'react';
+import { MyContext } from '../../App';
+import { useEffect } from 'react';
 
 
 const AddAddress = () => {
@@ -14,6 +17,10 @@ const AddAddress = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [phone, setPhone] = useState('');
     const [status, setStatus] = useState(false);
+
+    const context = useContext(MyContext);
+
+
     const [formFields, setFormFields] = useState({
         address_line1: '',
         city: '',
@@ -22,11 +29,15 @@ const AddAddress = () => {
         country: '',
         mobile: '',
         status: '',
-        userId: ''
     });
+
 
   const handleChangeStatus = (event) => {
     setStatus(event.target.value);
+    setFormFields((prevState) => ({
+        ...prevState,
+        status: event.target.value
+    }))
   };
 
     const onChangeInput = (e) => {
@@ -75,11 +86,15 @@ const AddAddress = () => {
             return false
         }
 
-        editData(`/api/user/${userId}`, formFields, { withCredentials: true }).then((res) => {
+        postData(`/api/address/add`, formFields, { withCredentials: true }).then((res) => {
             setIsLoading(false);
             if (res?.error !== true) {
                 setIsLoading(false);
                 context.alertBox("Success", res?.data?.message);
+
+                context?.setIsOpenFullScreenPanel({
+                    open: false,
+                })
 
             } else {
                 context.alertBox("error", res?.data?.message);
@@ -98,29 +113,44 @@ const AddAddress = () => {
                     <div className='grid grid-cols-2 mb-3 gap-4'>
                         <div className='col w-[100%]!'>
                             <h3 className='text-[14px] font-[500] mb-1 text-black'>Address Line1</h3>
-                            <input type='text' className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white' />
+                            <input type='text' className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white' 
+                            name='address_line1'
+                            value={formFields.address_line1}
+                            onChange={onChangeInput}/>
                         </div>
 
                         <div className='col w-[100%]!'>
                             <h3 className='text-[14px] font-[500] mb-1 text-black'>city</h3>
-                            <input type='text' className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white' />
+                            <input type='text' className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white'
+                            name='city'
+                            value={formFields.city}
+                            onChange={onChangeInput}/>
                         </div>
                     </div>
 
                     <div className='grid grid-cols-3 mb-3 gap-4'>
                         <div className='col w-[100%]!'>
                             <h3 className='text-[14px] font-[500] mb-1 text-black'>State</h3>
-                            <input type='text' className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white' />
+                            <input type='text' className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white' 
+                            name='state'
+                            value={formFields.state}
+                            onChange={onChangeInput}/>
                         </div>
 
                         <div className='col w-[100%]!'>
                             <h3 className='text-[14px] font-[500] mb-1 text-black'>Pincode</h3>
-                            <input type='text' className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white' />
+                            <input type='text' className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white' 
+                            name='pincode'
+                            value={formFields.pincode}
+                            onChange={onChangeInput}/>
                         </div>
 
                         <div className='col w-[100%]!'>
                             <h3 className='text-[14px] font-[500] mb-1 text-black'>Country</h3>
-                            <input type='text' className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white' />
+                            <input type='text' className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white'
+                            name='country'
+                            value={formFields.country}
+                            onChange={onChangeInput}/>
                         </div>
 
                         <div className='col w-[100%]!'>
@@ -130,8 +160,13 @@ const AddAddress = () => {
                                 value={phone}
                                 disabled={isLoading === true ? true : false}
                                 onChange={(phone) => {
-                                    setPhone(phone)
-                                   
+                                    setPhone(phone); {
+                                        setFormFields((prevState) => ({
+                                            ...prevState,
+                                            mobile: phone
+                                        }))
+                                    }
+
                                 }}
                             />
                         </div>
@@ -159,7 +194,7 @@ const AddAddress = () => {
                 <br />
                 <br />
                 <div className='w-[250px]'>
-                    <Button type='button' className='btn-blue btn-lg w-full flext gap-2'> <FaCloudUploadAlt className='text-[25px] text-white' /> Publish & View</Button>
+                    <Button type='submit' className='btn-blue btn-lg w-full flext gap-2'> <FaCloudUploadAlt className='text-[25px] text-white' /> Publish & View</Button>
                 </div>
             </form>
         </div >
