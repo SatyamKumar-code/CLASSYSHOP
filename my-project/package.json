@@ -23,6 +23,7 @@
     "react-hot-toast": "^2.6.0",
     "react-icons": "^5.5.0",
     "react-inner-image-zoom": "^4.0.1",
+    "react-international-phone": "^4.6.1",
     "react-range-slider-input": "^3.3.2",
     "react-router-dom": "^7.9.6",
     "styled-components": "^6.1.19",

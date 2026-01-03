@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { editData, postData } from '../../utils/api';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Collapse } from 'react-collapse';
+import { PhoneInput } from 'react-international-phone';
+import 'react-international-phone/style.css';
 
 
 const myAccount = () => {
@@ -15,6 +17,7 @@ const myAccount = () => {
     const [isLoading2, setIsLoading2] = useState(false);
     const [userId, setUserId] = useState(null);
     const [isChangePasswordFormShow, setIsChangePasswordFormShow] = useState(false);
+    const [phone, setPhone] = useState('');
 
     const [formFields, setFormFields] = useState({
         name: '',
@@ -47,6 +50,8 @@ const myAccount = () => {
                 email: context?.userData?.email,
                 mobile: context?.userData?.mobile
             })
+            const ph = `"${context?.userData?.mobile}"`;
+            setPhone(ph);
 
             setChangePassword({
                 email: context?.userData?.email
@@ -205,16 +210,20 @@ const myAccount = () => {
 
                         <div className='flex items-center mt-4 gap-5'>
                             <div className='w-[50%]'>
-                                <TextField 
-                                label="Phone Number"
-                                variant='outlined'
-                                size='small'
-                                className='w-full'
-                                name="mobile"
-                                value={formFields.mobile}
-                                disabled={isLoading===true ? true : false}
-                                onChange={onChangeInput}
+
+                                <PhoneInput
+                                    defaultCountry="in"
+                                    value={phone}
+                                    disabled={isLoading === true ? true : false}
+                                    onChange={(phone) => {
+                                        setPhone(phone)
+                                        setFormFields({
+                                            mobile: phone
+                                        })
+                                    }}
                                 />
+
+
                             </div>
 
                             

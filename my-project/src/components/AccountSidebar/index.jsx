@@ -7,6 +7,7 @@ import { NavLink } from 'react-router-dom';
 import { MyContext } from '../../App';
 import CircularProgress from '@mui/material/CircularProgress';
 import {  uploadImage } from '../../utils/api';
+import { LuMapPinCheck } from 'react-icons/lu';
 
 const AccountSidebar  = () => {
 
@@ -123,6 +124,16 @@ const AccountSidebar  = () => {
                             <Button className='w-full !text-left !px-5 !py-2 !justify-start !capitalize !text-[rgba(0,0,0,0.8)] !rounded-none flex items-center gap-2'>
                                 <FaRegUser className='text-[15px]' /> 
                                 My Profile
+                            </Button>
+                            </NavLink>
+                        </li>
+
+                        <li className='w-full'>
+                            <NavLink to="/address" exact={true} activeClassName="isActive"
+                            className="relative">
+                            <Button className='w-full !text-left !px-5 !py-2 !justify-start !capitalize !text-[rgba(0,0,0,0.8)] !rounded-none flex items-center gap-2'>
+                                <LuMapPinCheck className='text-[15px]' /> 
+                                Address
                             </Button>
                             </NavLink>
                         </li>

@@ -174,13 +174,11 @@ const AddAddress = () => {
                                 value={phone}
                                 disabled={isLoading === true ? true : false}
                                 onChange={(phone) => {
-                                    setPhone(phone); {
-                                        setFormFields((prevState) => ({
-                                            ...prevState,
-                                            mobile: phone
-                                        }))
-                                    }
-
+                                    setPhone(phone); 
+                                    setFormFields((prevState) => ({
+                                        ...prevState,
+                                        mobile: phone
+                                    }))
                                 }}
                             />
                         </div>
