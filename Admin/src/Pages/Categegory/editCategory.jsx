@@ -1,15 +1,15 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { IoMdClose } from 'react-icons/io';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import UploadBox from '../../Components/UploadBox';
 import Button from '@mui/material/Button';
 import { FaCloudUploadAlt } from 'react-icons/fa';
 import { useState } from 'react';
-import { deleteImages, postData } from '../../utils/api';
+import { deleteImages, editData, fetchDataFromApi, postData } from '../../utils/api';
 import { MyContext } from '../../App';
 import CircularProgress from '@mui/material/CircularProgress';
 
-const AddCategory = () => {
+const EditCategory = () => {
 
     const [formFields, setFormFields] = useState({
         name: '',
@@ -22,6 +22,19 @@ const AddCategory = () => {
 
     const context = useContext(MyContext);
 
+    useEffect(() => {
+        const id = context?.isOpenFullScreenPanel?.id;
+
+        fetchDataFromApi(`/api/category/${id}`).then((res) => {
+            setFormFields({
+                name: res?.category?.name,
+                images: res?.category?.images,
+            });
+            setPreviews(res?.category?.images);
+            
+        })
+    }, [])
+
     const onChangeInput = (e) => {
         const { name, value } = e.target;
         setFormFields(() => {
@@ -30,6 +43,7 @@ const AddCategory = () => {
                 [name]: value
             }
         })
+        setFormFields.images = previews;
     }
 
     const setPreviewsFun = (previewsArr) => {
@@ -69,18 +83,18 @@ const AddCategory = () => {
             return false;
         }
 
-        postData("/api/category/create", formFields).then((res) => {
-            if (res?.success === true) {
+        editData(`/api/category/${context?.isOpenFullScreenPanel?.id}`, formFields).then((res) => {
+            if (res?.data?.success === true) {
                 setTimeout(() => {
-                    context.alertBox("Success", "Category created successfully.");
+                    context.alertBox("Success", "Category Updated successfully.");
                     setIsLoading(false);
                     context.setIsOpenFullScreenPanel({
                         open: false,
                     })
-                }, 2000)
+                }, 1500)
                 
             } else {
-                context.alertBox("error", res?.message || "Failed to create category.");
+                context.alertBox("error", res?.message || "Failed to Update category.");
                 setIsLoading(false);
             }
         })
@@ -147,10 +161,10 @@ const AddCategory = () => {
                 <div className='w-[250px]'>
                     <Button type='submit' className='btn-blue btn-lg w-full flext gap-2'>
                         {
-                            isLoading === true ? <CircularProgress size={20} color='inherit' />
+                            isLoading === true ? <CircularProgress size={24} color='inherit' />
                                 :
                                 <>
-                                    <FaCloudUploadAlt className='text-[25px] text-white' />Publish & View
+                                    <FaCloudUploadAlt className='text-[25px] text-white' />Update & View
                                 </>
                         }
                     </Button>
@@ -160,4 +174,4 @@ const AddCategory = () => {
     )
 }
 
-export default AddCategory;
+export default EditCategory;

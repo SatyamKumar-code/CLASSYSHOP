@@ -33,6 +33,7 @@ import { fetchDataFromApi } from '../../my-project/src/utils/api'
 import toast, { Toaster } from 'react-hot-toast';
 import Profile from './Pages/Profile'
 import AddAddress from './Pages/Address/addAddress'
+import EditCategory from './Pages/Categegory/editCategory'
 
 
 
@@ -54,7 +55,8 @@ function App() {
 
   const [ isOpenFullScreenPanel, setIsOpenFullScreenPanel ] = useState({
     open: false,
-    Modal:''
+    Modal:'',
+    id: ""
   });
 
 
@@ -370,6 +372,9 @@ function App() {
         }
         {
           isOpenFullScreenPanel?.model === 'Add New Address' && <AddAddress/>
+        }
+        {
+          isOpenFullScreenPanel?.model === 'Edit Category' && <EditCategory/>
         }
 
       </Dialog>

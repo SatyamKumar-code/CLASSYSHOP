@@ -59,6 +59,21 @@ export const uploadImage = async (url, updateData ) => {
     return response;
 }
 
+export const uploadImages = async (url, formData ) => {
+    const params = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accesstoken')}`,
+            'Content-Type': 'multipart/form-data'
+        }
+    }
+    
+    var response;
+    await axios.post(apiUrl + url, formData, params).then((res) => {
+        response = res;
+    })
+    return response;
+}
+
 export const editData = async (url, updateData ) => {
     const params = {
         headers: {
@@ -72,4 +87,26 @@ export const editData = async (url, updateData ) => {
         response = res;
     })
     return response;
+}
+
+export const deleteImages = async (url, image) => {
+    const params = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accesstoken')}`,
+            'Content-Type': 'application/json'
+        }
+    }
+    const res = await axios.delete(apiUrl + url, params);
+    return res;
+}
+
+export const deleteData = async (url ) => {
+    const params = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accesstoken')}`,
+            'Content-Type': 'application/json'
+        }
+    }
+    const res = await axios.delete(apiUrl + url, params);
+    return res;
 }
