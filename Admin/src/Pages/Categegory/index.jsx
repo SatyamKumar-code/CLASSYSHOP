@@ -38,15 +38,15 @@ const CategoryList = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
-    const [catData, setCatData] = useState([]);
 
     const context = useContext(MyContext);
 
     useEffect(() => {
         fetchDataFromApi("/api/category").then((res) => {
-            setCatData(res?.categories);
+            context?.setCatData(res?.categories);
         })
-    }, [context?.isOpenFullScreenPanel])
+    }, [context?.setIsOpenFullScreenPanel])
+
 
     const handleChangeCatFilter = (event, newPage) => {
         setCategoryFilterVal(event.target.value);
@@ -66,7 +66,7 @@ const CategoryList = () => {
             if (res?.data?.success === true) {
                 context.alertBox("Success", "Category deleted successfully.");
                 fetchDataFromApi("/api/category").then((res) => {
-                    setCatData(res?.categories);
+                    context?.setCatData(res?.categories);
                 })
             } else {
                 context.alertBox("error", res?.message || "Failed to delete category.");
@@ -120,9 +120,9 @@ const CategoryList = () => {
                         <TableBody>
 
                             {
-                                catData?.length !== 0 && catData?.map((item, index) => {
+                                context?.catData?.length !== 0 && context?.catData?.map((item, index) => {
                                     return (
-                                        <TableRow>
+                                        <TableRow key={index}>
                                             <TableCell >
                                                 <Checkbox {...label} size='small' />
                                             </TableCell>
@@ -155,7 +155,7 @@ const CategoryList = () => {
                                                             onClick={() => context.setIsOpenFullScreenPanel({
                                                                 open: true,
                                                                 model: 'Edit Category',
-                                                                id:item?._id
+                                                                id: item?._id
                                                             })}
                                                         >
                                                             <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />

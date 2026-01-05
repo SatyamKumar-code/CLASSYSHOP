@@ -77,6 +77,7 @@ const AddCategory = () => {
                     context.setIsOpenFullScreenPanel({
                         open: false,
                     })
+                    context.getCat();
                 }, 2000)
                 
             } else {

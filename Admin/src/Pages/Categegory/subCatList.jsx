@@ -1,5 +1,5 @@
 import Button from '@mui/material/Button';
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { IoMdAdd } from 'react-icons/io';
 import Checkbox from '@mui/material/Checkbox';
 import { Link } from 'react-router-dom';
@@ -18,9 +18,11 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { FaRegEye } from 'react-icons/fa';
+import { FaAngleDown, FaRegEye } from 'react-icons/fa';
 import SearchBox from '../../Components/SearchBox';
 import { MyContext } from '../../App';
+import { fetchDataFromApi } from '../../utils/api';
+import EditSubCatBox from './EditSubCatBox';
 
 
 
@@ -33,30 +35,21 @@ const columns = [
     { id: 'catName', label: 'CATEGORY NAME', minWidth: 250 },
     { id: 'subCatName', label: 'SUB CATEGORY NAME', minWidth: 400 },
     { id: 'action', label: 'Action', minWidth: 100 },
-   
+
 ];
 
 const SubCategoryList = () => {
 
-    const [categoryFilterVal, setCategoryFilterVal] = useState('');
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-
+    const [isOpen, setIsOpen] = useState(0);
     const context = useContext(MyContext);
 
-
-    const handleChangeCatFilter = (event, newPage) => {
-        setCategoryFilterVal(event.target.value);
-    };
-
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
-
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(+event.target.value);
-        setPage(0);
-    };
+    const expend = (index) => {
+        if (isOpen === index) {
+            setIsOpen(!isOpen);
+        }else {
+            setIsOpen(index);
+        }
+    }
 
 
     return (
@@ -64,108 +57,74 @@ const SubCategoryList = () => {
 
             <div className='flex items-center justify-between px-2 py-0 mt-3'>
                 <h2 className='text-[18px] font-[600]'>Sub Category List <span className='font-[400] text-[14px]'> (Material Ui Table)</span></h2>
-                
+
                 <div className='col w-[30%] ml-auto flex items-center gap-3 justify-end'>
-                        <Button className='btn bg-green-600! text-white! btn-sm'>
-                            Export
-                        </Button>
-                        <Button className='btn-blue text-white! btn-sm '
-                        onClick={()=>context.setIsOpenFullScreenPanel({
-                            open:true,
-                            model:'Add New Sub Category'
+                    {/* <Button className='btn bg-green-600! text-white! btn-sm'>
+                        Export
+                    </Button> */}
+                    <Button className='btn-blue text-white! btn-sm '
+                        onClick={() => context.setIsOpenFullScreenPanel({
+                            open: true,
+                            model: 'Add New Sub Category'
                         })}
-                        >Add New Sub Category</Button>
-                    </div>
-            </div> 
+                    >Add New Sub Category</Button>
+                </div>
+            </div>
 
 
             <div className='card my-4 pt-5 shadow-md sm:rounded-lg bg-white'>
+                {
+                    context?.catData?.length !== 0 && 
+                    <ul className='w-full'>
+                        { 
+                            
+                            context?.catData?.map((fristLavelCat, index) => {
+                                return (
+                                    
+                                    <li className='w-full mb-1' key={index}>
+                                        <div className="flex items-center w-full p-2 bg-[#f1f1f1] rounded-sm px-4">
+                                            <span className=" font-[500] flex items-center gap-4 text-[14px]">
+                                                {fristLavelCat?.name}
+                                            </span>
 
-
-                <TableContainer sx={{ maxHeight: 440 }}>
-                    <Table stickyHeader aria-label="sticky table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell width={60}>
-                                    <Checkbox {...label} size='small' />
-                                </TableCell>
-
-                                {columns.map((column) => (
-                                    <TableCell
-                                        width={column.minWidth}
-                                        key={column.id}
-                                        align={column.align}
-                                    >
-                                        {column.label}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell >
-                                    <Checkbox {...label} size='small' />
-                                </TableCell>
-
-                                <TableCell width={100} >
-                                    <div className='flex items-center gap-4 w-[80px]'>
-                                        <div className='img w-full rounded-md overflow-hidden group'>
-                                            <Link to="/product/45745">
-                                                <img src='https://ecme-react.themenate.net/img/products/product-1.jpg'
-                                                    className='w-full group-hover:scale-105 transition-all'
-                                                />
-                                            </Link>
+                                            <Button 
+                                                onClick={() => expend(index)}
+                                                className='!min-w-[35px] !w-[35px] !h-[35px] !rounded-full text-black! ml-auto!'>
+                                                <FaAngleDown />
+                                            </Button>
                                         </div>
-                                    </div>
-                                </TableCell>
 
-                                <TableCell >
-                                    <Chip label="Fashion" />
-                                </TableCell>
+                                        {
+                                            isOpen === index &&
+                                            <>
+                                            {
+                                                fristLavelCat?.Children?.length !== 0 &&
+                                                <ul className='w-full ml-4 mt-2'>
+                                                    {fristLavelCat?.Children?.map((subCat, index_) => {
+                                                        return(
+                                                            <li className='w-full pl-1' key={index_}>
+                                                                <EditSubCatBox 
+                                                                    name={subCat?.name}
+                                                                    id={subCat?._id}
+                                                                    catData={context?.catData}
+                                                                    index={index}
+                                                                    selectedCat={subCat?.parentId}
+                                                                    selectedCatName={subCat?.parentCatName} />
+                                                            </li>
+                                                        )
+                                                    })}
+                                                </ul>
+                                            }
+                                            </>
+                                        }
 
-                                <TableCell >
-                                    <div className='flex items-center gap-3'>
-                                        <Chip label="Men" color='primary' />
-                                        <Chip label="Women" color='primary' />
-                                        <Chip label="Kids" color='primary' />
-                                    </div>
-                                </TableCell>
-
-                                <TableCell width={100} >
-                                    <div className='flex items-center gap-1'>
-                                        <TooltipMUI title="Edit Product" placement='top'>
-                                            <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                                                <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-
-                                        <TooltipMUI title="Remove Product" placement='top'>
-                                            <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                                                <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-
-
-
-                                    </div>
-                                </TableCell>
-
-                                
-
-                            </TableRow>
-
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[10, 25, 100]}
-                    component="div"
-                    count={10}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
+                                        
+                                    </li>
+                                )
+                            })
+                        }
+                    </ul>
+                }
 
             </div>
 
