@@ -110,6 +110,28 @@ const SubCategoryList = () => {
                                                                     index={index}
                                                                     selectedCat={subCat?.parentId}
                                                                     selectedCatName={subCat?.parentCatName} />
+
+                                                                {
+                                                                    subCat?.Children?.length!== 0 && 
+                                                                    <ul className='pl-4'>
+                                                                        {
+                                                                            subCat?.Children?.map((thirdLevel, index__ )=> {
+                                                                                return (
+                                                                                    <li className='w-full hover:bg-[#f1f1f1]' key={index__}>
+                                                                                       <EditSubCatBox
+                                                                                            name={thirdLevel.name}
+                                                                                            catData={fristLavelCat?.Children}
+                                                                                            index={index_}
+                                                                                            selectedCat={thirdLevel?.parentId}
+                                                                                            selectedCatName={thirdLevel?.parentCatName}
+                                                                                            id={thirdLevel?._id}
+                                                                                        />
+                                                                                    </li>
+                                                                                )
+                                                                            })
+                                                                        }
+                                                                    </ul>
+                                                                }
                                                             </li>
                                                         )
                                                     })}

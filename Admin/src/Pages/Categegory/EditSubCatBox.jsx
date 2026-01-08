@@ -6,6 +6,7 @@ import { MyContext } from '../../App';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import CircularProgress from '@mui/material/CircularProgress';
+import { deleteData, editData } from '../../utils/api';
 
 const EditSubCatBox = (props) => {
 
@@ -46,9 +47,37 @@ const EditSubCatBox = (props) => {
         formFields.parentId = event.target.value;
     }
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        setIsLoading(true);
+        if (formFields.name === "") {
+            context.alertBox("error", "Please enter category name");
+            setIsLoading(false);
+            return;
+        }
+
+        editData(`/api/category/${props?.id}`, formFields).then((res) => {
+            setTimeout(() => {
+                context.alertBox("success", "Sub Category updated successfully");
+                context?.getCat();
+                setIsLoading(false);
+            }, 1000);
+        })
+    }
+
+    const deleteCat = (id) => {
+        deleteData(`/api/category/${id}`).then((res) => {
+            if (res?.data?.success === true) {
+                context.alertBox("Success", "Category deleted successfully");
+                context?.getCat();
+            }
+        })
+    }
+
 
     return (
-        <form className='w-full flex items-center gap-3 p-0 px-4'>
+        <form className='w-full flex items-center gap-3 p-0 px-4' onSubmit={handleSubmit}>
 
             {
                 editMode === true &&
@@ -119,7 +148,9 @@ const EditSubCatBox = (props) => {
                         >
                             <MdOutlineModeEdit />
                         </Button>
-                        <Button className='min-w-[35px]! !w-[35px] h-[35px]! rounded-full! text-black!'>
+                        <Button className='min-w-[35px]! !w-[35px] h-[35px]! rounded-full! text-black!'
+                            onClick={() => deleteCat(props?.id)}
+                        >
                             <FaRegTrashAlt />
                         </Button>
                     </div>
