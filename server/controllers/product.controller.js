@@ -63,6 +63,7 @@ export async function createProduct( req, res) {
             price: req.body.price,
             oldPrice: req.body.oldPrice,
             catName: req.body.catName,
+            category: req.body.category,
             catId: req.body.catId,
             subCatId: req.body.subCatId,
             subCat: req.body.subCat,
@@ -696,7 +697,7 @@ export async function deleteProduct(req, res) {
         const urlArr = imgUrl.split("/");
         const image = urlArr[urlArr.length - 1];
 
-        const publicId = image.split(".")[0];
+        const imageName = image.split(".")[0];
 
         if ( imageName ) {
             cloudinary.uploader.destroy(imageName, (error, result) => {

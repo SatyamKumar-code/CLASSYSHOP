@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { deleteImages, postData } from '../../utils/api';
 import { MyContext } from '../../App';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useNavigate } from 'react-router-dom';
 
 const AddCategory = () => {
 
@@ -18,6 +19,8 @@ const AddCategory = () => {
 
     const [previews, setPreviews] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+
+    const history = useNavigate();
 
 
     const context = useContext(MyContext);
@@ -47,7 +50,7 @@ const AddCategory = () => {
             setPreviews([]);
             setTimeout(() => {
                 setPreviews(imageArr);
-                setFormFields.images = previewsArr;
+                setFormFields.images = imageArr;
             }, 100);
 
         })
@@ -77,6 +80,7 @@ const AddCategory = () => {
                     context.setIsOpenFullScreenPanel({
                         open: false,
                     })
+                    history('/category/list');
                     context.getCat();
                 }, 2000)
                 

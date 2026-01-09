@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -11,14 +11,13 @@ import { IoMdClose } from 'react-icons/io';
 import Button from '@mui/material/Button';
 import { FaCloudUploadAlt } from 'react-icons/fa';
 import { MyContext } from '../../App';
-import { deleteImages, postData } from '../../utils/api';
-import { useNavigate } from 'react-router-dom';
+import { deleteImages, editData, fetchDataFromApi, postData } from '../../utils/api';
+import { useNavigate, useParams } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
 
-const AddProduct = () => {
+const EditProduct = () => {
 
-
-
+    const [productData, setProductData] = useState(null);
     const [productCat, setProductCat] = useState('');
     const [productSubCat, setProductSubCat] = useState('');
     const [productFeatured, setProductFeatured] = useState('');
@@ -28,10 +27,12 @@ const AddProduct = () => {
     const [productThirdLavelCat, setProductThirdLavelCat] = useState('');
     const [previews, setPreviews] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isPageLoading, setIsPageLoading] = useState(true);
 
 
     const context = useContext(MyContext)
     const history = useNavigate();
+
 
 
     const [formFields, setFormFields] = useState({
@@ -57,25 +58,76 @@ const AddProduct = () => {
         productWeight: [],
     });
     const setPreviewsFun = (previewsArr) => {
-        setPreviews(previewsArr);
-        setFormFields.images = previewsArr;
-
+        const updatedPreviews = [...previews, ...previewsArr];
+        setPreviews(updatedPreviews);
+        setFormFields((prev) => ({
+            ...prev,
+            images: updatedPreviews
+        }));
     }
 
     const removeImg = (image, index) => {
-        var imageArr = [];
-        imageArr = previews;
         deleteImages(`/api/category/deleteImage?img=${image}`).then((res) => {
-            imageArr.splice(index, 1);
-
-            setPreviews([]);
-            setTimeout(() => {
-                setPreviews(imageArr);
-                setFormFields.images = imageArr;
-            }, 100);
-
+            const updatedPreviews = previews.filter((_, i) => i !== index);
+            setPreviews(updatedPreviews);
+            setFormFields((prev) => ({
+                ...prev,
+                images: updatedPreviews
+            }));
         })
     }
+
+    useEffect(() => {
+        if (context?.isOpenFullScreenPanel?.id) {
+            setIsPageLoading(true);
+            fetchDataFromApi(`/api/product/${context?.isOpenFullScreenPanel?.id}`).then((res) => {
+                if (res?.success) {
+                    const product = res?.product;
+                    setProductData(product);
+                    
+                    // Set form fields with existing product data
+                    setFormFields({
+                        name: product?.name || '',
+                        description: product?.description || '',
+                        images: product?.images || [],
+                        brand: product?.brand || '',
+                        price: product?.price || '',
+                        oldPrice: product?.oldPrice || '',
+                        category: product?.category || '',
+                        catName: product?.catName || '',
+                        catId: product?.catId || '',
+                        subCatId: product?.subCatId || '',
+                        subCat: product?.subCat || '',
+                        thirdsubCat: product?.thirdsubCat || '',
+                        thirdsubCatId: product?.thirdsubCatId || '',
+                        countInStock: product?.countInStock || '',
+                        rating: product?.rating || '',
+                        isFeatured: product?.isFeatured || false,
+                        discount: product?.discount || '',
+                        productRam: product?.productRam || [],
+                        size: product?.size || [],
+                        productWeight: product?.productWeight || [],
+                    });
+
+                    // Set select dropdown values
+                    setProductCat(product?.catId || '');
+                    setProductSubCat(product?.subCatId || '');
+                    setProductThirdLavelCat(product?.thirdsubCatId || '');
+                    setProductFeatured(product?.isFeatured || false);
+                    setProductRams(product?.productRam || []);
+                    setProductSize(product?.size || []);
+                    setProductWeight(product?.productWeight || []);
+                    
+                    // Set image previews
+                    setPreviews(product?.images || []);
+                }
+                setIsPageLoading(false);
+            }).catch((err) => {
+                console.log(err);
+                setIsPageLoading(false);
+            });
+        }
+    }, [context?.isOpenFullScreenPanel?.id]);
 
 
     const handleChangeProductCat = (event) => {
@@ -229,10 +281,17 @@ const AddProduct = () => {
             setIsLoading(false);
             return false;
         }
-        postData("/api/product/create", formFields).then((res) => {
+
+        // Update form fields with current images
+        const updatedFormFields = {
+            ...formFields,
+            images: previews
+        };
+
+        editData(`/api/product/updateProduct/${context?.isOpenFullScreenPanel?.id}`, updatedFormFields).then((res) => {
             
-            if (res?.error === false) {
-                context.alertBox("Success", res?.message);
+            if (res?.data?.error === false) {
+                context.alertBox("Success", res?.data?.message);
                 setTimeout(() => {
                     setIsLoading(false);
                     context.setIsOpenFullScreenPanel({
@@ -241,16 +300,24 @@ const AddProduct = () => {
                     history('/products');
                 }, 1000)
             } else {
-                context.alertBox("error", res?.message || "Failed to create product.");
+                context.alertBox("error", res?.data?.message || "Failed to update product.");
                 setIsLoading(false);
             }
             
-        })
+        }).catch((err) => {
+            context.alertBox("error", "Failed to update product.");
+            setIsLoading(false);
+        });
         
     }
 
     return (
         <section className='p-5 bg-[rgba(240,240,240,0.5)]'>
+            {isPageLoading ? (
+                <div className='flex items-center justify-center h-[70vh]'>
+                    <CircularProgress />
+                </div>
+            ) : (
             <form className='form py-3 p-8 ' onSubmit={handleSubmit}>
                 <div className='scroll max-h-[73vh] overflow-y-scroll pr-4'>
                     <div className='grid grid-cols-1 mb-3'>
@@ -505,7 +572,7 @@ const AddProduct = () => {
 
                         <div className='col'>
                             <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Rating</h3>
-                            <Rating name='half-rating' defaultValue={1} precision={0.1}
+                            <Rating name='half-rating' value={parseFloat(formFields.rating) || 0} precision={0.1}
                                 onChange={onChangeRating} />
                         </div>
 
@@ -562,13 +629,14 @@ const AddProduct = () => {
                         isLoading === true ? <CircularProgress size={20} color='inherit' />
                             :
                             <>
-                                <FaCloudUploadAlt className='text-[25px] text-white' /> Publish & View
+                                <FaCloudUploadAlt className='text-[25px] text-white' /> Update Product
                             </>
                     }
                 </Button>
             </form>
+            )}
         </section>
     )
 }
 
-export default AddProduct;
+export default EditProduct;

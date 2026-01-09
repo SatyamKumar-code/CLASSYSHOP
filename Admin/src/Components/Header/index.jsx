@@ -3,7 +3,6 @@ import Button from '@mui/material/Button'
 import { RiMenu2Line } from "react-icons/ri";
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
-import IconButton from '@mui/material/IconButton';
 import { FaRegBell } from 'react-icons/fa';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
@@ -13,6 +12,27 @@ import { IoMdLogOut } from 'react-icons/io';
 import { MyContext } from '../../App';
 import { Link } from 'react-router-dom';
 import { fetchDataFromApi } from '../../utils/api';
+import AddProduct from '../../Pages/Products/addProduct';
+import AddHomeSlide from '../../Pages/HomeSliderBanners/addHomeSlide';
+import AddCategory from '../../Pages/Categegory/addCategory';
+import AddSubCategory from '../../Pages/Categegory/addSubCategory';
+import AddAddress from '../../Pages/Address/addAddress';
+import EditCategory from '../../Pages/Categegory/editCategory';
+import Slide from '@mui/material/Slide';
+
+
+import Dialog from '@mui/material/Dialog';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import { IoMdClose } from 'react-icons/io'
+import EditProduct from '../../Pages/Products/editProduct';
+
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -51,109 +71,167 @@ const Header = () => {
   }
 
   return (
-    <header className={`w-full h-auto py-2 shadow-md pr-7 bg-white flex items-center justify-between ${context.isSidebarOpen===true ? 'pl-80' : 'pl-5'} transition-all duration-300`}>
-      <div className='part1'>
-        <Button className='w-10! min-w-10! h-10! rounded-full! text-[rgba(0,0,0,0.7)]!'
-          onClick={() => context.setisSidebarOpen(!context.isSidebarOpen)} >
-          <RiMenu2Line className='text-[18px] text-[rgba(0,0,0,0.7)]'/>
-        </Button>
-      </div> 
+    <>
+      <header className={`w-full h-auto py-2 shadow-md pr-7 bg-white flex items-center justify-between ${context.isSidebarOpen === true ? 'pl-80' : 'pl-5'} transition-all duration-300`}>
+        <div className='part1'>
+          <Button className='w-10! min-w-10! h-10! rounded-full! text-[rgba(0,0,0,0.7)]!'
+            onClick={() => context.setisSidebarOpen(!context.isSidebarOpen)} >
+            <RiMenu2Line className='text-[18px] text-[rgba(0,0,0,0.7)]' />
+          </Button>
+        </div>
 
 
-      <div className='part2 w-[40%] flex items-center justify-end gap-5'>
-        <IconButton aria-label="cart">
-          <StyledBadge badgeContent={4} color="secondary">
-            <FaRegBell />
-          </StyledBadge>
-        </IconButton>
+        <div className='part2 w-[40%] flex items-center justify-end gap-5'>
+          <IconButton aria-label="cart">
+            <StyledBadge badgeContent={4} color="secondary">
+              <FaRegBell />
+            </StyledBadge>
+          </IconButton>
 
-        {
-          context.isLogin === true ? (
-            <div className='relative'>
-          <div className='rounded-full w-[35px] h-[35px] overflow-hidden cursor-pointer'
-            onClick={handleClickMyAcc}
-          >
-            <img src="https://up.yimg.com/ib/th/id/OIP.Kk4i-k-7bOfsgPv0SJtj5AHaHa?pid=Api&rs=1&c=1&qlt=95&w=121&h=121"
-              className='w-full h-full object-cover' />
-          </div>
-
-          <Menu
-            anchorEl={anchorMyAcc}
-            id="account-menu"
-            open={openMyAcc}
-            onClose={handleCloseMyAcc}
-            onClick={handleCloseMyAcc}
-            slotProps={{
-              paper: {
-                elevation: 0,
-                sx: {
-                  overflow: 'visible',
-                  filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                  mt: 1.5,
-                  '& .MuiAvatar-root': {
-                    width: 32,
-                    height: 32,
-                    ml: -0.5,
-                    mr: 1,
-                  },
-                  '&::before': {
-                    content: '""',
-                    display: 'block',
-                    position: 'absolute',
-                    top: 0,
-                    right: 14,
-                    width: 10,
-                    height: 10,
-                    bgcolor: 'background.paper',
-                    transform: 'translateY(-50%) rotate(45deg)',
-                    zIndex: 0,
-                  },
-                },
-              },
-            }}
-            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-          >
-            <MenuItem onClick={handleCloseMyAcc} className='bg-white!'>
-              <div className='flex items-center gap-3'>
-                <div className='rounded-full w-[35px] h-[35px] overflow-hidden cursor-pointer'                
+          {
+            context.isLogin === true ? (
+              <div className='relative'>
+                <div className='rounded-full w-[35px] h-[35px] overflow-hidden cursor-pointer'
+                  onClick={handleClickMyAcc}
                 >
                   <img src="https://up.yimg.com/ib/th/id/OIP.Kk4i-k-7bOfsgPv0SJtj5AHaHa?pid=Api&rs=1&c=1&qlt=95&w=121&h=121"
                     className='w-full h-full object-cover' />
                 </div>
 
-                <div className='info'>
-                  <h3 className='text-[15px] font-[500] leading-5'>{context?.userData?.name}</h3>
-                  <p className='text-[12px] font-[400] opacity-70'>{context?.userData?.email}</p>
-                </div>
+                <Menu
+                  anchorEl={anchorMyAcc}
+                  id="account-menu"
+                  open={openMyAcc}
+                  onClose={handleCloseMyAcc}
+                  onClick={handleCloseMyAcc}
+                  slotProps={{
+                    paper: {
+                      elevation: 0,
+                      sx: {
+                        overflow: 'visible',
+                        filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                        mt: 1.5,
+                        '& .MuiAvatar-root': {
+                          width: 32,
+                          height: 32,
+                          ml: -0.5,
+                          mr: 1,
+                        },
+                        '&::before': {
+                          content: '""',
+                          display: 'block',
+                          position: 'absolute',
+                          top: 0,
+                          right: 14,
+                          width: 10,
+                          height: 10,
+                          bgcolor: 'background.paper',
+                          transform: 'translateY(-50%) rotate(45deg)',
+                          zIndex: 0,
+                        },
+                      },
+                    },
+                  }}
+                  transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                  anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                >
+                  <MenuItem onClick={handleCloseMyAcc} className='bg-white!'>
+                    <div className='flex items-center gap-3'>
+                      <div className='rounded-full w-[35px] h-[35px] overflow-hidden cursor-pointer'
+                      >
+                        <img src="https://up.yimg.com/ib/th/id/OIP.Kk4i-k-7bOfsgPv0SJtj5AHaHa?pid=Api&rs=1&c=1&qlt=95&w=121&h=121"
+                          className='w-full h-full object-cover' />
+                      </div>
+
+                      <div className='info'>
+                        <h3 className='text-[15px] font-[500] leading-5'>{context?.userData?.name}</h3>
+                        <p className='text-[12px] font-[400] opacity-70'>{context?.userData?.email}</p>
+                      </div>
+                    </div>
+                  </MenuItem>
+                  <Divider />
+
+                  <Link to="/profile">
+                    <MenuItem onClick={handleCloseMyAcc} className='flex itrems-center gap-3'>
+                      <FaRegUser className='text-[16px]' />
+                      <span className='text-[14px]'>My Profile</span>
+                    </MenuItem>
+                  </Link>
+
+                  <MenuItem onClick={() => { logout(); handleCloseMyAcc(); }} className='flex itrems-center gap-3'>
+                    <IoMdLogOut className='text-[18px]' />
+                    <span className='text-[14px]'>Sign Out</span>
+                  </MenuItem>
+
+                </Menu>
               </div>
-            </MenuItem>
-            <Divider />
-
-            <Link to="/profile">
-              <MenuItem onClick={handleCloseMyAcc} className='flex itrems-center gap-3'>
-                <FaRegUser className='text-[16px]' />
-                <span className='text-[14px]'>My Profile</span>
-              </MenuItem>
-            </Link>
-
-            <MenuItem onClick={() => { logout(); handleCloseMyAcc(); }} className='flex itrems-center gap-3'>
-              <IoMdLogOut className='text-[18px]' />
-              <span className='text-[14px]'>Sign Out</span>
-            </MenuItem>
-            
-          </Menu>
+            )
+              : (
+                <Button className='btn-blue btn-sm rounded-full!'
+                >
+                  <Link to="/login">Sign In</Link>
+                </Button>
+              )
+          }
         </div>
-          )
-          : (
-            <Button className='btn-blue btn-sm rounded-full!'
+      </header>
+
+      <Dialog
+        fullScreen
+        open={context?.isOpenFullScreenPanel.open}
+        onClose={() => context?.setIsOpenFullScreenPanel({
+          open: false,
+        })}
+        slots={{
+          transition: Transition,
+        }}
+      >
+        <AppBar sx={{ position: 'relative' }}>
+          <Toolbar>
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={() => context?.setIsOpenFullScreenPanel({
+                open: false,
+              })}
+              aria-label="close"
             >
-              <Link to="/login">Sign In</Link>
-            </Button>
-          )
+              <IoMdClose className='text-gray-800' />
+            </IconButton>
+            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+              <span className='text-gray-800'>{context?.isOpenFullScreenPanel?.model}</span>
+            </Typography>
+
+          </Toolbar>
+        </AppBar>
+
+        {
+          context?.isOpenFullScreenPanel?.model === 'Add Product' && <AddProduct />
         }
-      </div>
-    </header>
+
+        {
+          context?.isOpenFullScreenPanel?.model === 'Add Home Slide' && <AddHomeSlide />
+        }
+        {
+          context?.isOpenFullScreenPanel?.model === 'Add New Category' && <AddCategory />
+        }
+        {
+          context?.isOpenFullScreenPanel?.model === 'Add New Sub Category' && <AddSubCategory />
+        }
+        {
+          context?.isOpenFullScreenPanel?.model === 'Add New Address' && <AddAddress />
+        }
+        {
+          context?.isOpenFullScreenPanel?.model === 'Edit Category' && <EditCategory />
+        }
+        {
+          context?.isOpenFullScreenPanel?.model === 'Edit Product' && <EditProduct />
+        }
+
+
+      </Dialog>
+
+    </>
   )
 }
 

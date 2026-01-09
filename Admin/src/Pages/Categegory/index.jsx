@@ -45,7 +45,7 @@ const CategoryList = () => {
         fetchDataFromApi("/api/category").then((res) => {
             context?.setCatData(res?.categories);
         })
-    }, [context?.setIsOpenFullScreenPanel])
+    }, [context?.isOpenFullScreenPanel?.open])
 
 
     const handleChangeCatFilter = (event, newPage) => {
