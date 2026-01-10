@@ -363,7 +363,7 @@ const EditProduct = () => {
                                     {
                                         context?.catData?.map((cat, index) => {
                                             return (
-                                                <MenuItem value={cat?._id}
+                                                <MenuItem value={cat?._id} key={index}
                                                     onClick={() => selectCatByName(cat?.name)}
                                                 >
                                                     {cat?.name}
@@ -395,7 +395,7 @@ const EditProduct = () => {
                                             return (
                                                 cat?.Children?.length !== 0 && cat?.Children?.map((subCat, index_) => {
                                                     return (
-                                                        <MenuItem value={subCat?._id}
+                                                        <MenuItem value={subCat?._id} key={index_}
                                                             onClick={() => selectSubCatByName(subCat?.name)}
                                                         >
                                                             {subCat?.name}

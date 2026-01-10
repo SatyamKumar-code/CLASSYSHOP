@@ -400,7 +400,7 @@ export async function getAllProductsByThirdLavelCatId(req, res) {
 
 
         const products = await ProductModel.find({
-            thirdLavelCatId: req.params.id
+            thirdsubCatId: req.params.id
         }).populate("category")
             .skip((page -1) * perPage)
             .limit(perPage)
@@ -781,6 +781,67 @@ export async function removeImageFromCloudinary(request, response) {
         })
     }
 } 
+
+// delete multiple products
+export async function deleteMultipleProduct(req, res) {
+    try {
+        const { ids } = req.body; // Array of product IDs to be deleted
+
+        if(!ids || !Array.isArray(ids)) {
+            return res.status(400).json({
+                error: true,
+                success: false,
+                message: "Invalid Input"
+            })
+        }
+
+        for (let i=0; i<ids?.length; i++) {
+            const product = await ProductModel.findById(ids[i]);
+
+            const images = product.images;
+            let img="";
+
+            for (img of images) {
+                const imgUrl = img;
+                const urlArr = imgUrl.split("/");
+                const image = urlArr[urlArr.length - 1];
+
+                const imageName = image.split(".")[0];
+
+                if ( imageName ) {
+                    cloudinary.uploader.destroy(imageName, (error, result) => {
+                        //console.log(result, error);
+                    });
+                }
+            }
+        }
+
+        try {
+            await ProductModel.deleteMany({ _id: { $in: ids }});
+
+            return res.status(200).json({
+                message: "Products deleted successfully",
+                error: false,
+                success: true
+            })
+
+        } catch (error) {
+            return res.status(500).json({
+                messsage: error.message || error,
+                error: true,
+                success: false
+            })
+        }
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+
+}
 
 // Update Product
 export async function updateProduct(req, res) {

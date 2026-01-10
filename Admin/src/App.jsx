@@ -23,6 +23,7 @@ import ChangePassword from './Pages/ChangePassword'
 import { fetchDataFromApi } from './utils/api'
 import toast, { Toaster } from 'react-hot-toast';
 import Profile from './Pages/Profile'
+import ProductDetails from './Pages/Products/productDetails'
 
 
 
@@ -297,6 +298,25 @@ function App() {
               </div>
               <div className={`contentRight py-4 px-5 ${isSidebarOpen === false ? 'w-[100%]' : 'w-[82%]'} transition-all duration-300`}>
                 <Profile />
+              </div>
+            </div>
+          </section>
+        </>
+      ),
+    },
+    {
+      path: '/product/:id',
+      exaxt: true,
+      element: (
+        <>
+          <section className='main'>
+            <Header />
+            <div className='contentMain flex'>
+              <div className={`overflow-hidden sidebarWrapper ${isSidebarOpen === true ? 'w-[18%]' : 'w-[0%] opacity-0'} transition-all duration-300`}>
+                <Sidebar />
+              </div>
+              <div className={`contentRight py-4 px-5 ${isSidebarOpen === false ? 'w-[100%]' : 'w-[82%]'} transition-all duration-300`}>
+                <ProductDetails />
               </div>
             </div>
           </section>
