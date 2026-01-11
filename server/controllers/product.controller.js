@@ -866,6 +866,7 @@ export async function updateProduct(req, res) {
                 countInStock: req.body.countInStock,
                 rating: req.body.rating,
                 isFeatured: req.body.isFeatured,
+                discount: req.body.discount,
                 productRam: req.body.productRam,
                 size: req.body.size,
                 productWeight: req.body.productWeight,
