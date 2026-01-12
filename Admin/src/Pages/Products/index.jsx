@@ -23,6 +23,7 @@ import { MyContext } from '../../App';
 import { fetchDataFromApi, deleteData, deleteMultipleData } from '../../utils/api';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
+import TableSkeleton from '../../Components/Skeleton/TableSkeleton';
 
 
 
@@ -57,6 +58,7 @@ const columns = [
 
 const Products = () => {
 
+    const [isLoading, setIsLoading] = useState(false);
     const [productCat, setProductCat] = useState('');
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -109,6 +111,7 @@ const Products = () => {
     };
 
     const getProducts = async () => {
+        setIsLoading(true);
         fetchDataFromApi("/api/product/getAllProducts").then((res) => {
             let productArr = [];
             if (res?.error === false) {
@@ -116,7 +119,10 @@ const Products = () => {
                     productArr[i] = res?.products[i];
                     productArr[i].checked = false;
                 }
-                setProductData(productArr || []);
+                setTimeout(() => {
+                    setIsLoading(false);
+                    setProductData(productArr);
+                }, 300);
             }
         })
     }
@@ -125,30 +131,47 @@ const Products = () => {
 
 
     const handleChangeProductCat = (event) => {
+        setIsLoading(true);
         setProductCat(event.target.value);
+        setProductSubCat('');
+        setProductThirdLavelCat('');
         fetchDataFromApi(`/api/product/getAllProductsByCatid/${event.target.value}`).then((res) => {
             if (res?.error === false) {
-                setProductData(res?.products || []);
+                setTimeout(() => {
+                    setProductData(res?.products || []);
+                    setIsLoading(false);
+                }, 300);
             }
         })
     };
 
     const handleChangeProductSubCat = (event) => {
+        setIsLoading(true);
+        setProductCat('');
         setProductSubCat(event.target.value);
+        setProductThirdLavelCat('');
         fetchDataFromApi(`/api/product/getAllProductsBySubCatid/${event.target.value}`).then((res) => {
             if (res?.error === false) {
-                setProductData(res?.products || []);
+                setTimeout(() => {
+                    setProductData(res?.products || []);
+                    setIsLoading(false);
+                }, 300);
             }
         })
     };
 
     const handleChangeProductThirdLavelCat = (event) => {
+        setIsLoading(true);
+        setProductCat('');
+        setProductSubCat('');
         setProductThirdLavelCat(event.target.value);
         fetchDataFromApi(`/api/product/getAllProductsByThirdLavelCat/${event.target.value}`).then((res) => {
-            console.log(res);
-            
+           
             if (res?.error === false) {
-                setProductData(res?.products || []);
+                setTimeout(() => {
+                    setProductData(res?.products || []);
+                    setIsLoading(false);
+                }, 300);
             }
         })
     };
@@ -367,6 +390,7 @@ const Products = () => {
                         <TableBody>
 
                             {
+                                isLoading === false ?
                                 productData?.length !== 0 && productData?.slice(
                                     page * rowsPerPage,
                                     page * rowsPerPage + rowsPerPage
@@ -462,6 +486,8 @@ const Products = () => {
                                         </TableRow>
                                     )
                                 })
+                                :
+                                <TableSkeleton rowsPerPage={rowsPerPage} /> 
                             }
 
 

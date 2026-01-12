@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import auth from '../middlewares/auth.js';
 import upload from "../middlewares/multer.js";
-import { createProduct, getAllProducts, getAllProductsByPrice, getAllProductsByCatId, getAllProductsByCatName, getAllProductsBySubCatId, getAllProductsBySubCatName, getAllProductsByThirdLavelCatId, getAllProductsByThirdLavelCatName, uploadImages, getAllProductsByRating, getProductsCount, getAllFeaturedProducts, deleteProduct, getProduct, removeImageFromCloudinary, updateProduct, deleteMultipleProduct } from '../controllers/product.controller.js';
+import { createProduct, getAllProducts, getAllProductsByPrice, getAllProductsByCatId, getAllProductsByCatName, getAllProductsBySubCatId, getAllProductsBySubCatName, getAllProductsByThirdLavelCatId, getAllProductsByThirdLavelCatName, uploadImages, getAllProductsByRating, getProductsCount, getAllFeaturedProducts, deleteProduct, getProduct, removeImageFromCloudinary, updateProduct, deleteMultipleProduct, createProductRAMS, deleteProductRAMS, deleteMultipleProductRams, updateProductRam, getProductRam } from '../controllers/product.controller.js';
 
 const productRouter = Router();
 productRouter.post('/uploadImages', auth, upload.array('images'), uploadImages)
@@ -19,9 +19,14 @@ productRouter.get('/getAllProductsCount', getProductsCount);
 productRouter.get('/getAllFeaturedProducts', getAllFeaturedProducts);
 productRouter.delete('/deleteMultiple', deleteMultipleProduct);
 productRouter.delete('/deleteImage', auth, removeImageFromCloudinary);
-productRouter.delete('/:id', deleteProduct);
+productRouter.delete('/:id',auth, deleteProduct);
 productRouter.get('/:id', getProduct);
 productRouter.put('/updateProduct/:id', auth, updateProduct);
+productRouter.post('/productRAMS/create', auth, createProductRAMS)
+productRouter.delete('/productRAMS/:id', auth, deleteProductRAMS);
+productRouter.put('/productRAMS/:id', auth, updateProductRam);
+productRouter.delete('/productRAMS/deleteMultipleRams', auth, deleteMultipleProductRams);
+productRouter.get('/productRAMS/get', getProductRam);
 
 
 export default productRouter;
