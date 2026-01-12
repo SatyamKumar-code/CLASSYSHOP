@@ -17,10 +17,10 @@ productRouter.get('/getAllProductsByPrice', getAllProductsByPrice);
 productRouter.get('/getAllProductsByRating', getAllProductsByRating);
 productRouter.get('/getAllProductsCount', getProductsCount);
 productRouter.get('/getAllFeaturedProducts', getAllFeaturedProducts);
-productRouter.delete('/:id', deleteProduct);
 productRouter.delete('/deleteMultiple', deleteMultipleProduct);
-productRouter.get('/:id', getProduct);
 productRouter.delete('/deleteImage', auth, removeImageFromCloudinary);
+productRouter.delete('/:id', deleteProduct);
+productRouter.get('/:id', getProduct);
 productRouter.put('/updateProduct/:id', auth, updateProduct);
 
 

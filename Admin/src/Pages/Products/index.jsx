@@ -20,7 +20,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { FaRegEye } from 'react-icons/fa';
 import SearchBox from '../../Components/SearchBox';
 import { MyContext } from '../../App';
-import { fetchDataFromApi, deleteData } from '../../utils/api';
+import { fetchDataFromApi, deleteData, deleteMultipleData } from '../../utils/api';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 
@@ -63,6 +63,7 @@ const Products = () => {
     const [productData, setProductData] = useState([]);
     const [productSubCat, setProductSubCat] = useState('');
     const [productThirdLavelCat, setProductThirdLavelCat] = useState('');
+    const [sortedIds, setSortedIds] = useState([]);
 
     const context = useContext(MyContext);
 
@@ -70,13 +71,57 @@ const Products = () => {
         getProducts();
     }, [context?.isOpenFullScreenPanel?.open]);
 
+    // Handle to toggle all checkboxes
+    const handleSelectAll = (e) => {
+        const isChecked = e.target.checked;
+
+        // Update all items' checked status
+        const updatedItems = productData.map((item) => ({
+            ...item,
+            checked: isChecked,
+        }));
+        setProductData(updatedItems);
+
+        // Update the sorted IDS satate
+        if (isChecked) {
+            const ids = updatedItems.map((item) => item._id).sort((a, b) => a - b);
+            console.log(ids);
+            setSortedIds(ids);
+            
+        }else [
+            setSortedIds([])
+        ]
+    }
+
+    // Handle to toggle individual checkbox
+    const handleCheckboxChange = (e, id, index) => {
+        const updatedItems = productData.map((item) => 
+            item._id === id ? { ...item, checked: e.target.checked } : item
+        );
+        setProductData(updatedItems);
+
+        // Update the sorted IDS satate
+        const selectedIds = updatedItems
+            .filter((item) => item.checked)
+            .map((item) => item._id)
+            .sort((a, b) => a - b);
+        setSortedIds(selectedIds);
+    };
+
     const getProducts = async () => {
         fetchDataFromApi("/api/product/getAllProducts").then((res) => {
+            let productArr = [];
             if (res?.error === false) {
-                setProductData(res?.products || []);
+                for(let i =0; i< res?.products?.length; i++) {
+                    productArr[i] = res?.products[i];
+                    productArr[i].checked = false;
+                }
+                setProductData(productArr || []);
             }
         })
     }
+
+    
 
 
     const handleChangeProductCat = (event) => {
@@ -130,6 +175,25 @@ const Products = () => {
         })
     }
 
+    const deleteMultipleProduct = () => {
+        if (sortedIds.length === 0) {
+            context.alertBox("error", "Please select items to delete.");
+            return;
+        }
+
+        try {
+            deleteMultipleData(`/api/product/deleteMultiple`, {
+                data: { ids: sortedIds }
+            }).then((res) => {
+                console.log(res);
+                getProducts();
+                context.alertBox("Success", "Product deleted")
+            })
+        } catch (error) {
+            context.alertBox("error", "Error deleting items.");
+        }
+    }
+
 
     return (
         <>
@@ -137,7 +201,15 @@ const Products = () => {
             <div className='flex items-center justify-between px-2 py-0 mt-3'>
                 <h2 className='text-[18px] font-[600]'>Products <span className='font-[400] text-[14px]'>(Material Ui Table)</span></h2>
 
-                <div className='col w-[20%] ml-auto flex items-center gap-3 justify-end'>
+                
+                <div className='col w-[45%] ml-auto flex items-center gap-3 justify-end'>
+                    {
+                        sortedIds?.length !== 0 && <Button variant='contained' className='btn-sm' size='small' color='error'
+                            onClick={deleteMultipleProduct}
+                        >
+                            Delete({sortedIds?.length})
+                        </Button>
+                    }
                     <Button className='btn bg-green-600! text-white! btn-sm'>
                         Export
                     </Button>
@@ -275,7 +347,10 @@ const Products = () => {
                         <TableHead>
                             <TableRow>
                                 <TableCell>
-                                    <Checkbox {...label} size='small' />
+                                    <Checkbox {...label} size='small'
+                                        onChange={handleSelectAll}
+                                        checked={productData?.length > 0 ? productData?.every((item) => item?.checked) : false}
+                                    />
                                 </TableCell>
 
                                 {columns.map((column) => (
@@ -299,7 +374,10 @@ const Products = () => {
                                     return (
                                         <TableRow key={index}>
                                             <TableCell style={{ minWidth: columns.minWidth }}>
-                                                <Checkbox {...label} size='small' />
+                                                <Checkbox {...label} size='small'
+                                                    checked={product?.checked === true ? true : false} 
+                                                    onChange={(e) => handleCheckboxChange(e, product._id, index)}
+                                                />
                                             </TableCell>
 
                                             <TableCell style={{ minWidth: columns.minWidth }}>

@@ -679,7 +679,7 @@ export async function getAllFeaturedProducts(req, res) {
 
 // delete product
 export async function deleteProduct(req, res) {
-    const product = await ProductModel.findById(req.params.id);
+    const product = await ProductModel.findById(req.params.id).populate("category");
 
     if (!product) {
         return res.status(404).json({
