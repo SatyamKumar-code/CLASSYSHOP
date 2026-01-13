@@ -1,18 +1,12 @@
 import Button from '@mui/material/Button'
-import Checkbox from '@mui/material/Checkbox';
 import CircularProgress from '@mui/material/CircularProgress';
 import React, { useContext, useEffect, useState } from 'react'
 import { FaCloudUploadAlt } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
-import Progress from '../../Components/ProgressBar';
-import TooltipMUI from '@mui/material/Tooltip';
 import { AiOutlineEdit } from 'react-icons/ai';
-import { FaRegEye } from 'react-icons/fa6';
 import { GoTrash } from 'react-icons/go';
 import { MyContext } from '../../App';
 import { deleteData, editData, fetchDataFromApi, postData } from '../../utils/api';
 
-const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 const AddWEIGHT = () => {
 
@@ -161,12 +155,7 @@ const AddWEIGHT = () => {
                         <table className="w-full text-sm text-left rtl:text-right text-gray-500">
                             <thead className="text-xs text-gray-700 uppercase bg-gray-1 00">
                                 <tr>
-                                    <th scope="col" className="px-6 pr-0 py-3" width="10%">
-                                        <div className='w-[60px]'>
-                                            <Checkbox {...label} size='small' />
-                                        </div>
-                                    </th>
-                                    <th scope="col" className="px-2 py-3 whitespace-nowrap" width="60%">
+                                    <th scope="col" className="px-6 py-3 whitespace-nowrap" width="60%">
                                         PRODUCT WEIGHT
                                     </th>
                                     <th scope="col" className="px-6 py-3 whitespace-nowrap" width="30%">
@@ -181,13 +170,8 @@ const AddWEIGHT = () => {
                                     data?.map((item, index) => {
                                         return (
                                             <tr className='odd:bg-white odd:dark:bg-white even:bg-gray-50 even:dark:bg-gray-100 border-b dark:border-gray-700' key={index}>
-                                                <td className='px-6 pr-0 py-2'>
-                                                    <div className='w-[60px]'>
-                                                        <Checkbox {...label} size='small' />
-                                                    </div>
-                                                </td>
-
-                                                <td className='px-0 py-2'>
+                                                
+                                                <td className='px-6 py-2'>
                                                     <span className='font-[600]'>{item?.weight}</span>
                                                 </td>
 

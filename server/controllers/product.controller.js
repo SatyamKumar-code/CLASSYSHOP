@@ -907,7 +907,7 @@ export async function updateProduct(req, res) {
 export async function createProductRAMS(req, res) {
     try {
         let productRAMS = new ProductRAMSModel({
-            name: req.body.name,
+            Ram: req.body.Ram,
         })
 
         productRAMS = await productRAMS.save();
@@ -974,7 +974,7 @@ export async function updateProductRam(req, res) {
         const productRam = await ProductRAMSModel.findByIdAndUpdate(
             req.params.id,
             {
-                name: req.body.name,
+                Ram: req.body.Ram,
                 
             },
             { new: true }

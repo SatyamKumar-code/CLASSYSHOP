@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const productRAMSSchema = new mongoose.Schema({
-    name: {
+    Ram: {
         type: String,
         required: true,
     },

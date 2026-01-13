@@ -1,23 +1,17 @@
 import Button from '@mui/material/Button'
-import Checkbox from '@mui/material/Checkbox';
 import CircularProgress from '@mui/material/CircularProgress';
 import React, { useContext, useEffect, useState } from 'react'
 import { FaCloudUploadAlt } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
-import Progress from '../../Components/ProgressBar';
-import TooltipMUI from '@mui/material/Tooltip';
 import { AiOutlineEdit } from 'react-icons/ai';
-import { FaRegEye } from 'react-icons/fa6';
 import { GoTrash } from 'react-icons/go';
 import { MyContext } from '../../App';
 import { deleteData, editData, fetchDataFromApi, postData } from '../../utils/api';
 
-const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 const AddRAMS = () => {
 
     const [isLoading, setIsLoading] = useState(false);
-    const [name, setName] = useState('');
+    const [Ram, setRam] = useState('');
     const [data, setData] = useState([]);
     const [editId, setEditId] = useState('');
     const [editMode, setEditMode] = useState(false);
@@ -41,7 +35,7 @@ const AddRAMS = () => {
 
         setIsLoading(true);
 
-        if (name === '') {
+        if (Ram === '') {
             context.alertBox("error", "Please enter product RAM.");
             setIsLoading(false);
             return false;
@@ -49,13 +43,13 @@ const AddRAMS = () => {
 
         if (editId === undefined || editId === '') {
             postData(`/api/product/productRAMS/create`, {
-                name: name
+                Ram: Ram
             }).then((res) => {
                 if (res.error === false) {
                     context.alertBox("Success", res?.message);
                     setTimeout(() => {
                         getData();
-                        setName('');
+                        setRam('');
                         setIsLoading(false); 
                     }, 300);
                 } else {
@@ -72,13 +66,13 @@ const AddRAMS = () => {
         if (editId !== '') {
             // Update RAM logic here
             editData(`/api/product/productRAMS/${editId}`, {
-                name: name
+                Ram: Ram
             }).then((res) => {
                 if (res?.data?.error === false) {
                     context.alertBox("Success", res?.data?.message);
                     setTimeout(() => {
                         getData();
-                        setName('');
+                        setRam('');
                         setIsLoading(false);
                         setEditId('');
                         setEditMode(false);
@@ -112,7 +106,7 @@ const AddRAMS = () => {
     const editItem = (id) => {
         fetchDataFromApi(`/api/product/productRAMS/${id}`).then((res) => {
             if (res?.error === false) {
-                setName(res?.data?.name || '');
+                setRam(res?.data?.Ram || '');
                 setEditId(res?.data?._id || '');
                 setEditMode(true);
             } else {
@@ -135,10 +129,10 @@ const AddRAMS = () => {
                     <div className="col mb-4">
                         <h3 className='text-[14px] font-[500] mb-1 text-black'>{editMode ? "Edit" : "Add"} Product RAM</h3>
                         <input type='text' className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-smp-3 text-sm'
-                            name='name'
-                            value={name}
+                            name='Ram'
+                            value={Ram}
                             placeholder={editMode ? 'Edit product RAM' : 'Enter product RAM'}
-                            onChange={(e) => setName(e.target.value)}
+                            onChange={(e) => setRam(e.target.value)}
                         />
                     </div>
                     <Button type='submit' className='btn-blue btn-lg w-full flext gap-2'>
@@ -161,12 +155,7 @@ const AddRAMS = () => {
                         <table className="w-full text-sm text-left rtl:text-right text-gray-500">
                             <thead className="text-xs text-gray-700 uppercase bg-gray-1 00">
                                 <tr>
-                                    <th scope="col" className="px-6 pr-0 py-3" width="10%">
-                                        <div className='w-[60px]'>
-                                            <Checkbox {...label} size='small' />
-                                        </div>
-                                    </th>
-                                    <th scope="col" className="px-2 py-3 whitespace-nowrap" width="60%">
+                                    <th scope="col" className="px-6 py-3 whitespace-nowrap" width="60%">
                                         PRODUCT RAM
                                     </th>
                                     <th scope="col" className="px-6 py-3 whitespace-nowrap" width="30%">
@@ -181,14 +170,9 @@ const AddRAMS = () => {
                                     data?.map((item, index) => {
                                         return (
                                             <tr className='odd:bg-white odd:dark:bg-white even:bg-gray-50 even:dark:bg-gray-100 border-b dark:border-gray-700' key={index}>
-                                                <td className='px-6 pr-0 py-2'>
-                                                    <div className='w-[60px]'>
-                                                        <Checkbox {...label} size='small' />
-                                                    </div>
-                                                </td>
-
-                                                <td className='px-0 py-2'>
-                                                    <span className='font-[600]'>{item?.name}</span>
+                                                
+                                                <td className='px-6 py-2'>
+                                                    <span className='font-[600]'>{item?.Ram}</span>
                                                 </td>
 
                                                 <td className='px-6 py-2'>
