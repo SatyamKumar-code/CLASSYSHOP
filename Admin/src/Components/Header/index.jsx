@@ -72,7 +72,7 @@ const Header = () => {
 
   return (
     <>
-      <header className={`w-full h-auto py-2 shadow-md pr-7 bg-white flex items-center justify-between ${context.isSidebarOpen === true ? 'pl-80' : 'pl-5'} transition-all duration-300`}>
+      <header className={`w-full h-auto py-2 shadow-md pr-7 bg-white flex items-center justify-between ${context.isSidebarOpen === true ? 'pl-80' : 'pl-5'} transition-all fixed top-0 left-0 z-50`}>
         <div className='part1'>
           <Button className='w-10! min-w-10! h-10! rounded-full! text-[rgba(0,0,0,0.7)]!'
             onClick={() => context.setisSidebarOpen(!context.isSidebarOpen)} >
