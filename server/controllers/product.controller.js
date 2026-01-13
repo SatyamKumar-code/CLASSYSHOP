@@ -1,5 +1,7 @@
 import ProductModel from '../models/product.model.js';
 import ProductRAMSModel from '../models/productRAMS.js';
+import productWEIGHTModel from '../models/productWEIGHT.js';
+import productSIZESModel from '../models/productSIZE.js';
 
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
@@ -901,7 +903,7 @@ export async function updateProduct(req, res) {
         })
     }
 }
-
+// // Product RAMS Controllers
 export async function createProductRAMS(req, res) {
     try {
         let productRAMS = new ProductRAMSModel({
@@ -965,46 +967,6 @@ export async function deleteProductRAMS(req, res) {
     });
 }
 
-
-// delete multiple products
-export async function deleteMultipleProductRams(req, res) {
-    try {
-        const { ids } = req.body; // Array of product IDs to be deleted
-
-        if(!ids || !Array.isArray(ids)) {
-            return res.status(400).json({
-                error: true,
-                success: false,
-                message: "Invalid Input"
-            })
-        }
-
-        try {
-            await ProductRAMSModel.deleteMany({ _id: { $in: ids }});
-
-            return res.status(200).json({
-                message: "Product RAMS deleted successfully",
-                error: false,
-                success: true
-            })
-
-        } catch (error) {
-            return res.status(500).json({
-                messsage: error.message || error,
-                error: true,
-                success: false
-            })
-        }
-
-    } catch (error) {
-        return res.status(500).json({
-            messsage: error.message || error,
-            error: true,
-            success: false
-        })
-    }
-
-}
 
 // Update Product RAMS
 export async function updateProductRam(req, res) {
@@ -1082,6 +1044,317 @@ export async function getProductRamById(req, res) {
             error: false,
             success: true,
             data: productRam
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+
+
+
+
+// // Product WEIGHT Controllers
+export async function createProductWEIGHT(req, res) {
+    try {
+        let productWEIGHT = new productWEIGHTModel({
+            weight: req.body.weight,
+        })
+
+        productWEIGHT = await productWEIGHT.save();
+        
+        if( !productWEIGHT ) {
+            res.status(400).json({
+                message: "Product WEIGHT not created",
+                error: true,
+                success: false
+            })
+        }
+
+        return res.status(201).json({
+            message: "Product WEIGHT created successfully",
+            error: false,
+            success: true,
+            product: productWEIGHT
+        })
+
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+// delete productWEIGHT
+export async function deleteProductWEIGHT(req, res) {
+    const productWeight = await productWEIGHTModel.findById(req.params.id);
+
+    if (!productWeight) {
+        return res.status(404).json({
+            message: "Item not found",
+            error: true,
+            success: false
+        });
+    }
+
+
+    const deletedProductWeight = await productWEIGHTModel.findByIdAndDelete(req.params.id);
+
+    if (!deletedProductWeight) {
+        return res.status(400).json({
+            message: "Product WEIGHT not deleted! ",
+            error: true,
+            success: false
+        });
+    }
+
+    return res.status(200).json({
+        message: "Product WEIGHT deleted!",
+        error: false,
+        success: true
+    });
+}
+
+
+// Update Product WEIGHT
+export async function updateProductWEIGHT(req, res) {
+    try {
+        const productWEIGHT = await productWEIGHTModel.findByIdAndUpdate(
+            req.params.id,
+            {
+                weight: req.body.weight,
+                
+            },
+            { new: true }
+        )
+
+        if (!productWEIGHT) {
+            return res.status(400).json({
+                message: "Product WEIGHT not updated",
+                error: true,
+                success: false
+            });
+        }
+
+        return res.status(200).json({
+            message: "Product WEIGHT is updated",
+            error: false,
+            success: true,
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+export async function getProductWeight(req, res) {
+    try {
+        const productWeight = await productWEIGHTModel.find();
+
+        if(!productWeight) {
+            return res.status(404).json({
+                error: true,
+                success: false
+            })
+        }
+
+        return res.status(200).json({
+            error: false,
+            success: true,
+            data: productWeight
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+// get single productWEIGHT by id
+export async function getProductWeightById(req, res) {
+    try {
+        const productWeight = await productWEIGHTModel.findById(req.params.id);
+
+        if(!productWeight) {
+            return res.status(404).json({
+                error: true,
+                success: false
+            })
+        }
+
+        return res.status(200).json({
+            error: false,
+            success: true,
+            data: productWeight
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+// Product SIZE Controllers
+export async function createProductSIZE(req, res) {
+    try {
+        let productSIZE = new productSIZESModel({
+            size: req.body.size,
+        })
+
+        productSIZE = await productSIZE.save();
+        
+        if( !productSIZE ) {
+            res.status(400).json({
+                message: "Product SIZE not created",
+                error: true,
+                success: false
+            })
+        }
+
+        return res.status(201).json({
+            message: "Product SIZE created successfully",
+            error: false,
+            success: true,
+            product: productSIZE
+        })
+
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+// delete productSIZE
+export async function deleteProductSIZE(req, res) {
+    const productSize = await productSIZESModel.findById(req.params.id);
+
+    if (!productSize) {
+        return res.status(404).json({
+            message: "Item not found",
+            error: true,
+            success: false
+        });
+    }
+
+
+    const deletedProductSize = await productSIZESModel.findByIdAndDelete(req.params.id);
+
+    if (!deletedProductSize) {
+        return res.status(400).json({
+            message: "Product SIZE not deleted! ",
+            error: true,
+            success: false
+        });
+    }
+
+    return res.status(200).json({
+        message: "Product SIZE deleted!",
+        error: false,
+        success: true
+    });
+}
+
+
+// Update Product Size
+export async function updateProductSIZE(req, res) {
+    try {
+        const productSIZE = await productSIZESModel.findByIdAndUpdate(
+            req.params.id,
+            {
+                size: req.body.size,
+                
+            },
+            { new: true }
+        )
+
+        if (!productSIZE) {
+            return res.status(400).json({
+                message: "Product SIZE not updated",
+                error: true,
+                success: false
+            });
+        }
+
+        return res.status(200).json({
+            message: "Product SIZE is updated",
+            error: false,
+            success: true,
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+// get all productSIZE
+export async function getProductSize(req, res) {
+    try {
+        const productSize = await productSIZESModel.find();
+
+        if(!productSize) {
+            return res.status(404).json({
+                error: true,
+                success: false
+            })
+        }
+
+        return res.status(200).json({
+            error: false,
+            success: true,
+            data: productSize
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+// get single productSIZE by id
+export async function getProductSizeById(req, res) {
+    try {
+        const productSize = await productSIZESModel.findById(req.params.id);
+
+        if(!productSize) {
+            return res.status(404).json({
+                error: true,
+                success: false
+            })
+        }
+
+        return res.status(200).json({
+            error: false,
+            success: true,
+            data: productSize
         })
 
     } catch (error) {
