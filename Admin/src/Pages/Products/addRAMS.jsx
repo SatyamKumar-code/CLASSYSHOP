@@ -10,7 +10,7 @@ import { AiOutlineEdit } from 'react-icons/ai';
 import { FaRegEye } from 'react-icons/fa6';
 import { GoTrash } from 'react-icons/go';
 import { MyContext } from '../../App';
-import { deleteData, fetchDataFromApi, postData } from '../../utils/api';
+import { deleteData, editData, fetchDataFromApi, postData } from '../../utils/api';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -19,6 +19,8 @@ const AddRAMS = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [name, setName] = useState('');
     const [data, setData] = useState([]);
+    const [editId, setEditId] = useState('');
+    const [editMode, setEditMode] = useState(false);
 
     const context = useContext(MyContext);
 
@@ -45,25 +47,52 @@ const AddRAMS = () => {
             return false;
         }
 
-        postData(`/api/product/productRAMS/create`, {
-            name: name
-        }).then((res) => {
-            if (res.error === false) {
-                context.alertBox("Success", "Product RAM created successfully!");
-                setTimeout(() => {
-                    getData();
-                    setName('');
+        if (editId === undefined || editId === '') {
+            postData(`/api/product/productRAMS/create`, {
+                name: name
+            }).then((res) => {
+                if (res.error === false) {
+                    context.alertBox("Success", res?.message);
+                    setTimeout(() => {
+                        getData();
+                        setName('');
+                        setIsLoading(false); 
+                    }, 300);
+                } else {
+                    context.alertBox("error", res?.message || "Failed to create RAM");
                     setIsLoading(false);
-                }, 300);
-            } else {
-                context.alertBox("error", res.message || "Failed to create RAM");
+                }
+
+            }).catch((err) => {
+                context.alertBox("error", "Something went wrong!");
                 setIsLoading(false);
-            }
-            
-        }).catch((err) => {
-            context.alertBox("error", "Something went wrong!");
-            setIsLoading(false);
-        });
+            });
+        }
+
+        if (editId !== '') {
+            // Update RAM logic here
+            editData(`/api/product/productRAMS/${editId}`, {
+                name: name
+            }).then((res) => {
+                if (res?.data?.error === false) {
+                    context.alertBox("Success", res?.data?.message);
+                    setTimeout(() => {
+                        getData();
+                        setName('');
+                        setIsLoading(false);
+                        setEditId('');
+                        setEditMode(false);
+                    }, 300);
+                } else {
+                    context.alertBox("error", res?.data?.message || "Failed to create RAM");
+                    setIsLoading(false);
+                }
+
+            }).catch((err) => {
+                context.alertBox("error", "Something went wrong!");
+                setIsLoading(false);
+            });
+        }
     }
 
     const deleteItem = (id) => {
@@ -80,6 +109,20 @@ const AddRAMS = () => {
         });
     }
 
+    const editItem = (id) => {
+        fetchDataFromApi(`/api/product/productRAMS/${id}`).then((res) => {
+            if (res?.error === false) {
+                setName(res?.data?.name || '');
+                setEditId(res?.data?._id || '');
+                setEditMode(true);
+            } else {
+                context.alertBox("error", res?.message || "Failed to fetch RAM data");
+            }
+        }).catch((err) => {
+            context.alertBox("error", "Something went wrong!");
+        });
+    }
+
     return (
         <>
             <div className='flex items-center justify-between px-2 py-0 mt-3'>
@@ -90,11 +133,11 @@ const AddRAMS = () => {
             <div className="card my-4 pt-5 pb-5 shadow-md sm:rounded-lg bg-white w-[65%]">
                 <form className='form py-3 p-6' onSubmit={handleSubmit}>
                     <div className="col mb-4">
-                        <h3 className='text-[14px] font-[500] mb-1 text-black'>Product RAM</h3>
+                        <h3 className='text-[14px] font-[500] mb-1 text-black'>{editMode ? "Edit" : "Add"} Product RAM</h3>
                         <input type='text' className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-smp-3 text-sm'
                             name='name'
                             value={name}
-                            placeholder='Enter product RAM'
+                            placeholder={editMode ? 'Edit product RAM' : 'Enter product RAM'}
                             onChange={(e) => setName(e.target.value)}
                         />
                     </div>
@@ -145,12 +188,14 @@ const AddRAMS = () => {
                                                 </td>
 
                                                 <td className='px-0 py-2'>
-                                                    {item?.name}
+                                                    <span className='font-[600]'>{item?.name}</span>
                                                 </td>
 
                                                 <td className='px-6 py-2'>
                                                     <div className='flex items-center gap-1'>
-                                                        <Button className='!w-[35] !h-[35px] bg-[#f1f1f1] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1] !min-w-[35px] !min-h-[35px]'>
+                                                        <Button className='!w-[35] !h-[35px] bg-[#f1f1f1] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1] !min-w-[35px] !min-h-[35px]'
+                                                            onClick={() => editItem(item?._id)}
+                                                        >
                                                             <AiOutlineEdit className='text-[rgba(0,0,0,07)] text-[20px]' />
                                                         </Button>
 

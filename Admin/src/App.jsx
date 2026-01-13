@@ -328,7 +328,7 @@ function App() {
       path: '/product/addRams',
       exaxt: true,
       element: (
-        <>
+        <> 
           <section className='main'>
             <Header />
             <div className='contentMain flex'>

@@ -1066,3 +1066,29 @@ export async function getProductRam(req, res) {
         })
     }
 }
+
+export async function getProductRamById(req, res) {
+    try {
+        const productRam = await ProductRAMSModel.findById(req.params.id);
+
+        if(!productRam) {
+            return res.status(404).json({
+                error: true,
+                success: false
+            })
+        }
+
+        return res.status(200).json({
+            error: false,
+            success: true,
+            data: productRam
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
