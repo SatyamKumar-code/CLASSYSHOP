@@ -102,10 +102,6 @@ const CategoryList = () => {
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead>
                             <TableRow>
-                                <TableCell width={60}>
-                                    <Checkbox {...label} size='small' />
-                                </TableCell>
-
                                 {columns.map((column) => (
                                     <TableCell
                                         width={column.minWidth}
@@ -123,12 +119,9 @@ const CategoryList = () => {
                                 context?.catData?.length !== 0 && context?.catData?.map((item, index) => {
                                     return (
                                         <TableRow key={index}>
-                                            <TableCell >
-                                                <Checkbox {...label} size='small' />
-                                            </TableCell>
 
                                             <TableCell width={100} >
-                                                <div className='flex items-center gap-4 w-[80px]'>
+                                                <div className='flex items-center gap-4 w-[50px]'>
                                                     <div className='img w-full rounded-md overflow-hidden group'>
                                                         <Link to="/product/45745">
                                                             <LazyLoadImage

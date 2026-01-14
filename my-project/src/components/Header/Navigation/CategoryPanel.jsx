@@ -20,8 +20,9 @@ const CategoryPanel = (props) => {
         <Box sx={{ width: 250 }} role="presentation" className="catagoryPanel">
             <h3 className='p-3 text-[16px] font-[500] flex items-center justify-between'>Shop By Categories<IoCloseSharp className=' text-[20px] cursor-pointer' onClick={toggleDrawer(false)} /></h3>
 
-            <CategoryCollapse />
-
+            {
+                props.data?.length !== 0 && <CategoryCollapse data={props.data} />
+            }
         </Box>
     );
 
