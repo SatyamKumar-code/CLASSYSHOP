@@ -13,7 +13,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import { FaRegEye } from 'react-icons/fa';
 import { MyContext } from '../../App';
 import { deleteData, fetchDataFromApi } from '../../utils/api';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
@@ -79,7 +78,7 @@ const CategoryList = () => {
         <>
 
             <div className='flex items-center justify-between px-2 py-0 mt-3'>
-                <h2 className='text-[18px] font-[600]'>Category List <span className='font-[400] text-[14px]'> (Material Ui Table)</span></h2>
+                <h2 className='text-[18px] font-[600]'>Category List</h2>
 
                 <div className='col w-[30%] ml-auto flex items-center gap-3 justify-end'>
                     <Button className='btn bg-green-600! text-white! btn-sm'>

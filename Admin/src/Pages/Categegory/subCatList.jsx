@@ -56,7 +56,7 @@ const SubCategoryList = () => {
         <>
 
             <div className='flex items-center justify-between px-2 py-0 mt-3'>
-                <h2 className='text-[18px] font-[600]'>Sub Category List <span className='font-[400] text-[14px]'> (Material Ui Table)</span></h2>
+                <h2 className='text-[18px] font-[600]'>Sub Category List</h2>
 
                 <div className='col w-[30%] ml-auto flex items-center gap-3 justify-end'>
                     {/* <Button className='btn bg-green-600! text-white! btn-sm'>

@@ -93,12 +93,11 @@ const Products = () => {
         // Update the sorted IDS satate
         if (isChecked) {
             const ids = updatedItems.map((item) => item._id).sort((a, b) => a - b);
-            console.log(ids);
             setSortedIds(ids);
             
-        }else [
+        }else {
             setSortedIds([])
-        ]
+        }
     }
 
     // Handle to toggle individual checkbox
@@ -214,9 +213,9 @@ const Products = () => {
             deleteMultipleData(`/api/product/deleteMultiple`, {
                 data: { ids: sortedIds }
             }).then((res) => {
-                console.log(res);
                 getProducts();
                 context.alertBox("Success", "Product deleted")
+                setSortedIds([]);
             })
         } catch (error) {
             context.alertBox("error", "Error deleting items.");
@@ -228,7 +227,7 @@ const Products = () => {
         <>
 
             <div className='flex items-center justify-between px-2 py-0 mt-3'>
-                <h2 className='text-[18px] font-[600]'>Products <span className='font-[400] text-[14px]'>(Material Ui Table)</span></h2>
+                <h2 className='text-[18px] font-[600]'>Products</h2>
 
                 
                 <div className='col w-[45%] ml-auto flex items-center gap-3 justify-end'>

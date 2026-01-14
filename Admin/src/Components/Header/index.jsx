@@ -10,7 +10,7 @@ import Divider from '@mui/material/Divider';
 import { FaRegUser } from 'react-icons/fa6';
 import { IoMdLogOut } from 'react-icons/io';
 import { MyContext } from '../../App';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { fetchDataFromApi } from '../../utils/api';
 import AddProduct from '../../Pages/Products/addProduct';
 import AddHomeSlide from '../../Pages/HomeSliderBanners/addHomeSlide';
@@ -48,6 +48,9 @@ const Header = () => {
 
   const [anchorMyAcc, setAnchorMyAcc] = useState(null);
   const openMyAcc = Boolean(anchorMyAcc);
+
+  const history = useNavigate();
+
   const handleClickMyAcc = (event) => {
     setAnchorMyAcc(event.currentTarget);
   };
@@ -66,6 +69,7 @@ const Header = () => {
         localStorage.removeItem("refreshToken");
         context.alertBox("Success", res?.message);
         context.setIsLogin(false);
+        history("/login");
       }
     })
   }
