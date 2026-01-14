@@ -1,4 +1,4 @@
-import React, { useState, PureComponent, useContext } from 'react'
+import React, { useState, PureComponent, useContext, useEffect } from 'react'
 import DashboardBoxes from '../../Components/DashboardBoxes';
 import Button from '@mui/material/Button';
 import { FaPlus } from 'react-icons/fa6';
@@ -6,13 +6,14 @@ import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
 import Badge from '../../Components/Badge'
 import Checkbox from '@mui/material/Checkbox';
 import { Link } from 'react-router-dom';
-import Progress from '../../Components/ProgressBar';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { FaRegEye } from 'react-icons/fa6';
 import { GoTrash } from 'react-icons/go';
-import TooltipMUI from '@mui/material/Tooltip';
-import Pagination from '@mui/material/Pagination';
-import { BiExport } from 'react-icons/bi';
+import SearchBox from '../../Components/SearchBox';
+import TableSkeleton from '../../Components/Skeleton/TableSkeleton';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
+import Rating from '@mui/material/Rating';
 
 
 
@@ -26,8 +27,9 @@ import TableRow from '@mui/material/TableRow';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { MyContext } from '../../App';
+import { fetchDataFromApi } from '../../utils/api';
 
 
 
@@ -53,6 +55,11 @@ const columns = [
     minWidth: 100,
   },
   {
+    id: 'rating',
+    label: 'RATING',
+    minWidth: 100,
+  },
+  {
     id: 'action',
     label: 'ACTION',
     minWidth: 120,
@@ -73,6 +80,12 @@ const Dashboard = () => {
 
 
   const [isOpenOrderdProduct, setIsOpenOrderdProduct] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [productCat, setProductCat] = useState('');
+  const [productData, setProductData] = useState([]);
+  const [productSubCat, setProductSubCat] = useState('');
+  const [productThirdLavelCat, setProductThirdLavelCat] = useState('');
+  const [sortedIds, setSortedIds] = useState([]);
 
   const isShowOrderdProduct = (index) => {
     if (isOpenOrderdProduct === index) {
@@ -88,81 +101,124 @@ const Dashboard = () => {
 
   const [categoryFilterVal, setCategoryFilterVal] = useState('');
   const [chart1Data, setChart1Data] = useState([
-  {
-    name: 'JAN',
-    TotalSales: 4000,
-    TotalUsers: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'FEB',
-    TotalSales: 3000,
-    TotalUsers: 1398,
-    amt: 2210,
-  },
-  {
-    name: 'MAR',
-    TotalSales: 2000,
-    TotalUsers: 9800,
-    amt: 2290,
-  },
-  {
-    name: 'APR',
-    TotalSales: 2780,
-    TotalUsers: 3908,
-    amt: 2000,
-  },
-  {
-    name: 'MAY',
-    TotalSales: 1890,
-    TotalUsers: 4800,
-    amt: 2181,
-  },
-  {
-    name: 'JUN',
-    TotalSales: 2390,
-    TotalUsers: 3800,
-    amt: 2500,
-  },
-  {
-    name: 'JUL',
-    TotalSales: 3490,
-    TotalUsers: 4300,
-    amt: 2100,
-  },
-  {
-    name: 'AUG',
-    TotalSales: 8990,
-    TotalUsers: 3500,
-    amt: 4500,
-  },
-  {
-    name: 'SEP',
-    TotalSales: 5490,
-    TotalUsers: 4300,
-    amt: 2100,
-  },
-  {
-    name: 'OCT',
-    TotalSales: 3490,
-    TotalUsers: 6520,
-    amt: 2100,
-  },
-  {
-    name: 'NOV',
-    TotalSales: 3490,
-    TotalUsers: 2300,
-    amt: 2100,
-  },
-  {
-    name: 'DEC',
-    TotalSales: 3990,
-    TotalUsers: 5300,
-    amt: 2600,
-  }
-]);
+    {
+      name: 'JAN',
+      TotalSales: 4000,
+      TotalUsers: 2400,
+      amt: 2400,
+    },
+    {
+      name: 'FEB',
+      TotalSales: 3000,
+      TotalUsers: 1398,
+      amt: 2210,
+    },
+    {
+      name: 'MAR',
+      TotalSales: 2000,
+      TotalUsers: 9800,
+      amt: 2290,
+    },
+    {
+      name: 'APR',
+      TotalSales: 2780,
+      TotalUsers: 3908,
+      amt: 2000,
+    },
+    {
+      name: 'MAY',
+      TotalSales: 1890,
+      TotalUsers: 4800,
+      amt: 2181,
+    },
+    {
+      name: 'JUN',
+      TotalSales: 2390,
+      TotalUsers: 3800,
+      amt: 2500,
+    },
+    {
+      name: 'JUL',
+      TotalSales: 3490,
+      TotalUsers: 4300,
+      amt: 2100,
+    },
+    {
+      name: 'AUG',
+      TotalSales: 8990,
+      TotalUsers: 3500,
+      amt: 4500,
+    },
+    {
+      name: 'SEP',
+      TotalSales: 5490,
+      TotalUsers: 4300,
+      amt: 2100,
+    },
+    {
+      name: 'OCT',
+      TotalSales: 3490,
+      TotalUsers: 6520,
+      amt: 2100,
+    },
+    {
+      name: 'NOV',
+      TotalSales: 3490,
+      TotalUsers: 2300,
+      amt: 2100,
+    },
+    {
+      name: 'DEC',
+      TotalSales: 3990,
+      TotalUsers: 5300,
+      amt: 2600,
+    }
+  ]);
 
   const context = useContext(MyContext);
+
+  useEffect(() => {
+    getProducts();
+  }, [context?.isOpenFullScreenPanel?.open]);
+
+  // Handle to toggle all checkboxes
+  const handleSelectAll = (e) => {
+    const isChecked = e.target.checked;
+
+    // Update all items' checked status
+    const updatedItems = productData.map((item) => ({
+      ...item,
+      checked: isChecked,
+    }));
+    setProductData(updatedItems);
+
+    // Update the sorted IDS satate
+    if (isChecked) {
+      const ids = updatedItems.map((item) => item._id).sort((a, b) => a - b);
+      console.log(ids);
+      setSortedIds(ids);
+
+    } else[
+      setSortedIds([])
+    ]
+  }
+
+  const getProducts = async () => {
+    setIsLoading(true);
+    fetchDataFromApi("/api/product/getAllProducts").then((res) => {
+      let productArr = [];
+      if (res?.error === false) {
+        for (let i = 0; i < res?.products?.length; i++) {
+          productArr[i] = res?.products[i];
+          productArr[i].checked = false;
+        }
+        setTimeout(() => {
+          setIsLoading(false);
+          setProductData(productArr);
+        }, 300);
+      }
+    })
+  }
 
   const handleChangeCatFilter = (event, newPage) => {
     setCategoryFilterVal(event.target.value);
@@ -177,6 +233,52 @@ const Dashboard = () => {
     setPage(0);
   };
 
+  const handleChangeProductCat = (event) => {
+    setIsLoading(true);
+    setProductCat(event.target.value);
+    setProductSubCat('');
+    setProductThirdLavelCat('');
+    fetchDataFromApi(`/api/product/getAllProductsByCatid/${event.target.value}`).then((res) => {
+      if (res?.error === false) {
+        setTimeout(() => {
+          setProductData(res?.products || []);
+          setIsLoading(false);
+        }, 300);
+      }
+    })
+  };
+
+  const handleChangeProductSubCat = (event) => {
+    setIsLoading(true);
+    setProductCat('');
+    setProductSubCat(event.target.value);
+    setProductThirdLavelCat('');
+    fetchDataFromApi(`/api/product/getAllProductsBySubCatid/${event.target.value}`).then((res) => {
+      if (res?.error === false) {
+        setTimeout(() => {
+          setProductData(res?.products || []);
+          setIsLoading(false);
+        }, 300);
+      }
+    })
+  };
+
+  const handleChangeProductThirdLavelCat = (event) => {
+    setIsLoading(true);
+    setProductCat('');
+    setProductSubCat('');
+    setProductThirdLavelCat(event.target.value);
+    fetchDataFromApi(`/api/product/getAllProductsByThirdLavelCat/${event.target.value}`).then((res) => {
+
+      if (res?.error === false) {
+        setTimeout(() => {
+          setProductData(res?.products || []);
+          setIsLoading(false);
+        }, 300);
+      }
+    })
+  };
+
   return (
     <>
       <div className='w-full py-2 px-5 border bg-[#f1faff] border-[rgba(0,0,0,0.1)] flex items-center gap-8 mb-5 justify-between rounded-md'>
@@ -185,13 +287,13 @@ const Dashboard = () => {
           <p>Hear's What happening on your store today. See the statistics at once.</p>
           <br />
           <Button className="btn-blue capitalize!"
-          onClick={()=> context.setIsOpenFullScreenPanel({
-            open:true,
-            model:"Add Product"
-          })}
+            onClick={() => context.setIsOpenFullScreenPanel({
+              open: true,
+              model: "Add Product"
+            })}
           >
             <FaPlus />
-             Add product
+            Add product
           </Button>
         </div>
 
@@ -199,813 +301,134 @@ const Dashboard = () => {
       </div>
       <DashboardBoxes />
 
-      <div className='card my-4 shadow-md sm:rounded-lg bg-white'>
-        <div className='flex items-center justify-between px-5 py-5'>
-          <h2 className='text-[18px] font-[600]'>Products <span className='font-[400] text-[14px]'>(Tailwind Css Table)</span></h2>
-        </div>
+      <div className='card my-4 pt-5 shadow-md sm:rounded-lg bg-white'>
 
-        <div className='flex items-center w-full pl-5 justify-between pr-5'>
-          <div className='col w-[20%]'>
+
+        <div className='flex items-center w-full px-5 justify-between gap-4'>
+          <div className='col w-[15%]'>
             <h4 className='font-[600] text-[13px] mb-2'>Category By</h4>
 
-            <Select
-              className='w-full'
-              size='small'
-              labelId="demo-simple-select-standard-label"
-              id="demo-simple-select-standard"
-              value={categoryFilterVal}
-              onChange={handleChangeCatFilter}
-              label="Category"
-            >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
-              <MenuItem value={10}>Men</MenuItem>
-              <MenuItem value={20}>Women</MenuItem>
-              <MenuItem value={30}>Kids</MenuItem>
-            </Select>
+            {
+              context?.catData?.length !== 0 &&
+              <Select
+                style={{ zoom: '80%' }}
+                labelId="demo-simple-select-label"
+                id="productCatDrop"
+                size='small'
+                className='w-full'
+                value={productCat}
+                label="Category"
+                onChange={handleChangeProductCat}
+              >
+                {
+                  context?.catData?.map((cat, index) => {
+                    return (
+                      <MenuItem
+                        value={cat?._id}
+                      // key={index}
+                      >
+                        {cat?.name}
+                      </MenuItem>
+                    )
+                  })
+                }
+              </Select>
+            }
           </div>
 
-          <div className='col w-[20%] ml-auto flex items-center gap-3'>
-            <Button className='btn bg-green-600! text-white! btn-sm'>
-               Export
-            </Button>
-            <Button className='btn-blue text-white! btn-sm'
-              onClick={()=> context.setIsOpenFullScreenPanel({
-                open:true,
-                model:"Add Product"
-              })}
-            >
-              Add Product</Button>
+          <div className='col w-[15%]'>
+            <h4 className='font-[600] text-[13px] mb-2'>Sub Category By</h4>
+
+            {
+              context?.catData?.length !== 0 &&
+              <Select
+                style={{ zoom: '80%' }}
+                labelId="demo-simple-select-label"
+                id="productCatDrop"
+                size='small'
+                className='w-full'
+                value={productSubCat}
+                label="Sub Category"
+                onChange={handleChangeProductSubCat}
+              >
+                {
+                  context?.catData?.map((cat, index) => {
+                    return (
+                      cat?.Children?.length !== 0 && cat?.Children?.map((subCat, index_) => {
+                        return (
+                          <MenuItem
+                            value={subCat?._id}
+                          // key={index_}
+                          >
+                            {subCat?.name}
+                          </MenuItem>
+                        )
+                      })
+
+                    )
+                  })
+                }
+              </Select>
+            }
           </div>
-        </div> 
 
-        <div className="relative overflow-x-auto mt-5 pb-5">
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-              <tr>
-                <th scope="col" className="px-6 pr-0 py-3" width="10%">
-                  <div className='w-[60px]'>
-                    <Checkbox {...label} size='small' />
-                  </div>
-                </th>
-                <th scope="col" className="px-2 py-3 whitespace-nowrap">
-                  Product
-                </th>
-                <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                  Category
-                </th>
-                <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                  Sub Category
-                </th>
-
-                <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                  Price
-                </th>
-                <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                  SALES
-                </th>
-                <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                  Action
-                </th>
-
-              </tr>
-            </thead>
-            <tbody>
-              <tr className='odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700'>
-                <td className='px-6 pr-0 py-2'>
-                  <div className='w-[60px]'>
-                    <Checkbox {...label} size='small' />
-                  </div>
-                </td>
-
-                <td className='px-0 py-2'>
-                  <div className='flex items-center gap-4 w-[300px]'>
-                    <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
-                      <Link to="/product/45745">
-                        <img src='https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/15.webp'
-                          className='w-full group-hover:scale-105 transition-all'
-                        />
-                      </Link>
-                    </div>
-
-                    <div className='info w-[75%]'>
-                      <h3 className='font-[600] text-[12px] leading-4 hovertext-primary'>
-                        <Link to="/product/45745">
-                          Electronic Rubber Table
-                        </Link>
-                      </h3>
-                      <span className='text-[12px]'>Books</span>
-                    </div>
-                  </div>
-                </td>
-
-                <td className='px-6 py-2'>
-                  Electronics
-                </td>
-
-                <td className='px-6 py-2'>
-                  Women
-                </td>
-
-                <td className='px-6 py-2'>
-                  <div className='flex gap-1 flex-col'>
-                    <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                      $58.00
-                    </span>
-                    <span className='price text-primary text-[14px] font-[600] text-green-600'>
-                      $45.00
-                    </span>
-                  </div>
-                </td>
-
-                <td className='px-6 py-2'>
-                  <p className='text-[14px] w-[100px]'><span className='font-[600]'>234</span> sale</p>
-                  <Progress type="warning" value={40} />
-                </td>
-
-                <td className='px-6 py-2'>
-
-                  <div className='flex items-center gap-1'>
-                    <TooltipMUI title="Edit Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="View Product Dtails" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[18px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="Remove Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-
-
-                  </div>
-                </td>
-
-
-              </tr>
-
-              <tr className='odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700'>
-                <td className='px-6 pr-0 py-2'>
-                  <div className='w-[60px]'>
-                    <Checkbox {...label} size='small' />
-                  </div>
-                </td>
-
-                <td className='px-0 py-2'>
-                  <div className='flex items-center gap-4 w-[300px]'>
-                    <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
-                      <Link to="/product/45745">
-                        <img src='https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/15.webp'
-                          className='w-full group-hover:scale-105 transition-all'
-                        />
-                      </Link>
-                    </div>
-
-                    <div className='info w-[75%]'>
-                      <h3 className='font-[600] text-[12px] leading-4 hovertext-primary'>
-                        <Link to="/product/45745">
-                          Electronic Rubber Table
-                        </Link>
-                      </h3>
-                      <span className='text-[12px]'>Books</span>
-                    </div>
-                  </div>
-                </td>
-
-                <td className='px-6 py-2'>
-                  Electronics
-                </td>
-
-                <td className='px-6 py-2'>
-                  Women
-                </td>
-
-                <td className='px-6 py-2'>
-                  <div className='flex gap-1 flex-col'>
-                    <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                      $58.00
-                    </span>
-                    <span className='price text-primary text-[14px] font-[600] text-green-600'>
-                      $45.00
-                    </span>
-                  </div>
-                </td>
-
-                <td className='px-6 py-2'>
-                  <p className='text-[14px] w-[100px]'><span className='font-[600]'>234</span> sale</p>
-                  <Progress type="warning" value={40} />
-                </td>
-
-                <td className='px-6 py-2'>
-
-                  <div className='flex items-center gap-1'>
-                    <TooltipMUI title="Edit Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="View Product Dtails" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[18px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="Remove Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-
-
-                  </div>
-                </td>
-
-
-              </tr>
-
-
-
-              <tr className='odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700'>
-                <td className='px-6 pr-0 py-2'>
-                  <div className='w-[60px]'>
-                    <Checkbox {...label} size='small' />
-                  </div>
-                </td>
-
-                <td className='px-0 py-2'>
-                  <div className='flex items-center gap-4 w-[300px]'>
-                    <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
-                      <Link to="/product/45745">
-                        <img src='https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/15.webp'
-                          className='w-full group-hover:scale-105 transition-all'
-                        />
-                      </Link>
-                    </div>
-
-                    <div className='info w-[75%]'>
-                      <h3 className='font-[600] text-[12px] leading-4 hovertext-primary'>
-                        <Link to="/product/45745">
-                          Electronic Rubber Table
-                        </Link>
-                      </h3>
-                      <span className='text-[12px]'>Books</span>
-                    </div>
-                  </div>
-                </td>
-
-                <td className='px-6 py-2'>
-                  Electronics
-                </td>
-
-                <td className='px-6 py-2'>
-                  Women
-                </td>
-
-                <td className='px-6 py-2'>
-                  <div className='flex gap-1 flex-col'>
-                    <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                      $58.00
-                    </span>
-                    <span className='price text-primary text-[14px] font-[600] text-green-600'>
-                      $45.00
-                    </span>
-                  </div>
-                </td>
-
-                <td className='px-6 py-2'>
-                  <p className='text-[14px] w-[100px]'><span className='font-[600]'>234</span> sale</p>
-                  <Progress type="warning" value={40} />
-                </td>
-
-                <td className='px-6 py-2'>
-
-                  <div className='flex items-center gap-1'>
-                    <TooltipMUI title="Edit Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="View Product Dtails" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[18px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="Remove Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-
-
-                  </div>
-                </td>
-
-
-              </tr>
-
-
-
-
-              <tr className='odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700'>
-                <td className='px-6 pr-0 py-2'>
-                  <div className='w-[60px]'>
-                    <Checkbox {...label} size='small' />
-                  </div>
-                </td>
-
-                <td className='px-0 py-2'>
-                  <div className='flex items-center gap-4 w-[300px]'>
-                    <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
-                      <Link to="/product/45745">
-                        <img src='https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/15.webp'
-                          className='w-full group-hover:scale-105 transition-all'
-                        />
-                      </Link>
-                    </div>
-
-                    <div className='info w-[75%]'>
-                      <h3 className='font-[600] text-[12px] leading-4 hovertext-primary'>
-                        <Link to="/product/45745">
-                          Electronic Rubber Table
-                        </Link>
-                      </h3>
-                      <span className='text-[12px]'>Books</span>
-                    </div>
-                  </div>
-                </td>
-
-                <td className='px-6 py-2'>
-                  Electronics
-                </td>
-
-                <td className='px-6 py-2'>
-                  Women
-                </td>
-
-                <td className='px-6 py-2'>
-                  <div className='flex gap-1 flex-col'>
-                    <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                      $58.00
-                    </span>
-                    <span className='price text-primary text-[14px] font-[600] text-green-600'>
-                      $45.00
-                    </span>
-                  </div>
-                </td>
-
-                <td className='px-6 py-2'>
-                  <p className='text-[14px] w-[100px]'><span className='font-[600]'>234</span> sale</p>
-                  <Progress type="warning" value={40} />
-                </td>
-
-                <td className='px-6 py-2'>
-
-                  <div className='flex items-center gap-1'>
-                    <TooltipMUI title="Edit Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="View Product Dtails" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[18px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="Remove Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-
-
-                  </div>
-                </td>
-
-
-              </tr>
-
-
-
-
-
-              <tr className='odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700'>
-                <td className='px-6 pr-0 py-2'>
-                  <div className='w-[60px]'>
-                    <Checkbox {...label} size='small' />
-                  </div>
-                </td>
-
-                <td className='px-0 py-2'>
-                  <div className='flex items-center gap-4 w-[300px]'>
-                    <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
-                      <Link to="/product/45745">
-                        <img src='https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/15.webp'
-                          className='w-full group-hover:scale-105 transition-all'
-                        />
-                      </Link>
-                    </div>
-
-                    <div className='info w-[75%]'>
-                      <h3 className='font-[600] text-[12px] leading-4 hovertext-primary'>
-                        <Link to="/product/45745">
-                          Electronic Rubber Table
-                        </Link>
-                      </h3>
-                      <span className='text-[12px]'>Books</span>
-                    </div>
-                  </div>
-                </td>
-
-                <td className='px-6 py-2'>
-                  Electronics
-                </td>
-
-                <td className='px-6 py-2'>
-                  Women
-                </td>
-
-                <td className='px-6 py-2'>
-                  <div className='flex gap-1 flex-col'>
-                    <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                      $58.00
-                    </span>
-                    <span className='price text-primary text-[14px] font-[600] text-green-600'>
-                      $45.00
-                    </span>
-                  </div>
-                </td>
-
-                <td className='px-6 py-2'>
-                  <p className='text-[14px] w-[100px]'><span className='font-[600]'>234</span> sale</p>
-                  <Progress type="warning" value={40} />
-                </td>
-
-                <td className='px-6 py-2'>
-
-                  <div className='flex items-center gap-1'>
-                    <TooltipMUI title="Edit Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="View Product Dtails" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[18px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="Remove Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-
-
-                  </div>
-                </td>
-
-
-              </tr>
-
-
-
-
-
-
-
-              <tr className='odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700'>
-                <td className='px-6 pr-0 py-2'>
-                  <div className='w-[60px]'>
-                    <Checkbox {...label} size='small' />
-                  </div>
-                </td>
-
-                <td className='px-0 py-2'>
-                  <div className='flex items-center gap-4 w-[300px]'>
-                    <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
-                      <Link to="/product/45745">
-                        <img src='https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/15.webp'
-                          className='w-full group-hover:scale-105 transition-all'
-                        />
-                      </Link>
-                    </div>
-
-                    <div className='info w-[75%]'>
-                      <h3 className='font-[600] text-[12px] leading-4 hovertext-primary'>
-                        <Link to="/product/45745">
-                          Electronic Rubber Table
-                        </Link>
-                      </h3>
-                      <span className='text-[12px]'>Books</span>
-                    </div>
-                  </div>
-                </td>
-
-                <td className='px-6 py-2'>
-                  Electronics
-                </td>
-
-                <td className='px-6 py-2'>
-                  Women
-                </td>
-
-                <td className='px-6 py-2'>
-                  <div className='flex gap-1 flex-col'>
-                    <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                      $58.00
-                    </span>
-                    <span className='price text-primary text-[14px] font-[600] text-green-600'>
-                      $45.00
-                    </span>
-                  </div>
-                </td>
-
-                <td className='px-6 py-2'>
-                  <p className='text-[14px] w-[100px]'><span className='font-[600]'>234</span> sale</p>
-                  <Progress type="warning" value={40} />
-                </td>
-
-                <td className='px-6 py-2'>
-
-                  <div className='flex items-center gap-1'>
-                    <TooltipMUI title="Edit Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="View Product Dtails" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[18px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="Remove Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-
-
-                  </div>
-                </td>
-
-
-              </tr>
-
-
-
-
-              <tr className='odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700'>
-                <td className='px-6 pr-0 py-2'>
-                  <div className='w-[60px]'>
-                    <Checkbox {...label} size='small' />
-                  </div>
-                </td>
-
-                <td className='px-0 py-2'>
-                  <div className='flex items-center gap-4 w-[300px]'>
-                    <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
-                      <Link to="/product/45745">
-                        <img src='https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/15.webp'
-                          className='w-full group-hover:scale-105 transition-all'
-                        />
-                      </Link>
-                    </div>
-
-                    <div className='info w-[75%]'>
-                      <h3 className='font-[600] text-[12px] leading-4 hovertext-primary'>
-                        <Link to="/product/45745">
-                          Electronic Rubber Table
-                        </Link>
-                      </h3>
-                      <span className='text-[12px]'>Books</span>
-                    </div>
-                  </div>
-                </td>
-
-                <td className='px-6 py-2'>
-                  Electronics
-                </td>
-
-                <td className='px-6 py-2'>
-                  Women
-                </td>
-
-                <td className='px-6 py-2'>
-                  <div className='flex gap-1 flex-col'>
-                    <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                      $58.00
-                    </span>
-                    <span className='price text-primary text-[14px] font-[600] text-green-600'>
-                      $45.00
-                    </span>
-                  </div>
-                </td>
-
-                <td className='px-6 py-2'>
-                  <p className='text-[14px] w-[100px]'><span className='font-[600]'>234</span> sale</p>
-                  <Progress type="warning" value={40} />
-                </td>
-
-                <td className='px-6 py-2'>
-
-                  <div className='flex items-center gap-1'>
-                    <TooltipMUI title="Edit Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="View Product Dtails" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[18px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="Remove Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-
-
-                  </div>
-                </td>
-
-
-              </tr>
-
-
-
-
-              <tr className='odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700'>
-                <td className='px-6 pr-0 py-2'>
-                  <div className='w-[60px]'>
-                    <Checkbox {...label} size='small' />
-                  </div>
-                </td>
-
-                <td className='px-0 py-2'>
-                  <div className='flex items-center gap-4 w-[300px]'>
-                    <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
-                      <Link to="/product/45745">
-                        <img src='https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/15.webp'
-                          className='w-full group-hover:scale-105 transition-all'
-                        />
-                      </Link>
-                    </div>
-
-                    <div className='info w-[75%]'>
-                      <h3 className='font-[600] text-[12px] leading-4 hovertext-primary'>
-                        <Link to="/product/45745">
-                          Electronic Rubber Table
-                        </Link>
-                      </h3>
-                      <span className='text-[12px]'>Books</span>
-                    </div>
-                  </div>
-                </td>
-
-                <td className='px-6 py-2'>
-                  Electronics
-                </td>
-
-                <td className='px-6 py-2'>
-                  Women
-                </td>
-
-                <td className='px-6 py-2'>
-                  <div className='flex gap-1 flex-col'>
-                    <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                      $58.00
-                    </span>
-                    <span className='price text-primary text-[14px] font-[600] text-green-600'>
-                      $45.00
-                    </span>
-                  </div>
-                </td>
-
-                <td className='px-6 py-2'>
-                  <p className='text-[14px] w-[100px]'><span className='font-[600]'>234</span> sale</p>
-                  <Progress type="warning" value={40} />
-                </td>
-
-                <td className='px-6 py-2'>
-
-                  <div className='flex items-center gap-1'>
-                    <TooltipMUI title="Edit Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="View Product Dtails" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[18px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="Remove Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-
-
-                  </div>
-                </td>
-
-
-              </tr>
-
-
-
-
-            </tbody>
-          </table>
-        </div>
-
-
-        <div className='flex items-center justify-end pt-5 pb-5 px-4'>
-          <Pagination count={10} color="primary" />
-        </div>
-
-      </div>
-
-
-
-
-      <div className='card my-4 shadow-md sm:rounded-lg bg-white'>
-        <div className='flex items-center justify-between px-5 py-5'>
-          <h2 className='text-[18px] font-[600]'>Products <span className='font-[400] text-[14px]'>(Material Ui Table)</span></h2>
-        </div>
-
-        <div className='flex items-center w-full pl-5 justify-between pr-5'>
           <div className='col w-[20%]'>
-            <h4 className='font-[600] text-[13px] mb-2'>Category By</h4>
+            <h4 className='font-[600] text-[13px] mb-2'>Third Lavel Sub Category By</h4>
 
-            <Select
-              className='w-full'
-              size='small'
-              labelId="demo-simple-select-standard-label"
-              id="demo-simple-select-standard"
-              value={categoryFilterVal}
-              onChange={handleChangeCatFilter}
-              label="Category"
-            >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
-              <MenuItem value={10}>Men</MenuItem>
-              <MenuItem value={20}>Women</MenuItem>
-              <MenuItem value={30}>Kids</MenuItem>
-            </Select>
+            {
+              context?.catData?.length !== 0 &&
+              <Select
+                style={{ zoom: '80%' }}
+                labelId="demo-simple-select-label"
+                id="productCatDrop"
+                size='small'
+                className='w-full'
+                value={productThirdLavelCat}
+                label="Sub Category"
+                onChange={handleChangeProductThirdLavelCat}
+              >
+                {
+                  context?.catData?.map((cat) => {
+                    return (
+                      cat?.Children?.length !== 0 && cat?.Children?.map((subCat) => {
+                        return (
+                          subCat?.Children?.length !== 0 && subCat?.Children?.map((thirdsubCat, index) => {
+                            return (
+                              <MenuItem
+                                value={thirdsubCat?._id}
+                                key={index}
+                              >
+                                {thirdsubCat?.name}
+                              </MenuItem>
+                            )
+                          })
+                        )
+                      })
+
+                    )
+                  })
+                }
+              </Select>
+            }
           </div>
 
-          <div className='col w-[20%] ml-auto flex items-center gap-3'>
-            <Button className='btn bg-green-600! text-white! btn-sm'>
-               Export
-            </Button>
-            <Button className='btn-blue text-white! btn-sm'
-            onClick={()=> context.setIsOpenFullScreenPanel({
-              open:true,
-              model:"Add Product"
-            })}
-            >
-              Add Product</Button>
+          <div className='col w-[20%] ml-auto'>
+            <SearchBox />
           </div>
-        </div> 
-        <br /> 
+
+
+        </div>
+        <br />
 
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <Checkbox {...label} size='small' />
+                  <Checkbox {...label} size='small'
+                    onChange={handleSelectAll}
+                    checked={productData?.length > 0 ? productData?.every((item) => item?.checked) : false}
+                  />
                 </TableCell>
 
                 {columns.map((column) => (
@@ -1020,468 +443,115 @@ const Dashboard = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <Checkbox {...label} size='small' />
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <div className='flex items-center gap-4 w-[300px]'>
-                    <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
-                      <Link to="/product/45745">
-                        <img src='https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/15.webp'
-                          className='w-full group-hover:scale-105 transition-all'
-                        />
-                      </Link>
-                    </div>
-
-                    <div className='info w-[75%]'>
-                      <h3 className='font-[600] text-[12px] leading-4 hovertext-primary'>
-                        <Link to="/product/45745">
-                          Electronic Rubber Table
-                        </Link>
-                      </h3>
-                      <span className='text-[12px]'>Books</span>
-                    </div>
-                  </div>
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  Electronics
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  Women
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <div className='flex gap-1 flex-col'>
-                    <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                      $58.00
-                    </span>
-                    <span className='price text-primary text-[14px] font-[600] text-green-600'>
-                      $45.00
-                    </span>
-                  </div>
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <p className='text-[14px] w-[100px]'><span className='font-[600]'>234</span> sale</p>
-                  <Progress type="warning" value={40} />
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <div className='flex items-center gap-1'>
-                    <TooltipMUI title="Edit Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="View Product Dtails" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[18px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="Remove Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-
-
-                  </div>
-                </TableCell>
-
-              </TableRow>
-
-              <TableRow>
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <Checkbox {...label} size='small' />
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <div className='flex items-center gap-4 w-[300px]'>
-                    <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
-                      <Link to="/product/45745">
-                        <img src='https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/15.webp'
-                          className='w-full group-hover:scale-105 transition-all'
-                        />
-                      </Link>
-                    </div>
-
-                    <div className='info w-[75%]'>
-                      <h3 className='font-[600] text-[12px] leading-4 hovertext-primary'>
-                        <Link to="/product/45745">
-                          Electronic Rubber Table
-                        </Link>
-                      </h3>
-                      <span className='text-[12px]'>Books</span>
-                    </div>
-                  </div>
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  Electronics
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  Women
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <div className='flex gap-1 flex-col'>
-                    <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                      $58.00
-                    </span>
-                    <span className='price text-primary text-[14px] font-[600] text-green-600'>
-                      $45.00
-                    </span>
-                  </div>
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <p className='text-[14px] w-[100px]'><span className='font-[600]'>234</span> sale</p>
-                  <Progress type="warning" value={40} />
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <div className='flex items-center gap-1'>
-                    <TooltipMUI title="Edit Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="View Product Dtails" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[18px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="Remove Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-
-
-                  </div>
-                </TableCell>
-
-              </TableRow>
-
-
-              <TableRow>
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <Checkbox {...label} size='small' />
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <div className='flex items-center gap-4 w-[300px]'>
-                    <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
-                      <Link to="/product/45745">
-                        <img src='https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/15.webp'
-                          className='w-full group-hover:scale-105 transition-all'
-                        />
-                      </Link>
-                    </div>
-
-                    <div className='info w-[75%]'>
-                      <h3 className='font-[600] text-[12px] leading-4 hovertext-primary'>
-                        <Link to="/product/45745">
-                          Electronic Rubber Table
-                        </Link>
-                      </h3>
-                      <span className='text-[12px]'>Books</span>
-                    </div>
-                  </div>
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  Electronics
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  Women
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <div className='flex gap-1 flex-col'>
-                    <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                      $58.00
-                    </span>
-                    <span className='price text-primary text-[14px] font-[600] text-green-600'>
-                      $45.00
-                    </span>
-                  </div>
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <p className='text-[14px] w-[100px]'><span className='font-[600]'>234</span> sale</p>
-                  <Progress type="warning" value={40} />
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <div className='flex items-center gap-1'>
-                    <TooltipMUI title="Edit Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="View Product Dtails" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[18px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="Remove Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-
-
-                  </div>
-                </TableCell>
-
-              </TableRow>
-
-              <TableRow>
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <Checkbox {...label} size='small' />
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <div className='flex items-center gap-4 w-[300px]'>
-                    <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
-                      <Link to="/product/45745">
-                        <img src='https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/15.webp'
-                          className='w-full group-hover:scale-105 transition-all'
-                        />
-                      </Link>
-                    </div>
-
-                    <div className='info w-[75%]'>
-                      <h3 className='font-[600] text-[12px] leading-4 hovertext-primary'>
-                        <Link to="/product/45745">
-                          Electronic Rubber Table
-                        </Link>
-                      </h3>
-                      <span className='text-[12px]'>Books</span>
-                    </div>
-                  </div>
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  Electronics
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  Women
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <div className='flex gap-1 flex-col'>
-                    <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                      $58.00
-                    </span>
-                    <span className='price text-primary text-[14px] font-[600] text-green-600'>
-                      $45.00
-                    </span>
-                  </div>
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <p className='text-[14px] w-[100px]'><span className='font-[600]'>234</span> sale</p>
-                  <Progress type="warning" value={40} />
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <div className='flex items-center gap-1'>
-                    <TooltipMUI title="Edit Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="View Product Dtails" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[18px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="Remove Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-
-
-                  </div>
-                </TableCell>
-
-              </TableRow>
-
-              <TableRow>
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <Checkbox {...label} size='small' />
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <div className='flex items-center gap-4 w-[300px]'>
-                    <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
-                      <Link to="/product/45745">
-                        <img src='https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/15.webp'
-                          className='w-full group-hover:scale-105 transition-all'
-                        />
-                      </Link>
-                    </div>
-
-                    <div className='info w-[75%]'>
-                      <h3 className='font-[600] text-[12px] leading-4 hovertext-primary'>
-                        <Link to="/product/45745">
-                          Electronic Rubber Table
-                        </Link>
-                      </h3>
-                      <span className='text-[12px]'>Books</span>
-                    </div>
-                  </div>
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  Electronics
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  Women
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <div className='flex gap-1 flex-col'>
-                    <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                      $58.00
-                    </span>
-                    <span className='price text-primary text-[14px] font-[600] text-green-600'>
-                      $45.00
-                    </span>
-                  </div>
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <p className='text-[14px] w-[100px]'><span className='font-[600]'>234</span> sale</p>
-                  <Progress type="warning" value={40} />
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <div className='flex items-center gap-1'>
-                    <TooltipMUI title="Edit Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="View Product Dtails" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[18px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="Remove Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-
-
-                  </div>
-                </TableCell>
-
-              </TableRow>
-
-              <TableRow>
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <Checkbox {...label} size='small' />
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <div className='flex items-center gap-4 w-[300px]'>
-                    <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
-                      <Link to="/product/45745">
-                        <img src='https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/15.webp'
-                          className='w-full group-hover:scale-105 transition-all'
-                        />
-                      </Link>
-                    </div>
-
-                    <div className='info w-[75%]'>
-                      <h3 className='font-[600] text-[12px] leading-4 hovertext-primary'>
-                        <Link to="/product/45745">
-                          Electronic Rubber Table
-                        </Link>
-                      </h3>
-                      <span className='text-[12px]'>Books</span>
-                    </div>
-                  </div>
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  Electronics
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  Women
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <div className='flex gap-1 flex-col'>
-                    <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                      $58.00
-                    </span>
-                    <span className='price text-primary text-[14px] font-[600] text-green-600'>
-                      $45.00
-                    </span>
-                  </div>
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <p className='text-[14px] w-[100px]'><span className='font-[600]'>234</span> sale</p>
-                  <Progress type="warning" value={40} />
-                </TableCell>
-
-                <TableCell style={{ minWidth: columns.minWidth }}>
-                  <div className='flex items-center gap-1'>
-                    <TooltipMUI title="Edit Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="View Product Dtails" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[18px]' />
-                      </Button>
-                    </TooltipMUI>
-
-                    <TooltipMUI title="Remove Product" placement='top'>
-                      <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
-                        <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                      </Button>
-                    </TooltipMUI>
-
-
-
-                  </div>
-                </TableCell>
-
-              </TableRow>
+
+              {
+                isLoading === false ?
+                  productData?.length !== 0 && productData?.slice(
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )?.map((product, index) => {
+                    return (
+                      <TableRow key={index}>
+                        <TableCell style={{ minWidth: columns.minWidth }}>
+                          <Checkbox {...label} size='small'
+                            checked={product?.checked === true ? true : false}
+                            onChange={(e) => handleCheckboxChange(e, product._id, index)}
+                          />
+                        </TableCell>
+
+                        <TableCell style={{ minWidth: columns.minWidth }}>
+                          <div className='flex items-center gap-4 w-[300px]'>
+                            <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
+                              <Link to={`/product/${product?._id}`}>
+                                <LazyLoadImage
+                                  src={product?.images[0]}
+                                  effect="blur"
+                                  className='w-full group-hover:scale-105 transition-all'
+                                />
+
+                              </Link>
+                            </div>
+
+                            <div className='info w-[75%]'>
+                              <h3 className='font-[600] text-[12px] leading-4 hovertext-primary'>
+                                <Link to={`/product/${product?._id}`} className='hover:text-primary'>
+                                  {product?.name}
+                                </Link>
+                              </h3>
+                              <span className='text-[12px]'>{product?.brand}</span>
+                            </div>
+                          </div>
+                        </TableCell>
+
+                        <TableCell style={{ minWidth: columns.minWidth }}>
+                          {product?.catName}
+                        </TableCell>
+
+                        <TableCell style={{ minWidth: columns.minWidth }}>
+                          {product?.subCat}
+                        </TableCell>
+
+                        <TableCell style={{ minWidth: columns.minWidth }}>
+                          <div className='flex gap-1 flex-col'>
+                            <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
+                              &#x20b9; {product?.oldPrice}
+                            </span>
+                            <span className='price text-primary text-[14px] font-[600] text-green-600'>
+                              &#x20b9; {product?.price}
+                            </span>
+                          </div>
+                        </TableCell>
+
+                        <TableCell style={{ minWidth: columns.minWidth }}>
+                          <p className='text-[14px] w-[100px]'><span className='font-[600]'>{product?.sale}</span> sale</p>
+                          {/* <Progress type="warning" value={product?.sale} /> */}
+                        </TableCell>
+
+                        <TableCell style={{ minWidth: columns.minWidth }}>
+                          <p className='text-[14px] w-[100px]'>
+                            <Rating name='half-rating' size='small' value={product?.rating} precision={0.5} readOnly />
+                          </p>
+
+                        </TableCell>
+
+                        <TableCell style={{ minWidth: columns.minWidth }}>
+                          <div className='flex items-center gap-1'>
+                            <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'
+                              onClick={() => context?.setIsOpenFullScreenPanel({
+                                open: true,
+                                model: 'Edit Product',
+                                id: product?._id
+                              })}
+                            >
+                              <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
+                            </Button>
+
+                            <Link to={`/product/${product?._id}`}>
+                              <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
+                                <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[18px]' />
+                              </Button>
+                            </Link>
+
+
+                            <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'
+                              onClick={() => deleteProduct(product?._id)}
+                            >
+                              <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
+                            </Button>
+
+
+
+
+                          </div>
+                        </TableCell>
+
+                      </TableRow>
+                    )
+                  })
+                  :
+                  <TableSkeleton rowsPerPage={rowsPerPage} />
+              }
+
 
             </TableBody>
           </Table>
@@ -1489,7 +559,7 @@ const Dashboard = () => {
         <TablePagination
           rowsPerPageOptions={[10, 25, 100]}
           component="div"
-          count={10}
+          count={productData?.length || 0}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
@@ -1797,35 +867,35 @@ const Dashboard = () => {
           </span>
         </div>
 
-          <LineChart
-           width={1200}
-           height={500}
-            data={chart1Data}
-            margin={{
-              top: 5,
-              right: 30,
-              left: 20,
-              bottom: 5,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke="none" />
-            <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-            <YAxis tick={{ fontSize: 12 }}/>
-            <Tooltip />
-            <Legend />
-            <Line 
-            type="monotone" 
-            dataKey="TotalSales" 
-            stroke="#8884d8" 
+        <LineChart
+          width={1200}
+          height={500}
+          data={chart1Data}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" stroke="none" />
+          <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+          <YAxis tick={{ fontSize: 12 }} />
+          <Tooltip />
+          <Legend />
+          <Line
+            type="monotone"
+            dataKey="TotalSales"
+            stroke="#8884d8"
             strokeWidth={3}
             activeDot={{ r: 8 }} />
-            <Line 
-            type="monotone" 
-            dataKey="TotalUsers" 
-            stroke="#82ca9d" 
+          <Line
+            type="monotone"
+            dataKey="TotalUsers"
+            stroke="#82ca9d"
             strokeWidth={3} />
-            
-          </LineChart>
+
+        </LineChart>
       </div>
     </>
   )

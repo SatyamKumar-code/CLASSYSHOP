@@ -24,6 +24,7 @@ import { fetchDataFromApi, deleteData, deleteMultipleData } from '../../utils/ap
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import TableSkeleton from '../../Components/Skeleton/TableSkeleton';
+import Rating from '@mui/material/Rating';
 
 
 
@@ -47,6 +48,11 @@ const columns = [
     {
         id: 'sales',
         label: 'SALES',
+        minWidth: 100,
+    },
+    {
+        id: 'rating',
+        label: 'RATING',
         minWidth: 100,
     },
     {
@@ -450,6 +456,13 @@ const Products = () => {
                                             <TableCell style={{ minWidth: columns.minWidth }}>
                                                 <p className='text-[14px] w-[100px]'><span className='font-[600]'>{product?.sale}</span> sale</p>
                                                 {/* <Progress type="warning" value={product?.sale} /> */}
+                                            </TableCell>
+
+                                            <TableCell style={{ minWidth: columns.minWidth }}>
+                                                <p className='text-[14px] w-[100px]'>
+                                                    <Rating name="read-only" value={product?.rating} readOnly size="small" precision={0.1} />
+                                                </p>
+                                                
                                             </TableCell>
 
                                             <TableCell style={{ minWidth: columns.minWidth }}>
