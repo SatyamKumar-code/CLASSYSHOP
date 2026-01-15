@@ -6,7 +6,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import { Navigation } from 'swiper/modules';
 
-export const ProductZoom = () => {
+export const ProductZoom = (props) => {
 
     const [ slideIndex, setSlideIndex ] = React.useState(0);
     const zoomSliderBig = React.useRef();
@@ -29,57 +29,22 @@ export const ProductZoom = () => {
             spaceBetween={0}
             navigation={true}
             modules={[Navigation]}
-            className='zoomProductSliderThumbs link h-[500px] overflow-hidden'
+            className={`zoomProductSliderThumbs link h-[500px] overflow-hidden ${props?.images?.length > 5 && 'space'}`}
             >
-            <SwiperSlide>
-                <div className={`item rounded-md overflow-hidden cursor-pointer group ${slideIndex === 0 ? 'opacity-100' : 'opacity-30' }`}
-                onClick={() => goto(0)}>
-                    <img src='https://www.jiomart.com/images/product/original/rvvtluazsa/live-fashion-black-women-printed-pu-sling-bag-product-images-rvvtluazsa-0-202409201509.jpg?im=Resize=(600,750)' alt='product'
-                    className='w-full transition-all group-hover:scale-105' />
-                </div>
-            </SwiperSlide>
-
-            <SwiperSlide>
-                <div className={`item rounded-md overflow-hidden cursor-pointer group ${slideIndex === 1 ? 'opacity-100' : 'opacity-30' }`}
-                onClick={() => goto(1)}>
-                    <img src='https://www.jiomart.com/images/product/original/rvvtluazsa/live-fashion-black-women-printed-pu-sling-bag-product-images-rvvtluazsa-1-202409201509.jpg?im=Resize=(75,94)' alt='product'
-                    className='w-full transition-all group-hover:scale-105' />
-                </div>
-            </SwiperSlide>
-
-            <SwiperSlide>
-                <div className={`item rounded-md overflow-hidden cursor-pointer group ${slideIndex === 2 ? 'opacity-100' : 'opacity-30' }`}
-                onClick={() => goto(2)}>
-                    <img src='https://www.jiomart.com/images/product/original/rvvtluazsa/live-fashion-black-women-printed-pu-sling-bag-product-images-rvvtluazsa-2-202409201509.jpg?im=Resize=(75,94)' alt='product'
-                    className='w-full transition-all group-hover:scale-105' />
-                </div>
-            </SwiperSlide>
-
-            <SwiperSlide>
-                <div className={`item rounded-md overflow-hidden cursor-pointer group ${slideIndex === 3 ? 'opacity-100' : 'opacity-30' }`}
-                onClick={() => goto(3)}>
-                    <img src='https://www.jiomart.com/images/product/original/rvvtluazsa/live-fashion-black-women-printed-pu-sling-bag-product-images-rvvtluazsa-3-202409201509.jpg?im=Resize=(75,94)' alt='product'
-                    className='w-full transition-all group-hover:scale-105' />
-                </div>
-            </SwiperSlide>
+            {
+                props?.images?.map((item, index) => {
+                    return (
+                        <SwiperSlide key={index}>
+                            <div className={`item rounded-md overflow-hidden cursor-pointer group ${slideIndex === index ? 'opacity-100' : 'opacity-30'}`}
+                                onClick={() => goto(index)}>
+                                <img src={item} alt='product'
+                                    className='w-full transition-all group-hover:scale-105' />
+                            </div>
+                        </SwiperSlide>
+                    )
+                })
+            }
             
-            <SwiperSlide>
-                <div className={`item rounded-md overflow-hidden cursor-pointer group ${slideIndex === 4 ? 'opacity-100' : 'opacity-30' }`}
-                onClick={() => goto(4)}>
-                    <img src='https://www.jiomart.com/images/product/original/rviph6xygj/live-fashion-grey-women-printed-pu-sling-bag-product-images-rviph6xygj-0-202409201509.jpg?im=Resize=(75,94)' alt='product'
-                    className='w-full transition-all group-hover:scale-105' />
-                </div>
-            </SwiperSlide>
-            
-
-            <SwiperSlide>
-                <div className={`item rounded-md overflow-hidden cursor-pointer group ${slideIndex === 5 ? 'opacity-100' : 'opacity-30' }`}
-                onClick={() => goto(5)}>
-                    <img src='https://www.jiomart.com/images/product/original/rviph6xygj/live-fashion-grey-women-printed-pu-sling-bag-product-images-rviph6xygj-0-202409201509.jpg?im=Resize=(75,94)' alt='product'
-                    className='w-full transition-all group-hover:scale-105' />
-                </div>
-            </SwiperSlide>
-            <SwiperSlide></SwiperSlide>
             </Swiper>
             
         </div>
@@ -91,47 +56,18 @@ export const ProductZoom = () => {
                       spaceBetween={0}
                       navigation={false}
                   >
-                      <SwiperSlide>
-                          <InnerImageZoom
-                              zoomType='hover'
-                              zoomScale={1}
-                              src={'https://www.jiomart.com/images/product/original/rvvtluazsa/live-fashion-black-women-printed-pu-sling-bag-product-images-rvvtluazsa-0-202409201509.jpg?im=Resize=(600,750)'} />
-                      </SwiperSlide>
-
-                      <SwiperSlide>
-                          <InnerImageZoom
-                              zoomType='hover'
-                              zoomScale={1}
-                              src={'https://www.jiomart.com/images/product/original/rvvtluazsa/live-fashion-black-women-printed-pu-sling-bag-product-images-rvvtluazsa-1-202409201509.jpg?im=Resize=(600,750)'} />
-                      </SwiperSlide>
-
-                      <SwiperSlide>
-                          <InnerImageZoom
-                              zoomType='hover'
-                              zoomScale={1}
-                              src={'https://www.jiomart.com/images/product/original/rvvtluazsa/live-fashion-black-women-printed-pu-sling-bag-product-images-rvvtluazsa-2-202409201509.jpg?im=Resize=(600,750)'} />
-                      </SwiperSlide>
-
-                      <SwiperSlide>
-                          <InnerImageZoom
-                              zoomType='hover'
-                              zoomScale={1}
-                              src={'https://www.jiomart.com/images/product/original/rvvtluazsa/live-fashion-black-women-printed-pu-sling-bag-product-images-rvvtluazsa-3-202409201509.jpg?im=Resize=(600,750)'} />
-                      </SwiperSlide>
-
-                      <SwiperSlide>
-                          <InnerImageZoom
-                              zoomType='hover'
-                              zoomScale={1}
-                              src={'https://www.jiomart.com/images/product/original/rviph6xygj/live-fashion-grey-women-printed-pu-sling-bag-product-images-rviph6xygj-0-202409201509.jpg?im=Resize=(600,750)'} />
-                      </SwiperSlide>
-
-                      <SwiperSlide>
-                          <InnerImageZoom
-                              zoomType='hover'
-                              zoomScale={1}
-                              src={'https://www.jiomart.com/images/product/original/rviph6xygj/live-fashion-grey-women-printed-pu-sling-bag-product-images-rviph6xygj-0-202409201509.jpg?im=Resize=(600,750)'} />
-                      </SwiperSlide>
+                    {
+                        props?.images?.map((item, index) => {
+                            return (
+                                <SwiperSlide key={index}>
+                                    <InnerImageZoom
+                                        zoomType='hover'
+                                        zoomScale={1}
+                                        src={item} />
+                                </SwiperSlide>
+                            )
+                        })
+                    }
 
                   </Swiper>
               </div>

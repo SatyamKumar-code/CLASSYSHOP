@@ -34,18 +34,32 @@ const MyContext = createContext();
 
 function App() {
 
-  const [openProductDetailsModal, setOpenProductDetailsModal] = useState(false);
+  const [openProductDetailsModal, setOpenProductDetailsModal] = useState({
+    open: false,
+    item: {}
+  });
   const [maxWidth, setMaxWidth] = useState('lg');
   const [fullWidth, setFullWidth] = useState(true);
   const [isLogin, setIsLogin] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [catData, setCatData] = useState([]);
 
 
   const [openCartPanel, setOpenCartPanel] = useState(false);
+
+  const handleOpenProductDetailModel = (status, item) => {
+    setOpenProductDetailsModal({
+      open: status,
+      item: item 
+    });
+  };
   
 
   const handleCloseProductDetailsModal = () => {
-    setOpenProductDetailsModal(false);
+    setOpenProductDetailsModal({
+      open: false,
+      item: {} 
+    });
   };
 
   const toggleCartPanel = (newOpen) => () => {
@@ -81,6 +95,14 @@ function App() {
     }
   }, [isLogin]);
 
+  useEffect(() => {
+    fetchDataFromApi("/api/category").then((res) => {
+      if(res?.error === false) {
+        setCatData(res?.categories);
+      }
+    })
+  }, []);
+
   const alertBox = (type, msg) => {
     if(type === "Success"){
       toast.success(msg)
@@ -92,6 +114,7 @@ function App() {
 
   const values = {
     setOpenProductDetailsModal,
+    handleOpenProductDetailModel,
     setOpenCartPanel,
     toggleCartPanel,
     openCartPanel,
@@ -99,7 +122,9 @@ function App() {
     isLogin,
     setIsLogin,
     setUserData,
-    userData
+    userData,
+    setCatData,
+    catData
   }
 
   return (
@@ -132,7 +157,7 @@ function App() {
       <Dialog
         fullWidth={fullWidth}
         maxWidth={maxWidth}
-        open={openProductDetailsModal}
+        open={openProductDetailsModal.open}
         onClose={handleCloseProductDetailsModal}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
@@ -143,13 +168,18 @@ function App() {
           <div className='flex items-center wfull productDetailsModalContainer relative'>
             <Button className='!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000] !absolute top-[15px] right-[15px] !bg-[#f1f1f1]' 
             onClick={handleCloseProductDetailsModal}><IoCloseSharp className='text-[20px]' /></Button>
-            <div className='col1 w-[40%] px-3'>
-              <ProductZoom />
-            </div>
+            {
+              openProductDetailsModal?.item?.length !== 0 &&
+              <>
+                <div className='col1 w-[40%] px-3 py-8'>
+                  <ProductZoom images={openProductDetailsModal?.item?.images} />
+                </div>
 
-            <div className='col2 w-[60%] py-8 px-8 pr-16 productContent'>
-              <ProductDetailsComponent />
-            </div>
+                <div className='col2 w-[60%] py-8 px-8 pr-16 productContent'>
+                  <ProductDetailsComponent item={openProductDetailsModal?.item} />
+                </div>
+              </>
+            }
           </div>
         </DialogContent>
       </Dialog>

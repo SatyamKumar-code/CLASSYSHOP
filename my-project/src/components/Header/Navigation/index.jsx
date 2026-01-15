@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Button from '@mui/material/Button';
 import { RiMenu2Fill } from "react-icons/ri";
 import { LiaAngleDownSolid } from "react-icons/lia";
@@ -8,6 +8,7 @@ import CategoryPanel from './CategoryPanel';
 
 import "../Navigation/style.css";
 import { fetchDataFromApi } from '../../../utils/api';
+import { MyContext } from '../../../App';
 
 
 const Navigation = () => {
@@ -15,14 +16,12 @@ const Navigation = () => {
     const [isOpenCategoryPanel, setIsOpenCategoryPanel] = useState(false);
     const [catData, setCatData] = useState([]);
 
-    useEffect(() => {
-        fetchDataFromApi("/api/category").then((res) => {
-            if (res?.error===false) {
-                setCatData(res?.categories);
-            }
-        })
-    }, []);
+    const Context = useContext(MyContext);
 
+    useEffect(() => {
+        setCatData(Context?.catData);
+    }, [Context?.catData]);
+    
     const openCategoryPanel = () => {
         setIsOpenCategoryPanel(true);
     }
@@ -54,38 +53,38 @@ const Navigation = () => {
                                                 cat?.Children?.length !== 0 &&
                                                 <div className='submenu absolute top-[120%] left-[0%] min-w-[150px] bg-white shadow-md opacity-0 transition-all'>
                                                     <ul>
-                                                            {
-                                                                cat?.Children?.map((subCat, index_) => {
-                                                                    return (
-                                                                        <li className='list-none w-full' key={index_}>
-                                                                            <Link to={"/fashion/men"}>
-                                                                                <Button className=' !text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none'>{subCat?.name}</Button>
-                                                                                {
-                                                                                    subCat?.Children?.length !== 0 &&
-                                                                                    <div className='submenu absolute top-[0%] left-[100%] min-w-[150px] bg-white shadow-md opacity-0 transition-all'>
-                                                                                        <ul>
-                                                                                            {
-                                                                                            subCat?.Children?.map((thirdLavelCat, index__) => {
-                                                                                                return (
-                                                                                                    <li className='list-none w-full' key={index__}>
-                                                                                                        <Link to={"/fashion/women"}>
-                                                                                                            <Button className='!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none'>{thirdLavelCat?.name}</Button>
-                                                                                                        </Link>
-                                                                                                    </li>
-                                                                                                )
-                                                                                            })
-                                                                                            }
-                                                                                            
-                                                                                        </ul>
-                                                                                    </div>
-                                                                                }
+                                                        {
+                                                            cat?.Children?.map((subCat, index_) => {
+                                                                return (
+                                                                    <li className='list-none w-full' key={index_}>
+                                                                        <Link to={"/fashion/men"}>
+                                                                            <Button className=' !text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none'>{subCat?.name}</Button>
+                                                                            {
+                                                                                subCat?.Children?.length !== 0 &&
+                                                                                <div className='submenu absolute top-[0%] left-[100%] min-w-[150px] bg-white shadow-md opacity-0 transition-all'>
+                                                                                    <ul>
+                                                                                        {
+                                                                                        subCat?.Children?.map((thirdLavelCat, index__) => {
+                                                                                            return (
+                                                                                                <li className='list-none w-full' key={index__}>
+                                                                                                    <Link to={"/fashion/women"}>
+                                                                                                        <Button className='!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none'>{thirdLavelCat?.name}</Button>
+                                                                                                    </Link>
+                                                                                                </li>
+                                                                                            )
+                                                                                        })
+                                                                                        }
+                                                                                        
+                                                                                    </ul>
+                                                                                </div>
+                                                                            }
 
 
-                                                                            </Link>
-                                                                        </li>
-                                                                    )
-                                                                })
-                                                            }
+                                                                        </Link>
+                                                                    </li>
+                                                                )
+                                                            })
+                                                        }
                                                     </ul>
                                                 </div>
                                             }
