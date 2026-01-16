@@ -97,6 +97,16 @@ const productSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    bannerImage: [
+        {
+            type: String,
+            default: null
+        }
+    ],
+    bannerTitlename: {
+        type: String,
+        default: null
+    }
 }, { timestamps: true });
 
 const ProductModel = mongoose.model("Product", productSchema);

@@ -45,9 +45,12 @@ const ProductItem = (props) => {
             </div>
         </div>
 
-        <div className='info p-3 py-5'>
+        <div className='info p-3'>
             <h6 className='text-[13px] !font-[400]'>{props?.item?.brand}</h6>
-            <h3 className='text-[13px] title mt-1 font-[500] mb-1 text-[#000]'><Link to={`/product/${props?.item?._id}`} className='link transition-all'>{props?.item?.name}</Link></h3>
+            <h3 className='text-[13px] title mt-1 font-[500] mb-1 text-[#000]'>
+              <Link to={`/product/${props?.item?._id}`} 
+                className='link transition-all'>{props?.item?.name?.substr(0,40)+"..."}
+              </Link></h3>
 
             <Rating name='size-small' defaultValue={props?.item?.rating} size="small" readOnly />
 

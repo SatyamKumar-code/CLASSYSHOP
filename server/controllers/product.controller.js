@@ -54,6 +54,45 @@ export async function uploadImages(req, res) {
     }
 }
 
+// upload banner images
+var bannerImages = [];
+export async function uploadBannerImages(req, res) {
+    try {
+        bannerImages = [];
+
+        const image = req.files;
+
+        const option = {
+            use_filename: true,
+            unique_filename: false,
+            overwrite: false,
+        };
+
+        for (let i = 0; i < image?.length; i++) {
+            const img = await cloudinary.uploader.upload(
+                image[i].path,
+                option,
+                function (error, result) {
+                    bannerImages.push(result.secure_url);
+                    fs.unlinkSync(`uploads/${req.files[i].filename}`);
+                }
+            );
+        }
+
+
+        return res.status(200).json({
+            images: bannerImages,
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
 
 //create product
 export async function createProduct( req, res) {
@@ -62,6 +101,8 @@ export async function createProduct( req, res) {
             name: req.body.name,
             description: req.body.description,
             images: imagesArr,
+            bannerImage: bannerImages,
+            bannerTitlename: req.body.bannerTitlename,
             brand: req.body.brand,
             price: req.body.price,
             oldPrice: req.body.oldPrice,
@@ -858,6 +899,8 @@ export async function updateProduct(req, res) {
                 subCat: req.body.subCat,
                 description: req.body.description,
                 images: req.body.images,
+                bannerImage: req.body.bannerImage,
+                bannerTitlename: req.body.bannerTitlename,
                 brand: req.body.brand,
                 price: req.body.price,
                 oldPrice: req.body.oldPrice,

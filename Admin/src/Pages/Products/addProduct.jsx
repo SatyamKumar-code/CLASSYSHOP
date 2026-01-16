@@ -31,6 +31,9 @@ const AddProduct = () => {
     const [productSizeData, setProductSizeData] = useState([]);
     const [productThirdLavelCat, setProductThirdLavelCat] = useState('');
     const [previews, setPreviews] = useState([]);
+    const [bannerPreviews, setBannerPreviews] = useState([]);
+
+    
     const [isLoading, setIsLoading] = useState(false);
 
 
@@ -59,23 +62,38 @@ const AddProduct = () => {
         productRam: [],
         size: [],
         productWeight: [],
+        bannerTitlename: '',
+        bannerImage: [],
     });
+
+
     const setPreviewsFun = (previewsArr) => {
         setPreviews(previewsArr);
         setFormFields.images = previewsArr;
 
     }
 
+    const setBannerImagesFun = (previewsArr) => {
+        setBannerPreviews(previewsArr);
+        setFormFields.bannerImage = previewsArr;
+
+    }
+
+     
+
     const removeImg = (image, index) => {
         var imageArr = [];
         imageArr = previews;
-        deleteImages(`/api/category/deleteImage?img=${image}`).then((res) => {
+        deleteImages(`/api/product/deleteImage?img=${image}`).then((res) => {
             imageArr.splice(index, 1);
 
+            setBannerPreviews([]);
             setPreviews([]);
             setTimeout(() => {
                 setPreviews(imageArr);
                 setFormFields.images = imageArr;
+                setBannerImagesFun(imageArr);
+                setFormFields.bannerImage = imageArr;
             }, 100);
 
         })
@@ -595,6 +613,59 @@ const AddProduct = () => {
 
                         <UploadBox multiple={true} name="images" url="/api/product/uploadImages" setPreviewsFun={setPreviewsFun} />
                     </div>
+                    </div>
+
+                    <div className='col w-full p-5 px-0'>
+
+                        <div className="shadow-md bg-white p-4 w-full">
+                            <h3 className='font-[700] text-[18px] mb-3'>Banner Images</h3>
+                            <div className='grid grid-cols-7 gap-4'>
+                                
+
+                                {
+                                    bannerPreviews?.length !== 0 && bannerPreviews?.map((image, index) => {
+                                        return (
+                                            <div className='uploadBoxWrapper relative'>
+                                                <span className='absolute w-[20px] h-[20px] rounded-full overflow-hidden bg-red-700 -top-[5px] -right-[5px] flex items-center justify-center z-50 cursor-pointer'
+                                                    onClick={() => removeImg(image, index)}
+                                                >
+                                                    <IoMdClose className='text-white text-[17px]' />
+                                                </span>
+
+                                                <div key={index} className='uploadBox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-[150px] w-[100%] bg-gray-100 cursor-pointer hover:bg-gray-200 flex items-center justify-center flex-col relative'>
+                                                    {/* <LazyLoadImage
+                                                alt={"image"}
+                                                effect="blur"
+                                                wrapperProps={{
+                                                    style: { transitionDelay: "1s" }
+                                                }}
+                                                src={image}
+                                            /> */}
+                                                    <img src={image} className='w-full' />
+                                                </div>
+
+
+
+                                            </div>
+                                        )
+                                    })
+                                }
+
+
+                                <UploadBox multiple={true} name="bannerImage" url="/api/product/uploadBannerImages" setPreviewsFun={setBannerImagesFun} />
+                            </div>
+
+                            <h3 className='font-[700] text-[18px] mb-3'>Banner Title</h3>
+                            <input
+                                type='text'
+                                name='bannerTitlename'
+                                value={formFields.bannerTitlename}
+                                onChange={onChangeInput}
+                                className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white'
+                            />
+                        </div>
+
+
                     </div>
 
 

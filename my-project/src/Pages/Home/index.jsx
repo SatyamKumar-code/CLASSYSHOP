@@ -4,6 +4,7 @@ import HomeCatSlider from '../../components/HomeCatSlider';
 import { LiaShippingFastSolid } from 'react-icons/lia';
 import AdsBannerSlider from '../../components/AdsBannerSlider';
 import AdsBannerSliderV2 from '../../components/AdsBannerSliderV2';
+import ProductSliderSkeleton from '../../components/skeleton/ProductSliderSkeleton';
 
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -26,6 +27,10 @@ const Home = () => {
   const [popularProductsData, setPopularProductsData] = useState([]);
   const [productData, setAllProductData] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
+  
+  const [popularLoading, setPopularLoading] = useState(true);
+  const [productsLoading, setProductsLoading] = useState(true);
+  const [featuredLoading, setFeaturedLoading] = useState(true);
 
   const context = useContext(MyContext);
 
@@ -35,18 +40,22 @@ const Home = () => {
     });
     fetchDataFromApi("/api/product/getAllProducts").then((res) => {
       setAllProductData(res?.products);
+      setProductsLoading(false);
     });
     fetchDataFromApi("/api/product/getAllFeaturedProducts").then((res) => {
       setFeaturedProducts(res?.products);
+      setFeaturedLoading(false);
     });
     
   }, []);
 
   useEffect(() => {
+    setPopularLoading(true);
     fetchDataFromApi(`/api/product/getAllProductsByCatId/${ context?.catData[0]?._id}`).then((res) => {
       if(res?.error === false){
         setPopularProductsData(res?.products);
       }
+      setPopularLoading(false);
     });
   }, [context?.catData]);
 
@@ -55,10 +64,12 @@ const Home = () => {
   };
 
   const filterByCatId = (Id) => {
+    setPopularLoading(true);
     fetchDataFromApi(`/api/product/getAllProductsByCatId/${Id}`).then((res) => {
       if(res?.error === false){
         setPopularProductsData(res?.products);
       }
+      setPopularLoading(false);
     }); 
   };
 
@@ -68,18 +79,6 @@ const Home = () => {
       homeSlidesData?.length !== 0 && <HomeSlider data={homeSlidesData} />
     }
 
-    <section className='py-6'>
-      <div className='container flex gap-5'>
-        <div className='part1 w-[70%]'>
-          <HomeBannerV2 />
-        </div>
-
-        <div className='part2 w-[30%] flex flex-col items-center gap-5 justify-between'>
-          <BannerBoxV2  />
-          <BannerBoxV2 info="right" image={"https://serviceapi.spicezgold.com/download/1741664665391_1741497254110_New_Project_50.jpg"}/>
-        </div>
-      </div>
-    </section>
     {
       context?.catData?.length !== 0 && <HomeCatSlider data={context?.catData} />
     }
@@ -112,10 +111,24 @@ const Home = () => {
         </div>
 
         {
+          popularLoading ? <ProductSliderSkeleton items={6} /> :
           popularProductsData?.length !== 0 && <ProductsSlider items={6} data={popularProductsData} />
         }
 
 
+      </div>
+    </section>
+
+    <section className='py-6'>
+      <div className='container flex gap-5'>
+        <div className='part1 w-[70%]'>
+          <HomeBannerV2 />
+        </div>
+
+        <div className='part2 w-[30%] flex flex-col items-center gap-5 justify-between'>
+          <BannerBoxV2  />
+          <BannerBoxV2 info="right" image={"https://serviceapi.spicezgold.com/download/1741664665391_1741497254110_New_Project_50.jpg"}/>
+        </div>
       </div>
     </section>
 
@@ -141,6 +154,7 @@ const Home = () => {
       <div className='container'>
         <h2 className='text-[20px] font-[600]'>Latest Products</h2>
         {
+          productsLoading ? <ProductSliderSkeleton items={6} /> :
           productData?.length !== 0 && <ProductsSlider items={6} data={productData} />
         }
 
@@ -152,6 +166,7 @@ const Home = () => {
       <div className='container'>
         <h2 className='text-[20px] font-[600]'>Featured Products</h2>
         {
+          featuredLoading ? <ProductSliderSkeleton items={6} /> :
           featuredProducts?.length !== 0 && <ProductsSlider items={6} data={featuredProducts} />
         }
 
