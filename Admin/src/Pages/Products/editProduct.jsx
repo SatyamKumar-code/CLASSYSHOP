@@ -14,6 +14,10 @@ import { MyContext } from '../../App';
 import { deleteImages, editData, fetchDataFromApi, postData } from '../../utils/api';
 import { useNavigate, useParams } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
+import Switch from '@mui/material/Switch';
+
+
+const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
 const EditProduct = () => {
 
@@ -31,6 +35,9 @@ const EditProduct = () => {
     const [previews, setPreviews] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isPageLoading, setIsPageLoading] = useState(true);
+    const [bannerPreviews, setBannerPreviews] = useState([]);
+
+    const [checkedSwitch, setCheckedSwitch] = useState(false);
 
 
     const context = useContext(MyContext)
@@ -59,6 +66,9 @@ const EditProduct = () => {
         productRam: [],
         size: [],
         productWeight: [],
+        bannerTitlename: '',
+        bannerImage: [],
+        isDisplayOnHomeBanner: false,
     });
     const setPreviewsFun = (previewsArr) => {
         const updatedPreviews = [...previews, ...previewsArr];
@@ -67,6 +77,16 @@ const EditProduct = () => {
             ...prev,
             images: updatedPreviews
         }));
+    }
+
+    const setBannerImagesFun = (previewsArr) => {
+        const updatedPreviews = [...bannerPreviews, ...previewsArr];
+        setBannerPreviews(updatedPreviews);
+        setFormFields((prev) => ({
+            ...prev,
+            bannerImage: updatedPreviews
+        }));
+
     }
 
     const removeImg = (image, index) => {
@@ -79,6 +99,27 @@ const EditProduct = () => {
             }));
         })
     }
+
+    const removeBannerImg = (image, index) => {
+        deleteImages(`/api/category/deleteImage?img=${image}`).then((res) => {
+            const updatedPreviews = bannerPreviews.filter((_, i) => i !== index);
+            setBannerPreviews(updatedPreviews);
+            setFormFields((prev) => ({
+                ...prev,
+                bannerImage: updatedPreviews
+            }));
+        })
+    }
+
+    const handleChangeSwitch = (event) => {
+        setCheckedSwitch(event.target.checked);
+        setFormFields((prev) => ({
+            ...prev,
+            isDisplayOnHomeBanner: event.target.checked
+        }));
+    }
+
+
 
     useEffect(() => {
         fetchDataFromApi("/api/product/productRAMS/get").then((res) => {
@@ -107,7 +148,7 @@ const EditProduct = () => {
                 if (res?.success) {
                     const product = res?.product;
                     setProductData(product);
-                    
+
                     // Set form fields with existing product data
                     setFormFields({
                         name: product?.name || '',
@@ -130,6 +171,9 @@ const EditProduct = () => {
                         productRam: product?.productRam || [],
                         size: product?.size || [],
                         productWeight: product?.productWeight || [],
+                        bannerTitlename: product?.bannerTitlename || '',
+                        bannerImage: product?.bannerImage || [],
+                        isDisplayOnHomeBanner: product?.isDisplayOnHomeBanner || false,
                     });
 
                     // Set select dropdown values
@@ -140,9 +184,11 @@ const EditProduct = () => {
                     setProductRams(product?.productRam || []);
                     setProductSize(product?.size || []);
                     setProductWeight(product?.productWeight || []);
-                    
+                    setCheckedSwitch(product?.isDisplayOnHomeBanner || false);
+
                     // Set image previews
                     setPreviews(product?.images || []);
+                    setBannerPreviews(product?.bannerImage || []);
                 }
                 setIsPageLoading(false);
             }).catch((err) => {
@@ -181,13 +227,13 @@ const EditProduct = () => {
         formFields.thirdsubCat = name;
     }
 
-    
+
 
     const handleChangeProductSize = (event) => {
         const {
             target: { value },
         } = event;
-        setProductSize (
+        setProductSize(
             // On autofill we get a stringified value.
             typeof value === 'string' ? value.split(',') : value,
         );
@@ -199,11 +245,11 @@ const EditProduct = () => {
         const {
             target: { value },
         } = event;
-        setProductWeight (
+        setProductWeight(
             // On autofill we get a stringified value.
             typeof value === 'string' ? value.split(',') : value,
         );
-        
+
         formFields.productWeight = value;
     };
 
@@ -211,7 +257,7 @@ const EditProduct = () => {
         const {
             target: { value },
         } = event;
-        setProductRams (
+        setProductRams(
             // On autofill we get a stringified value.
             typeof value === 'string' ? value.split(',') : value,
         );
@@ -225,7 +271,7 @@ const EditProduct = () => {
     };
 
 
-    
+
 
     const onChangeInput = (e) => {
         const { name, value } = e.target;
@@ -298,7 +344,7 @@ const EditProduct = () => {
             setIsLoading(false);
             return false;
         }
-        
+
         if (previews?.length === 0) {
             context.alertBox("error", "Please select product images.");
             setIsLoading(false);
@@ -312,7 +358,7 @@ const EditProduct = () => {
         };
 
         editData(`/api/product/updateProduct/${context?.isOpenFullScreenPanel?.id}`, updatedFormFields).then((res) => {
-            
+
             if (res?.data?.error === false) {
                 context.alertBox("Success", res?.data?.message);
                 setTimeout(() => {
@@ -326,12 +372,12 @@ const EditProduct = () => {
                 context.alertBox("error", res?.data?.message || "Failed to update product.");
                 setIsLoading(false);
             }
-            
+
         }).catch((err) => {
             context.alertBox("error", "Failed to update product.");
             setIsLoading(false);
         });
-        
+
     }
 
     return (
@@ -341,301 +387,301 @@ const EditProduct = () => {
                     <CircularProgress />
                 </div>
             ) : (
-            <form className='form py-3 p-8 ' onSubmit={handleSubmit}>
-                <div className='scroll max-h-[73vh] overflow-y-scroll pr-4'>
-                    <div className='grid grid-cols-1 mb-3'>
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Name</h3>
-                            <input
-                                type='text'
-                                name='name'
-                                value={formFields.name}
-                                onChange={onChangeInput}
-                                className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white'
-                            />
+                <form className='form py-3 p-8 ' onSubmit={handleSubmit}>
+                    <div className='scroll max-h-[73vh] overflow-y-scroll pr-4'>
+                        <div className='grid grid-cols-1 mb-3'>
+                            <div className='col'>
+                                <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Name</h3>
+                                <input
+                                    type='text'
+                                    name='name'
+                                    value={formFields.name}
+                                    onChange={onChangeInput}
+                                    className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white'
+                                />
+                            </div>
                         </div>
-                    </div>
 
-                    <div className='grid grid-cols-1 mb-3'>
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Description</h3>
-                            <textarea
-                                type='text'
-                                name='description'
-                                value={formFields.description}
-                                onChange={onChangeInput}
-                                className='w-full h-[140px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white' />
+                        <div className='grid grid-cols-1 mb-3'>
+                            <div className='col'>
+                                <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Description</h3>
+                                <textarea
+                                    type='text'
+                                    name='description'
+                                    value={formFields.description}
+                                    onChange={onChangeInput}
+                                    className='w-full h-[140px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white' />
+                            </div>
                         </div>
-                    </div>
 
-                    <div className='grid grid-cols-4 mb-3 gap-4'>
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Category</h3>
+                        <div className='grid grid-cols-4 mb-3 gap-4'>
+                            <div className='col'>
+                                <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Category</h3>
 
-                            {
-                                context?.catData?.length !== 0 &&
+                                {
+                                    context?.catData?.length !== 0 &&
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="productCatDrop"
+                                        size='small'
+                                        className='w-full'
+                                        value={productCat}
+                                        label="Category"
+                                        onChange={handleChangeProductCat}
+                                    >
+                                        {
+                                            context?.catData?.map((cat, index) => {
+                                                return (
+                                                    <MenuItem value={cat?._id} key={index}
+                                                        onClick={() => selectCatByName(cat?.name)}
+                                                    >
+                                                        {cat?.name}
+                                                    </MenuItem>
+                                                )
+                                            })
+                                        }
+                                    </Select>
+                                }
+
+                            </div>
+
+                            <div className='col'>
+                                <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Sub Category</h3>
+
+                                {
+                                    context?.catData?.length !== 0 &&
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="productCatDrop"
+                                        size='small'
+                                        className='w-full'
+                                        value={productSubCat}
+                                        label="Sub Category"
+                                        onChange={handleChangeProductSubCat}
+                                    >
+                                        {
+                                            context?.catData?.map((cat, index) => {
+                                                return (
+                                                    cat?.Children?.length !== 0 && cat?.Children?.map((subCat, index_) => {
+                                                        return (
+                                                            <MenuItem value={subCat?._id} key={index_}
+                                                                onClick={() => selectSubCatByName(subCat?.name)}
+                                                            >
+                                                                {subCat?.name}
+                                                            </MenuItem>
+                                                        )
+                                                    })
+
+                                                )
+                                            })
+                                        }
+                                    </Select>
+                                }
+                            </div>
+
+
+                            <div className='col'>
+                                <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Third Lavel Category</h3>
+
+                                {
+                                    context?.catData?.length !== 0 &&
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="productCatDrop"
+                                        size='small'
+                                        className='w-full'
+                                        value={productThirdLavelCat}
+                                        label="Sub Category"
+                                        onChange={handleChangeProductThirdLavelCat}
+                                    >
+                                        {
+                                            context?.catData?.map((cat) => {
+                                                return (
+                                                    cat?.Children?.length !== 0 && cat?.Children?.map((subCat) => {
+                                                        return (
+                                                            subCat?.Children?.length !== 0 && subCat?.Children?.map((thirdsubCat, index) => {
+                                                                return (
+                                                                    <MenuItem value={thirdsubCat?._id} key={index}
+                                                                        onClick={() => selectSubCatByThirdLavel(thirdsubCat?.name)}
+                                                                    >
+                                                                        {thirdsubCat?.name}
+                                                                    </MenuItem>
+                                                                )
+                                                            })
+                                                        )
+                                                    })
+
+                                                )
+                                            })
+                                        }
+                                    </Select>
+                                }
+                            </div>
+
+                            <div className='col'>
+                                <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Price</h3>
+                                <input
+                                    type='number'
+                                    name='price'
+                                    value={formFields.price}
+                                    onChange={onChangeInput}
+                                    className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white' />
+                            </div>
+
+                            <div className='col'>
+                                <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Old Price</h3>
+                                <input
+                                    type='number'
+                                    name='oldPrice'
+                                    value={formFields.oldPrice}
+                                    onChange={onChangeInput}
+                                    className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white' />
+                            </div>
+
+                            <div className='col'>
+                                <h3 className='text-[14px] font-[500] mb-1 text-black'>Is Featured?</h3>
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="productCatDrop"
                                     size='small'
                                     className='w-full'
-                                    value={productCat}
-                                    label="Category"
-                                    onChange={handleChangeProductCat}
+                                    value={productFeatured}
+                                    label="Product Featured"
+                                    onChange={handleChangeProductFeatured}
                                 >
-                                    {
-                                        context?.catData?.map((cat, index) => {
-                                            return (
-                                                <MenuItem value={cat?._id} key={index}
-                                                    onClick={() => selectCatByName(cat?.name)}
+                                    <MenuItem value={true}>True</MenuItem>
+                                    <MenuItem value={false}>False</MenuItem>
+                                </Select>
+                            </div>
+
+                            <div className='col'>
+                                <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Stock</h3>
+                                <input
+                                    type='number'
+                                    name='countInStock'
+                                    value={formFields.countInStock}
+                                    onChange={onChangeInput}
+                                    className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white' />
+                            </div>
+
+                            <div className='col'>
+                                <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Brand</h3>
+                                <input
+                                    type='text'
+                                    name='brand'
+                                    value={formFields.brand}
+                                    onChange={onChangeInput}
+                                    className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white' />
+                            </div>
+
+                            <div className='col'>
+                                <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Discount</h3>
+                                <input
+                                    type='number'
+                                    name='discount'
+                                    value={formFields.discount}
+                                    onChange={onChangeInput}
+                                    className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white' />
+                            </div>
+
+
+                            <div className='col'>
+                                <h3 className='text-[14px] font-[500] mb-1 text-black'>Product RAMS</h3>
+                                {
+                                    productRamsData?.length !== 0 &&
+                                    <Select
+                                        multiple
+                                        labelId="demo-simple-select-label"
+                                        id="productCatDrop"
+                                        size='small'
+                                        className='w-full'
+                                        value={productRams}
+                                        label="Product RAMS"
+                                        onChange={handleChangeProductRams}
+                                    >
+                                        {
+                                            productRamsData?.map((item, index) => {
+                                                return <MenuItem key={index} value={item?.Ram}>{item?.Ram}</MenuItem>
+                                            })
+                                        }
+                                    </Select>
+                                }
+                            </div>
+
+                            <div className='col'>
+                                <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Weight</h3>
+                                {
+                                    productWeightData?.length !== 0 &&
+                                    <Select
+                                        multiple
+                                        labelId="demo-simple-select-label"
+                                        id="productCatDrop"
+                                        size='small'
+                                        className='w-full'
+                                        value={productWeight}
+                                        label="Product Weight"
+                                        onChange={handleChangeProductWeight}
+                                    >
+                                        {
+                                            productWeightData?.map((item, index) => {
+                                                return <MenuItem key={index} value={item?.weight}>{item?.weight}</MenuItem>
+                                            })
+                                        }
+                                    </Select>
+                                }
+                            </div>
+
+                            <div className='col'>
+                                <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Size</h3>
+                                {
+                                    productSizeData?.length !== 0 &&
+                                    <Select
+                                        multiple
+                                        labelId="demo-simple-select-label"
+                                        id="productCatDrop"
+                                        size='small'
+                                        className='w-full'
+                                        value={productSize}
+                                        label="Product Size"
+                                        onChange={handleChangeProductSize}
+                                    >
+                                        {
+                                            productSizeData?.map((item, index) => {
+                                                return <MenuItem key={index} value={item?.size}>{item?.size}</MenuItem>
+                                            })
+                                        }
+                                    </Select>
+                                }
+                            </div>
+
+                            <div className='col'>
+                                <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Rating</h3>
+                                <Rating name='half-rating' value={parseFloat(formFields.rating) || 0} precision={0.1}
+                                    onChange={onChangeRating} />
+                            </div>
+
+
+                        </div>
+
+                        <div className='col w-full p-5 px-0'>
+                            <h3 className='font-[700] text-[18px] mb-3'>Media & Images</h3>
+
+
+
+                            <div className='grid grid-cols-7 gap-4'>
+
+                                {
+                                    previews?.length !== 0 && previews?.map((image, index) => {
+                                        return (
+                                            <div className='uploadBoxWrapper relative'>
+                                                <span className='absolute w-[20px] h-[20px] rounded-full overflow-hidden bg-red-700 -top-[5px] -right-[5px] flex items-center justify-center z-50 cursor-pointer'
+                                                    onClick={() => removeImg(image, index)}
                                                 >
-                                                    {cat?.name}
-                                                </MenuItem>
-                                            )
-                                        })
-                                    }
-                                </Select>
-                            }
+                                                    <IoMdClose className='text-white text-[17px]' />
+                                                </span>
 
-                        </div>
-
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Sub Category</h3>
-
-                            {
-                                context?.catData?.length !== 0 &&
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="productCatDrop"
-                                    size='small'
-                                    className='w-full'
-                                    value={productSubCat}
-                                    label="Sub Category"
-                                    onChange={handleChangeProductSubCat}
-                                >
-                                    {
-                                        context?.catData?.map((cat, index) => {
-                                            return (
-                                                cat?.Children?.length !== 0 && cat?.Children?.map((subCat, index_) => {
-                                                    return (
-                                                        <MenuItem value={subCat?._id} key={index_}
-                                                            onClick={() => selectSubCatByName(subCat?.name)}
-                                                        >
-                                                            {subCat?.name}
-                                                        </MenuItem>
-                                                    )
-                                                })
-   
-                                            )
-                                        })
-                                    }
-                                </Select>
-                            }
-                        </div>
-
-
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Third Lavel Category</h3>
-
-                            {
-                                context?.catData?.length !== 0 &&
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="productCatDrop"
-                                    size='small'
-                                    className='w-full'
-                                    value={productThirdLavelCat}
-                                    label="Sub Category"
-                                    onChange={handleChangeProductThirdLavelCat}
-                                >
-                                    {
-                                        context?.catData?.map((cat) => {
-                                            return (
-                                                cat?.Children?.length !== 0 && cat?.Children?.map((subCat) => {
-                                                    return (
-                                                        subCat?.Children?.length !== 0 && subCat?.Children?.map((thirdsubCat,index) => {
-                                                            return (
-                                                                <MenuItem value={thirdsubCat?._id} key={index}
-                                                                    onClick={() => selectSubCatByThirdLavel(thirdsubCat?.name)}
-                                                                >
-                                                                    {thirdsubCat?.name}
-                                                                </MenuItem>
-                                                            )
-                                                        })
-                                                    )
-                                                })
-
-                                            )
-                                        })
-                                    }
-                                </Select>
-                            }
-                        </div>
-
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Price</h3>
-                            <input
-                                type='number'
-                                name='price'
-                                value={formFields.price}
-                                onChange={onChangeInput}
-                                className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white' />
-                        </div>
-
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Old Price</h3>
-                            <input
-                                type='number'
-                                name='oldPrice'
-                                value={formFields.oldPrice}
-                                onChange={onChangeInput}
-                                className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white' />
-                        </div>
-
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Is Featured?</h3>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="productCatDrop"
-                                size='small'
-                                className='w-full'
-                                value={productFeatured}
-                                label="Product Featured"
-                                onChange={handleChangeProductFeatured}
-                            >
-                                <MenuItem value={true}>True</MenuItem>
-                                <MenuItem value={false}>False</MenuItem>
-                            </Select>
-                        </div>
-
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Stock</h3>
-                            <input
-                                type='number'
-                                name='countInStock'
-                                value={formFields.countInStock}
-                                onChange={onChangeInput}
-                                className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white' />
-                        </div>
-
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Brand</h3>
-                            <input
-                                type='text'
-                                name='brand'
-                                value={formFields.brand}
-                                onChange={onChangeInput}
-                                className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white' />
-                        </div>
-
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Discount</h3>
-                            <input
-                                type='number'
-                                name='discount'
-                                value={formFields.discount}
-                                onChange={onChangeInput}
-                                className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white' />
-                        </div>
-
-
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product RAMS</h3>
-                            {
-                                productRamsData?.length !== 0 &&
-                                <Select
-                                    multiple
-                                    labelId="demo-simple-select-label"
-                                    id="productCatDrop"
-                                    size='small'
-                                    className='w-full'
-                                    value={productRams}
-                                    label="Product RAMS"
-                                    onChange={handleChangeProductRams}
-                                >
-                                {
-                                    productRamsData?.map((item, index) => {
-                                        return <MenuItem key={index} value={item?.Ram}>{item?.Ram}</MenuItem>
-                                    })
-                                }
-                                </Select>
-                            }
-                        </div>
-
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Weight</h3>
-                            {
-                                productWeightData?.length !== 0 &&
-                                <Select
-                                    multiple
-                                    labelId="demo-simple-select-label"
-                                    id="productCatDrop"
-                                    size='small'
-                                    className='w-full'
-                                    value={productWeight}
-                                    label="Product Weight"
-                                    onChange={handleChangeProductWeight}
-                                >
-                                {
-                                    productWeightData?.map((item, index) => {
-                                        return <MenuItem key={index} value={item?.weight}>{item?.weight}</MenuItem>
-                                    })
-                                }
-                                </Select>
-                            }
-                        </div>
-
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Size</h3>
-                            {
-                                productSizeData?.length !== 0 &&
-                                <Select
-                                    multiple
-                                    labelId="demo-simple-select-label"
-                                    id="productCatDrop"
-                                    size='small'
-                                    className='w-full'
-                                    value={productSize}
-                                    label="Product Size"
-                                    onChange={handleChangeProductSize}
-                                >
-                                {
-                                    productSizeData?.map((item, index) => {
-                                        return <MenuItem key={index} value={item?.size}>{item?.size}</MenuItem>
-                                    })
-                                }
-                                </Select>
-                            }
-                        </div>
-
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Rating</h3>
-                            <Rating name='half-rating' value={parseFloat(formFields.rating) || 0} precision={0.1}
-                                onChange={onChangeRating} />
-                        </div>
-
-
-                    </div>
-
-                    <div className='col w-full p-5 px-0'>
-                        <h3 className='font-[700] text-[18px] mb-3'>Media & Images</h3>
-
-
-
-                        <div className='grid grid-cols-7 gap-4'>
-
-                        {
-                            previews?.length !== 0 && previews?.map((image, index) => {
-                                return (
-                                    <div className='uploadBoxWrapper relative'>
-                                        <span className='absolute w-[20px] h-[20px] rounded-full overflow-hidden bg-red-700 -top-[5px] -right-[5px] flex items-center justify-center z-50 cursor-pointer'
-                                            onClick={() => removeImg(image, index)}
-                                        >
-                                            <IoMdClose className='text-white text-[17px]' />
-                                        </span>
-
-                                        <div key={index} className='uploadBox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-[150px] w-[100%] bg-gray-100 cursor-pointer hover:bg-gray-200 flex items-center justify-center flex-col relative'>
-                                            {/* <LazyLoadImage
+                                                <div key={index} className='uploadBox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-[150px] w-[100%] bg-gray-100 cursor-pointer hover:bg-gray-200 flex items-center justify-center flex-col relative'>
+                                                    {/* <LazyLoadImage
                                                 alt={"image"}
                                                 effect="blur"
                                                 wrapperProps={{
@@ -643,35 +689,99 @@ const EditProduct = () => {
                                                 }}
                                                 src={image}
                                             /> */}
-                                            <img src={image} className='w-full' />
-                                        </div>
+                                                    <img src={image} className='w-full' />
+                                                </div>
 
 
 
-                                    </div>
-                                )
-                            })
+                                            </div>
+                                        )
+                                    })
+                                }
+
+
+                                <UploadBox multiple={true} name="images" url="/api/product/uploadImages" setPreviewsFun={setPreviewsFun} />
+                            </div>
+                        </div>
+
+                        <div className='col w-full p-5 px-0'>
+
+                            <div className="shadow-md bg-white p-4 w-full">
+                                <div className='flex items-center gap-8'>
+                                    <h3 className='font-[700] text-[18px] mb-3'>Banner Images</h3>
+                                    <Switch
+                                        {...label}
+                                        onChange={handleChangeSwitch}
+                                        checked={checkedSwitch}
+                                    />
+                                </div>
+                                <div className='grid grid-cols-7 gap-4'>
+
+
+                                    {
+                                        bannerPreviews?.length !== 0 && bannerPreviews?.map((image, index) => {
+                                            return (
+                                                <div className='uploadBoxWrapper relative'>
+                                                    <span className='absolute w-[20px] h-[20px] rounded-full overflow-hidden bg-red-700 -top-[5px] -right-[5px] flex items-center justify-center z-50 cursor-pointer'
+                                                        onClick={() => removeBannerImg(image, index)}
+                                                    >
+                                                        <IoMdClose className='text-white text-[17px]' />
+                                                    </span>
+
+                                                    <div key={index} className='uploadBox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-[150px] w-[100%] bg-gray-100 cursor-pointer hover:bg-gray-200 flex items-center justify-center flex-col relative'>
+                                                        {/* <LazyLoadImage
+                                                alt={"image"}
+                                                effect="blur"
+                                                wrapperProps={{
+                                                    style: { transitionDelay: "1s" }
+                                                }}
+                                                src={image}
+                                            /> */}
+                                                        <img src={image} className='w-full' />
+                                                    </div>
+
+
+
+                                                </div>
+                                            )
+                                        })
+                                    }
+
+                                    {
+                                        bannerPreviews?.length === 0 && <UploadBox multiple={false} name="bannerImage" url="/api/product/uploadBannerImages" setPreviewsFun={setBannerImagesFun} />
+                                    }
+                                    
+                                </div>
+
+                                <br />
+
+                                <h3 className='font-[700] text-[18px] mb-3'>Banner Title</h3>
+                                <input
+                                    type='text'
+                                    name='bannerTitlename'
+                                    value={formFields.bannerTitlename}
+                                    onChange={onChangeInput}
+                                    className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white'
+                                />
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+                    <hr />
+                    <br />
+                    <Button type='submit' className='btn-blue btn-lg w-full flext gap-2'>
+                        {
+                            isLoading === true ? <CircularProgress size={20} color='inherit' />
+                                :
+                                <>
+                                    <FaCloudUploadAlt className='text-[25px] text-white' /> Update Product
+                                </>
                         }
-
-
-                        <UploadBox multiple={true} name="images" url="/api/product/uploadImages" setPreviewsFun={setPreviewsFun} />
-                    </div>
-                    </div>
-
-
-                </div>
-                <hr />
-                <br />
-                <Button type='submit' className='btn-blue btn-lg w-full flext gap-2'>
-                    {
-                        isLoading === true ? <CircularProgress size={20} color='inherit' />
-                            :
-                            <>
-                                <FaCloudUploadAlt className='text-[25px] text-white' /> Update Product
-                            </>
-                    }
-                </Button>
-            </form>
+                    </Button>
+                </form>
             )}
         </section>
     )

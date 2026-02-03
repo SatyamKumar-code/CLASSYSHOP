@@ -106,7 +106,11 @@ const productSchema = new mongoose.Schema({
     bannerTitlename: {
         type: String,
         default: null
-    }
+    },
+    isDisplayOnHomeBanner: {
+        type: Boolean,
+        default: false
+    },
 }, { timestamps: true });
 
 const ProductModel = mongoose.model("Product", productSchema);

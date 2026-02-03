@@ -122,7 +122,9 @@ const Home = () => {
     <section className='py-6'>
       <div className='container flex gap-5'>
         <div className='part1 w-[70%]'>
-          <HomeBannerV2 />
+          {
+            productData?.length!== 0 && <HomeBannerV2 data={productData} />
+          }
         </div>
 
         <div className='part2 w-[30%] flex flex-col items-center gap-5 justify-between'>
