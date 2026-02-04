@@ -18,12 +18,13 @@ export const AddBannerV1 = () => {
         subCatId: '',
         thirdsubCatId: '',
         price: '',
-        images: [],
+        alignInfo: '',
     });
 
     const [productCat, setProductCat] = useState('');
     const [productSubCat, setProductSubCat] = useState('');
     const [productThirdLavelCat, setProductThirdLavelCat] = useState('');
+    const [alignInfo, setAlignInfo] = useState('');
     const [previews, setPreviews] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -59,6 +60,11 @@ export const AddBannerV1 = () => {
         setProductThirdLavelCat(event.target.value);
         formFields.thirdsubCatId = event.target.value;
     };
+
+    const handleChangeAlignInfo = (event) => {
+        setAlignInfo(event.target.value);
+        formFields.alignInfo = event.target.value;
+    }
 
 
     const setPreviewsFun = (previewsArr) => {
@@ -242,6 +248,25 @@ export const AddBannerV1 = () => {
                                             )
                                         })
                                     }
+                                </Select>
+                            }
+                        </div>
+
+                        <div className='col'>
+                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Align Info</h3>
+                            {
+                                context?.catData?.length !== 0 &&
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="productCatDrop"
+                                    size='small'
+                                    className='w-full'
+                                    value={alignInfo}
+                                    label="Sub Category"
+                                    onChange={handleChangeAlignInfo}
+                                >
+                                    <MenuItem value={'left'}>Left</MenuItem>
+                                    <MenuItem value={'right'}>Right</MenuItem>  
                                 </Select>
                             }
                         </div>

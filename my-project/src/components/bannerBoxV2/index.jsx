@@ -10,9 +10,9 @@ const BannerBoxV2 = (props) => {
 
         <div className={`info absolute p-5 top-0 ${props.info === "left" ? "left-0" : "right-0"} w-[70%] h-[100%] z-50 flex flex-col items-center justify-center gap-2
         ${props.info === "left" ? "" : "pl-17"}`}>
-            <h2 className='text-[18px] font-[600]'>Samsung Gear VR Camera</h2>
+            <h2 className='text-[18px] font-[600]'>{props?.item?.bannerTitle}</h2>
 
-            <span className='text-[20px] text-primary font-[600] w-full'>$129.00</span>
+            <span className='text-[20px] text-primary font-[600] w-full'>&#x20b9;{props?.item?.price}</span>
 
             <div className='w-full'>
                 <Link to='/' className='text-[16px] font-[600] link'>Shop Now</Link>

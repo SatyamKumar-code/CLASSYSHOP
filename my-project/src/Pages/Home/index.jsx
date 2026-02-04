@@ -27,6 +27,7 @@ const Home = () => {
   const [popularProductsData, setPopularProductsData] = useState([]);
   const [productData, setAllProductData] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [bannerV1Data, setBannerV1Data] = useState([]);
   
   const [popularLoading, setPopularLoading] = useState(true);
   const [productsLoading, setProductsLoading] = useState(true);
@@ -45,6 +46,10 @@ const Home = () => {
     fetchDataFromApi("/api/product/getAllFeaturedProducts").then((res) => {
       setFeaturedProducts(res?.products);
       setFeaturedLoading(false);
+    });
+
+    fetchDataFromApi("/api/bannerV1").then((res) => {
+      setBannerV1Data(res?.banners);
     });
     
   }, []);
@@ -148,7 +153,9 @@ const Home = () => {
           <p className='font-bold text-[25px]'>- Only $200</p>
         </div>
 
-        <AdsBannerSliderV2 items={4} />
+        {
+          bannerV1Data?.length !== 0 && <AdsBannerSliderV2 items={4} data={bannerV1Data} />
+        }
       </div>
     </section>
 

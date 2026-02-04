@@ -11,24 +11,15 @@ const AdsBannerSlider = (props) => {
   return (
     <>
     <Swiper slidesPerView={props.items} spaceBetween={10} navigation={true} modules={[Navigation]} className="smalBtn">
-        <SwiperSlide>
-            <BannerBoxV2  info="right" image={"https://serviceapi.spicezgold.com/download/1760160666204_1737020916820_New_Project_52.jpg"} link={'/'} />
-        </SwiperSlide>
-        <SwiperSlide>
-            <BannerBoxV2  info="right" image={"https://serviceapi.spicezgold.com/download/1760160666204_1737020916820_New_Project_52.jpg"} link={'/'} />
-        </SwiperSlide>
-        <SwiperSlide>
-            <BannerBoxV2  info="right" image={"https://serviceapi.spicezgold.com/download/1760160666204_1737020916820_New_Project_52.jpg"} link={'/'} />
-        </SwiperSlide>
-        <SwiperSlide>
-            <BannerBoxV2  info="right" image={"https://serviceapi.spicezgold.com/download/1760160666204_1737020916820_New_Project_52.jpg"} link={'/'} />
-        </SwiperSlide>
-        <SwiperSlide>
-            <BannerBoxV2  info="right" image={"https://serviceapi.spicezgold.com/download/1760160666204_1737020916820_New_Project_52.jpg"} link={'/'} />
-        </SwiperSlide>
-        <SwiperSlide>
-            <BannerBoxV2  info="right" image={"https://serviceapi.spicezgold.com/download/1760160666204_1737020916820_New_Project_52.jpg"} link={'/'} />
-        </SwiperSlide>
+        {
+            props?.data?.map((item, index) => {
+                return (
+                    <SwiperSlide key={index}> 
+                        <BannerBoxV2 info={item?.alignInfo} item={item} image={item.images[0]} link={item.link} />
+                    </SwiperSlide>
+                )
+            })
+        }
       </Swiper>
     </>
   )

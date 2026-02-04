@@ -61,6 +61,7 @@ export async function addBanner(req, res) {
             subCatId: req.body.subCatId,
             thirdsubCatId: req.body.thirdsubCatId,
             price: req.body.price,
+            alignInfo: req.body.alignInfo,
         })
         if( !banner ) {
             return res.status(400).json({
@@ -204,6 +205,7 @@ export async function updatedBanner(req, res) {
                 subCatId: req.body.subCatId,
                 thirdsubCatId: req.body.thirdsubCatId,
                 price: req.body.price,
+                alignInfo: req.body.alignInfo,
             },
             { new: true }
         );
