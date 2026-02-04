@@ -28,6 +28,8 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { IoMdClose } from 'react-icons/io'
 import EditProduct from '../../Pages/Products/editProduct';
+import { AddBannerV1 } from '../../Pages/Banners/addBannerV1';
+import { EditBannerV1 } from '../../Pages/Banners/editBannerV1';
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -230,6 +232,12 @@ const Header = () => {
         }
         {
           context?.isOpenFullScreenPanel?.model === 'Edit Product' && <EditProduct />
+        }
+        {
+          context?.isOpenFullScreenPanel?.model === 'Add BannerV1' && <AddBannerV1 />
+        }
+        {
+          context?.isOpenFullScreenPanel?.model === 'Edit BannerV1' && <EditBannerV1 />
         }
 
 

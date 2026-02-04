@@ -77,11 +77,11 @@ const AddCategory = () => {
                 setTimeout(() => {
                     context.alertBox("Success", "Category created successfully.");
                     setIsLoading(false);
-                    context.setIsOpenFullScreenPanel({
+                    context?.setIsOpenFullScreenPanel({
                         open: false,
                     })
                     history('/category/list');
-                    context.getCat();
+                    context?.getCat();
                 }, 2000)
                 
             } else {
