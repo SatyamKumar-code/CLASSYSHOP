@@ -30,6 +30,7 @@ import { IoMdClose } from 'react-icons/io'
 import EditProduct from '../../Pages/Products/editProduct';
 import { AddBannerV1 } from '../../Pages/Banners/addBannerV1';
 import { EditBannerV1 } from '../../Pages/Banners/editBannerV1';
+import AddBlog from '../../Pages/Blog/addBlog';
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -238,6 +239,9 @@ const Header = () => {
         }
         {
           context?.isOpenFullScreenPanel?.model === 'Edit BannerV1' && <EditBannerV1 />
+        }
+        {
+          context?.isOpenFullScreenPanel?.model === 'Add Blog' && <AddBlog />
         }
 
 
