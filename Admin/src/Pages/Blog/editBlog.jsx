@@ -1,16 +1,16 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { IoMdClose } from 'react-icons/io';
 import UploadBox from '../../Components/UploadBox';
 import Button from '@mui/material/Button';
 import { FaCloudUploadAlt } from 'react-icons/fa';
 import { useState } from 'react';
-import { deleteImages, postData } from '../../utils/api';
+import { deleteImages, postData, editData, fetchDataFromApi } from '../../utils/api';
 import { MyContext } from '../../App';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
 import Editor from 'react-simple-wysiwyg';
 
-const AddBlog = () => {
+const EditBlog = () => {
 
     const [formFields, setFormFields] = useState({
         title: '',
@@ -26,6 +26,21 @@ const AddBlog = () => {
 
 
     const context = useContext(MyContext);
+
+    useEffect(() => {
+        const id = context?.isOpenFullScreenPanel?.id;
+
+        fetchDataFromApi(`/api/blog/${id}`).then((res) => {
+            setFormFields({
+                title: res?.blog?.title,
+                description: res?.blog?.description,
+                images: res?.blog?.images,
+            });
+            setPreviews(res?.blog?.images);
+            setHtml(res?.blog?.description);
+            
+        })
+    }, [])
 
     const onChangeInput = (e) => {
         const { name, value } = e.target;
@@ -92,10 +107,10 @@ const AddBlog = () => {
             return false;
         }
 
-        postData("/api/blog/add", formFields).then((res) => {
-            if (res?.success === true) {
+        editData(`/api/blog/${context?.isOpenFullScreenPanel?.id}`, formFields).then((res) => {
+            if (res?.data?.success === true) {
                 setTimeout(() => {
-                    context.alertBox("Success", "Blog created successfully.");
+                    context.alertBox("Success", "Blog updated successfully.");
                     setIsLoading(false);
                     context?.setIsOpenFullScreenPanel({
                         open: false,
@@ -105,7 +120,7 @@ const AddBlog = () => {
                 }, 2000)
                 
             } else {
-                context.alertBox("error", res?.message || "Failed to create blog.");
+                context.alertBox("error", res?.message || "Failed to update blog.");
                 setIsLoading(false);
             }
         })
@@ -196,4 +211,4 @@ const AddBlog = () => {
     )
 }
 
-export default AddBlog;
+export default EditBlog;

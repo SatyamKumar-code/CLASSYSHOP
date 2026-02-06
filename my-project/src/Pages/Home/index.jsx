@@ -28,6 +28,7 @@ const Home = () => {
   const [productData, setAllProductData] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [bannerV1Data, setBannerV1Data] = useState([]);
+  const [blogData, setBlogData] = useState([]);
   
   const [popularLoading, setPopularLoading] = useState(true);
   const [productsLoading, setProductsLoading] = useState(true);
@@ -51,6 +52,9 @@ const Home = () => {
     fetchDataFromApi("/api/bannerV1").then((res) => {
       setBannerV1Data(res?.banners);
     });
+    fetchDataFromApi("/api/blog").then((res) => {
+      setBlogData(res?.blogs);
+    })
     
   }, []);
 
@@ -183,6 +187,8 @@ const Home = () => {
       </div>
     </section>
 
+  {
+    blogData?.length !== 0 && 
     <section className='py-5 pb-8 pt-0 bg-white blogSection'>
       <div className='container'>
         <h2 className='text-[20px] font-[600] mb-4'>From The Blog</h2>
@@ -193,36 +199,20 @@ const Home = () => {
           modules={[Navigation]}
           className="blogSlider"
         >
-          <SwiperSlide>
-            <BlogItem />
-          </SwiperSlide>
-
-          <SwiperSlide>
-            <BlogItem />
-          </SwiperSlide>
-
-          <SwiperSlide>
-            <BlogItem />
-          </SwiperSlide>
-
-          <SwiperSlide>
-            <BlogItem />
-          </SwiperSlide>
-
-          <SwiperSlide>
-            <BlogItem />
-          </SwiperSlide>
-
-          <SwiperSlide>
-            <BlogItem />
-          </SwiperSlide>
-
-          <SwiperSlide>
-            <BlogItem />
-          </SwiperSlide>
+          {
+            blogData?.map((item, index) => {
+              return (
+                <SwiperSlide key={index}>
+                  <BlogItem item={item} />
+                </SwiperSlide>
+              )
+            })
+          }
         </Swiper>
       </div>
     </section>
+  }
+    
 
 
 

@@ -123,7 +123,7 @@ export const BlogList = () => {
                                             </TableCell>
 
                                             <TableCell width={300}>
-                                                <span className='text-[14px]'>{item?.description}</span>
+                                                <div dangerouslySetInnerHTML={{ __html: item?.description?.substr(0,150)+'...' }} />
                                             </TableCell>
 
                                             <TableCell width={100}>

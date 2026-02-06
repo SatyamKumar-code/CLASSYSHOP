@@ -89,19 +89,40 @@ export async function addBlog(req, res) {
 
 export async function getBlogs(req, res) {
     try {
-        const blogs = await BlogModel.find();
+        const page = parseInt(req.query.page) || 1;
+        const perPage = parseInt(req.query.perPage);
+        const totalPosts = await BlogModel.countDocuments();
+        const totalPages = Math.ceil(totalPosts / perPage);
 
-        if(!blogs) {
+
+        if(page > totalPages) {
             return res.status(404).json({
-                message: "No blogs found",
-                error: true,
-                success: false
+                message: "Page not found",
+                success: false,
+                error: true
             })
         }
+
+
+
+        const blogs = await BlogModel.find()
+            .skip((page -1) * perPage)
+            .limit(perPage)
+            .exec();
+
+        if(!blogs || blogs.length === 0) {
+            return res.status(404).json({
+                error: true,
+                success: false
+            });
+        }
+
         return res.status(200).json({
             error: false,
             success: true,
-            blogs,
+            blogs: blogs,
+            totalPages: totalPages,
+            page: page,
         });
 
     } catch (error) {
