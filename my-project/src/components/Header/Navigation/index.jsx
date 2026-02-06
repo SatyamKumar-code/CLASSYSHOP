@@ -45,7 +45,7 @@ const Navigation = () => {
                                 catData?.length !== 0 && catData?.map((cat, index) => {
                                     return (
                                         <li className='list-none relative' key={index}>
-                                            <Link to="/productListing" className='link transition text-[14px] font-[500]'>
+                                            <Link to={`/products?catId=${cat?._id}`} className='link transition text-[14px] font-[500]'>
                                                 <Button className='link transition !font-[500] !text-[rgba(0,0,0,0.8)] hover:!text-[#ff5252] !py-4'>{cat?.name}</Button>
                                             </Link>
 
@@ -57,7 +57,7 @@ const Navigation = () => {
                                                             cat?.Children?.map((subCat, index_) => {
                                                                 return (
                                                                     <li className='list-none w-full' key={index_}>
-                                                                        <Link to={"/fashion/men"}>
+                                                                        <Link to={`/products?subCatId=${subCat?._id}`} className='w-full block'>
                                                                             <Button className=' !text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none'>{subCat?.name}</Button>
                                                                             {
                                                                                 subCat?.Children?.length !== 0 &&
@@ -67,7 +67,7 @@ const Navigation = () => {
                                                                                         subCat?.Children?.map((thirdLavelCat, index__) => {
                                                                                             return (
                                                                                                 <li className='list-none w-full' key={index__}>
-                                                                                                    <Link to={"/fashion/women"}>
+                                                                                                    <Link to={`/products?thirdsubCatId=${thirdLavelCat?._id}`} className='w-full block'>
                                                                                                         <Button className='!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none'>{thirdLavelCat?.name}</Button>
                                                                                                     </Link>
                                                                                                 </li>

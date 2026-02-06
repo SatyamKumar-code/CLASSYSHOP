@@ -78,7 +78,7 @@ return (
                                                             subCat?.Children?.length !== 0 && subCat?.Children?.map((thirdLavelCat, index__) => {
                                                                 return (
                                                                     <li className='list-none relative mb-1' key={index__}>
-                                                                        <Link to={"/"} className=' link w-full !text-left !justify-start px-3 transition text-[14px]'>{thirdLavelCat?.name}</Link>
+                                                                        <Link to={`/products?thirdsubCatId=${thirdLavelCat?._id}`} className=' link w-full !text-left !justify-start px-3 transition text-[14px]'>{thirdLavelCat?.name}</Link>
                                                                     </li>
                                                                 )
                                                             })

@@ -55,8 +55,8 @@ const ProductItem = (props) => {
             <Rating name='size-small' defaultValue={props?.item?.rating} size="small" readOnly />
 
             <div className='flex items-center gap-4'>
-                <span className='oldPrice line-through text-gray-500 text-[15px] font-[500]'>&#x20b9; {props?.item?.price}</span>
-                <span className='price text-[#ff5252] text-[15px] font-[600]'>&#x20b9; {props?.item?.oldPrice}</span>
+                <span className='oldPrice line-through text-gray-500 text-[15px] font-[500]'>&#x20b9; {props?.item?.oldPrice}</span>
+                <span className='price text-[#ff5252] text-[15px] font-[600]'>&#x20b9; {props?.item?.price}</span>
             </div>
         </div>
 

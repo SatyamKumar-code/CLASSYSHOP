@@ -5,19 +5,28 @@ import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
 import ProductItem from '../../components/ProductItem';
 import ProductItemListView from '../../components/ProductItemListView';
+import ProductLoadingGrid from '../../components/skeleton/ProductLoadingGrid';
 import Button from '@mui/material/Button';
 import { IoGridSharp } from 'react-icons/io5';
 import { LuMenu } from 'react-icons/lu';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Pagination from '@mui/material/Pagination';
+import { useState } from 'react';
 
 
 
 
 const ProductListing = () => {
-    const [itemView, setItemView] = React.useState('grid');
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [itemView, setItemView] = useState('grid');
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const [productsData, setProductsData] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -53,7 +62,14 @@ const ProductListing = () => {
                 <div className='container flex gap-3'>
 
                     <div className='sidebarWrapper w-[20%] h-full bg-white'>
-                        <Sidebar />
+                        <Sidebar 
+                            productsData={productsData} 
+                            setProductsData={setProductsData} 
+                            isLoading={isLoading} 
+                            setIsLoading={setIsLoading}
+                            page={page}
+                            setTotalPages={setTotalPages}
+                        />
                     </div>
 
                     <div className='rightContent w-[80%] py-3'>
@@ -69,7 +85,7 @@ const ProductListing = () => {
                                 >
                                     <IoGridSharp className='text-[14px] text-[rgba(0,0,0,0.7)]' />
                                 </Button>
-                                <span className='text-[14px] font-[500] pl-3 text-[rgba(0,0,0,0.7)]'>There are 27 products.</span>
+                                <span className='text-[14px] font-[500] pl-3 text-[rgba(0,0,0,0.7)]'>There are {productsData?.length !== 0 ? productsData?.length : 0} products.</span>
 
                             </div>
 
@@ -126,34 +142,59 @@ const ProductListing = () => {
 
                             </div>
                         </div>
-                        <div className={`grid ${itemView === 'grid' ? 'grid grid-cols-4 mid:grid-cols-4' : 'grid grid-cols-1 mid:grid-cols-1'} gap-4`}>
+                        <div 
+                            className={`grid ${itemView === 'grid' 
+                                ? 'grid grid-cols-5 mid:grid-cols-5' 
+                                : 'grid grid-cols-1 mid:grid-cols-1'
+                                } gap-4`}>
                             {
                                 itemView === 'grid' ?
                                     <>
-                                        <ProductItem />
-                                        <ProductItem />
-                                        <ProductItem />
-                                        <ProductItem />
-                                        <ProductItem />
-                                        <ProductItem />
+                                    {
+                                        isLoading === true ? <ProductLoadingGrid view={itemView} /> 
+                                        :
+                                        productsData?.products?.length !== 0 && productsData?.products?.map((item, index) => {
+                                            return ( 
+                                                <ProductItem
+                                                    key={index}
+                                                    item={item}
+                                                />
+                                            )
+                                        })
+                                    }
                                     </>
                                     :
                                     (
                                         <>
-                                        <ProductItemListView />
-                                        <ProductItemListView />
-                                        <ProductItemListView />
-                                        <ProductItemListView />
-                                        <ProductItemListView />
-                                        <ProductItemListView />
+                                        {
+                                        isLoading === true ? <ProductLoadingGrid view={itemView} /> 
+                                        :
+                                        productsData?.products?.length !== 0 && productsData?.products?.map((item, index) => {
+                                            return ( 
+                                                <ProductItemListView
+                                                    key={index}
+                                                    item={item}
+                                                />
+                                            )
+                                        })
+                                    }
+                                        
                                         </>
                                     )
                             }
                         </div>
                         
-                        <div className='flex items-center justify-center mt-10'>   
-                        <Pagination count={10} showFirstButton showLastButton />
-                        </div>
+                        {
+                            totalPages > 1 &&
+                            <div className='flex items-center justify-center mt-10'>
+                                <Pagination 
+                                    count={totalPages} 
+                                    showFirstButton showLastButton
+                                    page={page}
+                                    onChange={(e, value)=> setPage(value)}
+                                />
+                            </div>
+                        }
                     </div>
                 </div>
             </div>

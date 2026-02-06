@@ -1410,3 +1410,50 @@ export async function getProductSizeById(req, res) {
         })
     }
 }
+
+export async function filters(req, res) {
+    const { catId, subCatId, thirdsubCatId, minPrice, maxPrice, rating, page, limit } = req.body;
+
+    const filter = {};
+
+    if(catId?.length) {
+        filter.catId = { $in: catId };
+    }
+    if(subCatId?.length) {
+        filter.subCatId = { $in: subCatId };
+    }
+    if(thirdsubCatId?.length) {
+        filter.thirdsubCatId = { $in: thirdsubCatId };
+    }
+    if(minPrice || maxPrice) {
+        filter.price = {$gte: +minPrice || 0, $lte: +maxPrice || Infinity};
+    }
+
+    if(rating?.length) {
+        filter.rating = { $in: rating };
+    }
+
+    try {
+
+        const products = await ProductModel.find(filter).populate("category").skip((page - 1) * limit).limit(parseInt(limit));
+
+        const total = await ProductModel.countDocuments(filter);
+
+        return res.status(200).json({
+            error: false,
+            success: true,
+            products: products,
+            total: total,
+            page: parseInt(page),
+            totalPages: Math.ceil(total / limit)
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+
+}
