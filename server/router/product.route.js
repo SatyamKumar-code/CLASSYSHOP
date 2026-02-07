@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import auth from '../middlewares/auth.js';
 import upload from "../middlewares/multer.js";
-import { createProduct, getAllProducts, getAllProductsByPrice, getAllProductsByCatId, getAllProductsByCatName, getAllProductsBySubCatId, getAllProductsBySubCatName, getAllProductsByThirdLavelCatId, getAllProductsByThirdLavelCatName, uploadImages, getAllProductsByRating, getProductsCount, getAllFeaturedProducts, deleteProduct, getProduct, removeImageFromCloudinary, updateProduct, deleteMultipleProduct, createProductRAMS, deleteProductRAMS, updateProductRam, getProductRam, getProductRamById, createProductWEIGHT, deleteProductWEIGHT, updateProductWEIGHT, getProductWeightById, getProductWeight, createProductSIZE, deleteProductSIZE, updateProductSIZE, getProductSizeById, getProductSize, uploadBannerImages, filters } from '../controllers/product.controller.js';
+import { createProduct, getAllProducts, getAllProductsByPrice, getAllProductsByCatId, getAllProductsByCatName, getAllProductsBySubCatId, getAllProductsBySubCatName, getAllProductsByThirdLavelCatId, getAllProductsByThirdLavelCatName, uploadImages, getAllProductsByRating, getProductsCount, getAllFeaturedProducts, deleteProduct, getProduct, removeImageFromCloudinary, updateProduct, deleteMultipleProduct, createProductRAMS, deleteProductRAMS, updateProductRam, getProductRam, getProductRamById, createProductWEIGHT, deleteProductWEIGHT, updateProductWEIGHT, getProductWeightById, getProductWeight, createProductSIZE, deleteProductSIZE, updateProductSIZE, getProductSizeById, getProductSize, uploadBannerImages, filters, sortBy } from '../controllers/product.controller.js';
 
 const productRouter = Router();
 productRouter.post('/uploadImages', auth, upload.array('images'), uploadImages)
@@ -41,6 +41,7 @@ productRouter.put('/productSize/:id', auth, updateProductSIZE);
 productRouter.get('/productSize/get', getProductSize);
 productRouter.get('/productSize/:id', getProductSizeById);
 
-productRouter.post('/filters', filters)
+productRouter.post('/filters', filters);
+productRouter.post('/sortBy', sortBy);
 
 export default productRouter;

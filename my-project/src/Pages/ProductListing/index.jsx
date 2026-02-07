@@ -1,6 +1,5 @@
 import React from 'react'
 import { Sidebar } from '../../components/Sidebar';
-import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
 import ProductItem from '../../components/ProductItem';
@@ -13,6 +12,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Pagination from '@mui/material/Pagination';
 import { useState } from 'react';
+import { postData } from '../../utils/api';
 
 
 
@@ -27,6 +27,8 @@ const ProductListing = () => {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
+    const [selectedSortVal, setSelectedSortVal] = useState('Name, A to Z');
+
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -34,6 +36,18 @@ const ProductListing = () => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const handleSortBy = (name, order, products, value) => {
+        setSelectedSortVal(value);
+        postData('/api/product/sortBy', {
+            products: products,
+            sortBy: name,
+            order: order
+        }).then((res)  => {
+            setProductsData(res);
+            setAnchorEl(null);
+        })
+    }
 
     return (
         <section className='py-5 pb-0'>
@@ -61,7 +75,7 @@ const ProductListing = () => {
             <div className='bg-white p-2 mt-4'>
                 <div className='container flex gap-3'>
 
-                    <div className='sidebarWrapper w-[20%] h-full bg-white'>
+                    <div className='sidebarWrapper w-[20%] bg-white'>
                         <Sidebar 
                             productsData={productsData} 
                             setProductsData={setProductsData} 
@@ -73,7 +87,7 @@ const ProductListing = () => {
                     </div>
 
                     <div className='rightContent w-[80%] py-3'>
-                        <div className='bg-[#f1f1f1] p-2 w-full mb-4 rounded-md flex items-center justify-between'>
+                        <div className='bg-[#f1f1f1] p-2 w-full mb-4 rounded-md flex items-center justify-between sticky top-[53px] z-60'> 
                             <div className='col1 flex items-center itemViewActions'>
                                 <Button className={`!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000] ${itemView === 'list' && 'active'}`}
                                     onClick={()=>setItemView('list')}
@@ -85,7 +99,7 @@ const ProductListing = () => {
                                 >
                                     <IoGridSharp className='text-[14px] text-[rgba(0,0,0,0.7)]' />
                                 </Button>
-                                <span className='text-[14px] font-[500] pl-3 text-[rgba(0,0,0,0.7)]'>There are {productsData?.length !== 0 ? productsData?.length : 0} products.</span>
+                                <span className='text-[14px] font-[500] pl-3 text-[rgba(0,0,0,0.7)]'>There are {productsData?.products?.length !== 0 ? productsData?.products?.length : 0} products.</span>
 
                             </div>
 
@@ -100,7 +114,7 @@ const ProductListing = () => {
                                     onClick={handleClick}
                                     className='!bg-white !text-[12px] !text-[#000] !capitalize !border-1 !border-[#000]'
                                 >
-                                    Sales, highest to lowest
+                                    {selectedSortVal}
                                 </Button>
                                 <Menu
                                     id="basic-menu"
@@ -113,31 +127,26 @@ const ProductListing = () => {
                                         },
                                     }}
                                 >
-                                    <MenuItem onClick={handleClose}
-                                        className='!text-[13px] !text-[#000]'
-                                    >Sales, highest to lowest
-                                    </MenuItem>
-                                    <MenuItem onClick={handleClose}
-                                        className='!text-[13px] !text-[#000]'
-                                    >Relevancet
-                                    </MenuItem>
-                                    <MenuItem onClick={handleClose}
-                                        className='!text-[13px] !text-[#000]'
+                                    <MenuItem onClick={() => handleSortBy('name', 'asc', productsData, 'Name, A to Z' )}
+                                        className='!text-[13px] !text-[#000] !capitalize'
                                     >Name, A to Z
                                     </MenuItem>
-                                    <MenuItem onClick={handleClose}
-                                        className='!text-[13px] !text-[#000]'
+
+                                    <MenuItem onClick={() => handleSortBy('name', 'desc', productsData, 'Name, Z to A' )}
+                                        className='text-[13px]! text-black! capitalize!'
                                     >Name, Z to A
                                     </MenuItem>
-                                    <MenuItem onClick={handleClose}
-                                        className='!text-[13px] !text-[#000]'
+
+                                    <MenuItem onClick={() => handleSortBy('price', 'asc', productsData, 'Price, low to high' )}
+                                        className='text-[13px]! text-black! capitalize!'
                                     >Price, low to high
                                     </MenuItem>
-                                    <MenuItem onClick={handleClose}
-                                        className='!text-[13px] !text-[#000]'
+
+                                    <MenuItem onClick={() => handleSortBy('price', 'desc', productsData, 'Price, high to low' )}
+                                        className='text-[13px]! text-black! capitalize!'
                                     >Price, high to low
                                     </MenuItem>
-                                </Menu>
+                                </Menu> 
 
 
                             </div>

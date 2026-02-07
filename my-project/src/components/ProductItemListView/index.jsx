@@ -21,7 +21,7 @@ const ProductItem = () => {
     <div className='productItem shadow-lg rounded-md overflow-hidden border-1 border-[rgba(0,0,0,0.1)] flex items-center'>
         <div className="group imgWrapper w-[20%] overflow-hidden rounded-md relative">
         <Link to="/">
-          <div className='img h-[220px] overflow-hidden'>
+          <div className='img overflow-hidden'>
             <img src="https://serviceapi.spicezgold.com/download/1753711304615_zoom_0-1677748187.jpg" alt="items" className='w-full' />
             <img src="https://serviceapi.spicezgold.com/download/1753711304616_zoom_1-1677748187.jpg" alt="items" 
             className='w-full transition-all duration-700 absolute top-0 left-0 opacity-0 group-hover:opacity-100 group-hover:scale-105' />

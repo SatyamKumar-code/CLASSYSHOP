@@ -19,8 +19,6 @@ import { postData } from '../../utils/api';
 export const Sidebar = (props) => {
 
   const [isOpenCategoryFilter, setIsOpenCategoryFilter] = React.useState(true);
-  const [isOpenAvailabilityFilter, setIsOpenAvailabilityFilter] = React.useState(true);
-  const [isOpenSizeFilter, setIsOpenSizeFilter] = React.useState(true);
 
   const [filters, setFilters] = useState({
     catId: [],
@@ -30,7 +28,7 @@ export const Sidebar = (props) => {
     maxPrice:'',
     rating: '',
     page: 1,
-    limit: 5
+    limit: 25
   })
 
   const [price, setPrice] = useState([0, 600000]);
@@ -129,7 +127,7 @@ export const Sidebar = (props) => {
   },[price])
 
   return (
-    <aside className='sidebar py-5'>
+    <aside className='sidebar py-5 sticky top-[60px] z-50'>
         <div className='box'>
             <h3 className=' w-full mb-3 text-[16px] font-[600] flex items-center pr-5'>Shop by Category
               <Button className='!w-[30px] !h-[30px] !min-w-[30px] !rounded-full !ml-auto !text-[#000]' onClick={()=> setIsOpenCategoryFilter(!isOpenCategoryFilter)} >

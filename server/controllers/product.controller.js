@@ -1457,3 +1457,31 @@ export async function filters(req, res) {
     }
 
 }
+
+const sortItems = (products, sortBy, order) => {
+    return products.sort((a, b) => {
+        if(sortBy === 'name') {
+            return order === 'asc' 
+                ? a.name.localeCompare(b.name) 
+                : b.name.localeCompare(a.name);
+        }
+        if(sortBy === 'price') {
+            return order === 'asc' ? a.price - b.price : b.price - a.price;
+        }
+
+        return 0;
+    })
+}
+
+export async function sortBy(req, res) {
+    const { products, sortBy, order } = req.body;
+    const sortedItems = sortItems([...products?.products], sortBy, order);
+
+    return res.status(200).json({
+        error: false,
+        success: true,
+        products: sortedItems,
+        page: 0,
+        totalPages: 0
+    })
+}

@@ -5,7 +5,7 @@ import Rating from '@mui/material/Rating';
 import Button from '@mui/material/Button';
 import { FaRegHeart } from 'react-icons/fa';
 import { IoGitCompareOutline } from 'react-icons/io5';
-import { MdZoomOutMap } from 'react-icons/md';
+import { MdOutlineShoppingCart, MdZoomOutMap } from 'react-icons/md';
 import Tooltip from '@mui/material/Tooltip';
 import { MyContext } from '../../App';
 
@@ -45,11 +45,11 @@ const ProductItem = (props) => {
             </div>
         </div>
 
-        <div className='info p-3'>
+        <div className='info p-3 py-5 relative pb-[50px] h-[190px]'>
             <h6 className='text-[13px] !font-[400]'>{props?.item?.brand}</h6>
             <h3 className='text-[13px] title mt-1 font-[500] mb-1 text-[#000]'>
               <Link to={`/product/${props?.item?._id}`} 
-                className='link transition-all'>{props?.item?.name?.substr(0,40)+"..."}
+                className='link transition-all'>{props?.item?.name?.substr(0,30)+"..."}
               </Link></h3>
 
             <Rating name='size-small' defaultValue={props?.item?.rating} size="small" readOnly />
@@ -57,6 +57,13 @@ const ProductItem = (props) => {
             <div className='flex items-center gap-4'>
                 <span className='oldPrice line-through text-gray-500 text-[15px] font-[500]'>&#x20b9; {props?.item?.oldPrice}</span>
                 <span className='price text-[#ff5252] text-[15px] font-[600]'>&#x20b9; {props?.item?.price}</span>
+            </div>
+
+            <div className=" absolute! bottom-[15px] left-0 px-3 w-full">
+              <Button className='btn-org btn-border flex w-full btn-sm gap-2' size='small'>
+                <MdOutlineShoppingCart className='text-[18px]' />
+                Add To Cart
+              </Button>
             </div>
         </div>
 
