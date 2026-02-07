@@ -149,12 +149,11 @@ const myAccount = () => {
                 setIsLoading2(false);
                 context.alertBox("Success", res?.message);
                 setChangePassword({
-                    email: '',
+                    email: context?.userData?.email || '',
                     oldPassword: '',
                     newPassword: '',
                     confirmPassword: ''
                 });
-
             } else {
                 context.alertBox("error", res?.message);
                 setIsLoading2(false);

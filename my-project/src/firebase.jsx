@@ -16,5 +16,13 @@ const firebaseConfig = {
   appId: VITE_FIREBASE_API_APP_ID
 };
 
+// Validate required Firebase config values
+const requiredFields = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId'];
+const missingFields = requiredFields.filter(field => !firebaseConfig[field]);
+
+if (missingFields.length > 0) {
+  throw new Error(`Firebase configuration is incomplete. Missing: ${missingFields.join(', ')}`);
+}
+
 // Initialize Firebase
 export const firebaseApp = initializeApp(firebaseConfig);

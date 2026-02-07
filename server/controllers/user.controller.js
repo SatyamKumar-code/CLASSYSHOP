@@ -141,7 +141,7 @@ export async function authWithGoogleController(req, res) {
                 name: name,
                 mobile: mobile,
                 email: email,
-                password: "null",
+                password: null,
                 avatar: avatar,
                 role: role,
                 verify_email: true,
@@ -622,7 +622,7 @@ export async function resetpassword(req, res) {
             })
         }
 
-        if(user?.signUpWithGoogle === false) {
+        if(user?.signUpWithGoogle !== true) {
             if (!oldPassword) {
                 return res.status(400).json({
                     message: "Provide old password",
@@ -634,13 +634,12 @@ export async function resetpassword(req, res) {
 
             if (!checkPassword) {
                 return res.status(400).json({
-                    message: "your old password is worng",
+                    message: "Your old password is wrong",
                     error: true,
                     success: false
                 })
             }
         }
-
         if (newPassword !== confirmPassword) {
             return res.status(400).json({
                 message: "Password and ConfirmPassword must be same.",

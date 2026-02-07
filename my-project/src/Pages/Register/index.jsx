@@ -79,24 +79,25 @@ const Login = () => {
     }
 
     const authWithGoogle = () => {
+        setIsLoading(true);
         signInWithPopup(auth, googleProvider)
             .then((result) => {
                 const credential = GoogleAuthProvider.credentialFromResult(result);
                 const token = credential.accessToken;
                 const user = result.user;
+                const provider = user.providerData?.length > 0 ? user.providerData[0] : null;
 
                 const field = {
-                    name: user.providerData[0].displayName,
-                    email: user.providerData[0].email,
+                    name: provider?.displayName ?? user.displayName ?? null,
+                    email: provider?.email ?? user.email ?? null,
                     password: null,
-                    avatar: user.providerData[0].photoURL,
-                    mobile: user.providerData[0].phoneNumber,
+                    avatar: provider?.photoURL ?? user.photoURL ?? null,
+                    mobile: provider?.phoneNumber ?? user.phoneNumber ?? null,
                     role: "USER",
                     
                 }
 
                 postData("/api/user/authWithGoogle", field).then((res) => {
-                    setIsLoading(false);
                     if (res?.error !== true) {
                         setIsLoading(false);
                         context.alertBox("Success", res?.message);
@@ -111,13 +112,14 @@ const Login = () => {
                     }
             
         })
-                
-            }).catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                const email = error.customData.email;
-                const credential = GoogleAuthProvider.credentialFromError(error);
-            })
+        }).catch((error) => {
+            // User closed popup or auth was cancelled
+            if (error.code === 'auth/popup-closed-by-user') {
+                return;
+            }
+            context.alertBox("error", error.message || "Google sign-in failed");
+            setIsLoading(false);
+        })               
         
     }
 
