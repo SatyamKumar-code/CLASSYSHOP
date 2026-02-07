@@ -1,11 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { MyContext } from "../../App";
 import CircularProgress from "@mui/material/CircularProgress";
-import { FaCloudUploadAlt } from "react-icons/fa";
+import { FaCloudUploadAlt, FaRegEye, FaEyeSlash } from "react-icons/fa";
 import { editData, fetchDataFromApi, postData, uploadImage } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
 import { PhoneInput } from "react-international-phone"
 import 'react-international-phone/style.css'
 import { Collapse } from "react-collapse";
@@ -25,6 +27,9 @@ const Profile = () => {
     const [userId, setUserId] = useState(null);
     const [isChangePasswordFormShow, setIsChangePasswordFormShow] = useState(false);
     const [phone, setPhone] = useState('');
+    const [showOldPassword, setShowOldPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const [formFields, setFormFields] = useState({
         name: '',
@@ -134,14 +139,16 @@ const Profile = () => {
         })
     }
 
-    const valideValue2 = Object.values(changePassword).every(el => el);
+    const valideValue2 = context?.userData?.signUpWithGoogle === true
+        ? changePassword.newPassword && changePassword.confirmPassword && changePassword.email
+        : Object.values(changePassword).every(el => el);
 
     const handleSubmitChangePassword = (e) => {
         e.preventDefault();
 
         setIsLoading2(true);
 
-        if (changePassword.oldPassword === "") {
+        if (context?.userData?.signUpWithGoogle !== true && changePassword.oldPassword === "") {
             context.alertBox("error", "Please enter old password")
             setIsLoading2(false);
             return false
@@ -168,7 +175,12 @@ const Profile = () => {
             if (res?.error !== true) {
                 setIsLoading2(false);
                 context.alertBox("Success", res?.message);
-
+                setChangePassword({
+                    email: context?.userData?.email || '',
+                    oldPassword: '',
+                    newPassword: '',
+                    confirmPassword: ''
+                });
             } else {
                 context.alertBox("error", res?.message);
                 setIsLoading2(false);
@@ -404,24 +416,44 @@ const Profile = () => {
                         <hr />
 
                         <form className='mt-8' onSubmit={handleSubmitChangePassword}>
-                            <div className='flex items-center gap-5'>
-                                <div className='w-[50%]'>
-                                    <TextField
-                                        label="Old Password"
-                                        variant='outlined'
-                                        size='small'
-                                        className='w-full'
-                                        name="oldPassword"
-                                        value={changePassword.oldPassword}
-                                        disabled={isLoading2 === true ? true : false}
-                                        onChange={onChangeInput}
-                                    />
+                            <div className='grid grid-cols-2 gap-5'>
+                            {
+                                context?.userData?.signUpWithGoogle === false &&
+                                <div className='col'>
+                                        <TextField
+                                            label="Old Password"
+                                            type={showOldPassword ? "text" : "password"}
+                                            autoComplete="current-password"
+                                            variant='outlined'
+                                            size='small'
+                                            className='w-full'
+                                            name="oldPassword"
+                                            value={changePassword.oldPassword}
+                                            disabled={isLoading2 === true ? true : false}
+                                            onChange={onChangeInput}
+                                            InputProps={{
+                                                endAdornment: (
+                                                    <InputAdornment position="end">
+                                                        <IconButton
+                                                            onClick={() => setShowOldPassword(!showOldPassword)}
+                                                            edge="end"
+                                                            size="small"
+                                                        >
+                                                            {showOldPassword ? <FaEyeSlash /> : <FaRegEye />}
+                                                        </IconButton>
+                                                    </InputAdornment>
+                                                )
+                                            }}
+                                        />
                                 </div>
+                            }
+                                
 
-                                <div className='w-[50%]'>
+                                <div className='col'>
                                     <TextField
-                                        type='text'
                                         label="New Password"
+                                        type={showNewPassword ? "text" : "password"}
+                                        autoComplete="new-password"
                                         variant='outlined'
                                         size='small'
                                         className='w-full'
@@ -429,16 +461,27 @@ const Profile = () => {
                                         value={changePassword.newPassword}
                                         disabled={isLoading2 === true ? true : false}
                                         onChange={onChangeInput}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position="end">
+                                                    <IconButton
+                                                        onClick={() => setShowNewPassword(!showNewPassword)}
+                                                        edge="end"
+                                                        size="small"
+                                                    >
+                                                        {showNewPassword ? <FaEyeSlash /> : <FaRegEye />}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            )
+                                        }}
                                     />
                                 </div>
 
-
-                            </div>
-
-                            <div className='flex items-center mt-4 gap-5'>
-                                <div className='w-[50%]'>
+                                <div className='col'>
                                     <TextField
                                         label="Confirm Password"
+                                        type={showConfirmPassword ? "text" : "password"}
+                                        autoComplete="new-password"
                                         variant='outlined'
                                         size='small'
                                         className='w-full'
@@ -446,6 +489,19 @@ const Profile = () => {
                                         value={changePassword.confirmPassword}
                                         disabled={isLoading2 === true ? true : false}
                                         onChange={onChangeInput}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position="end">
+                                                    <IconButton
+                                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                        edge="end"
+                                                        size="small"
+                                                    >
+                                                        {showConfirmPassword ? <FaEyeSlash /> : <FaRegEye />}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            )
+                                        }}
                                     />
                                 </div>
 

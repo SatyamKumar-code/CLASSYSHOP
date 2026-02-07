@@ -48,6 +48,7 @@ export async function registerUserController(req, res) {
             email,
             password: hashedPassword,
             otp: verifyCode,
+            role: "ADMIN",
             otp_expiry: Date.now() + 10 * 60 * 1000 // 10 minutes from now
         });
 
@@ -170,8 +171,9 @@ export async function authWithGoogleController(req, res) {
                 error: false,
                 success: true,
                 user: {
-                    accessToken,
+                    accesstoken,
                     refreshToken,
+                    role: user?.role
                 }
             })
         } else {
@@ -197,6 +199,7 @@ export async function authWithGoogleController(req, res) {
                 user: {
                     accesstoken,
                     refreshToken,
+                    role: existingUser?.role
                 }
             })
         }
@@ -273,6 +276,7 @@ export async function loginUserController(req, res) {
             user: {
                 accesstoken,
                 refreshToken,
+                role: user?.role
             }
         })
     } catch (error) {

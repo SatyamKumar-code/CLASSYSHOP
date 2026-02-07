@@ -29,9 +29,7 @@ import AddSIZE from './Pages/Products/addSIZES'
 import AddWEIGHT from './Pages/Products/addWEIGHT'
 import BannerV1List from './Pages/Banners/bannerV1List'
 import { BlogList } from './Pages/Blog'
-
-
-
+import ProtectedRoute from './Components/ProtectedRoute'
 
 
 
@@ -108,7 +106,7 @@ function App() {
       path: '/',
       exaxt: true,
       element: (
-        <>
+        <ProtectedRoute>
           <section className='main'>
             <Header />
             <div className='contentMain flex'>
@@ -120,7 +118,7 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
       ),
     },
 
@@ -177,7 +175,7 @@ function App() {
       path: '/products',
       exaxt: true,
       element: (
-        <>
+        <ProtectedRoute>
           <section className='main'>
             <Header />
             <div className='contentMain flex'>
@@ -189,7 +187,7 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
       ),
     },
 
@@ -197,7 +195,7 @@ function App() {
       path: '/homeSlider/list',
       exaxt: true,
       element: (
-        <>
+        <ProtectedRoute>
           <section className='main'>
             <Header />
             <div className='contentMain flex'>
@@ -209,7 +207,7 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
       ),
     },
 
@@ -217,7 +215,7 @@ function App() {
       path: '/category/list',
       exaxt: true,
       element: (
-        <>
+        <ProtectedRoute>
           <section className='main'>
             <Header />
             <div className='contentMain flex'>
@@ -229,7 +227,7 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
       ),
     },
 
@@ -237,7 +235,7 @@ function App() {
       path: '/subCategory/list',
       exaxt: true,
       element: (
-        <>
+        <ProtectedRoute>
           <section className='main'>
             <Header />
             <div className='contentMain flex'>
@@ -249,14 +247,14 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
       ),
     },
     {
       path: '/users',
       exaxt: true,
       element: (
-        <>
+        <ProtectedRoute>
           <section className='main'>
             <Header />
             <div className='contentMain flex'>
@@ -268,14 +266,14 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
       ),
     },
     {
       path: '/orders',
       exaxt: true,
       element: (
-        <>
+        <ProtectedRoute>
           <section className='main'>
             <Header />
             <div className='contentMain flex'>
@@ -287,14 +285,14 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
       ),
     },
     {
       path: '/profile',
       exaxt: true,
       element: (
-        <>
+        <ProtectedRoute>
           <section className='main'>
             <Header />
             <div className='contentMain flex'>
@@ -306,14 +304,14 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
       ),
     },
     {
       path: '/product/:id',
       exaxt: true,
       element: (
-        <>
+        <ProtectedRoute>
           <section className='main'>
             <Header />
             <div className='contentMain flex'>
@@ -325,14 +323,14 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
       ),
     },
     {
       path: '/product/addRams',
       exaxt: true,
       element: (
-        <> 
+        <ProtectedRoute>
           <section className='main'>
             <Header />
             <div className='contentMain flex'>
@@ -344,14 +342,14 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
       ),
     },
     {
       path: '/product/addSizes',
       exaxt: true,
       element: (
-        <> 
+        <ProtectedRoute>
           <section className='main'>
             <Header />
             <div className='contentMain flex'>
@@ -363,14 +361,14 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
       ),
     },
     {
       path: '/product/addWeights',
       exaxt: true,
       element: (
-        <> 
+        <ProtectedRoute>
           <section className='main'>
             <Header />
             <div className='contentMain flex'>
@@ -382,14 +380,14 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
       ),
     },
     {
       path: '/bannerV1/list',
       exaxt: true,
       element: (
-        <> 
+        <ProtectedRoute>
           <section className='main'>
             <Header />
             <div className='contentMain flex'>
@@ -401,14 +399,14 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
       ),
     },
     {
       path: '/blog/list',
       exaxt: true,
       element: (
-        <> 
+        <ProtectedRoute>
           <section className='main'>
             <Header />
             <div className='contentMain flex'>
@@ -420,7 +418,7 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
       ),
     },
   ])

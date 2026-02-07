@@ -13,6 +13,13 @@ import { MyContext } from '../../App';
 import CircularProgress from '@mui/material/CircularProgress';
 import { postData } from '../../utils/api';
 
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { firebaseApp } from '../../firebase';
+
+const auth = getAuth(firebaseApp);
+
+const googleProvider = new GoogleAuthProvider();
+
 const Login = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [loadingGoogle, setLoadingGoogle] = useState(false);
@@ -75,8 +82,13 @@ const Login = () => {
         }
 
         postData("/api/user/login", formFields, { withCredentials: true }).then((res) => {
-            setIsLoading(false);
+            setIsLoading(true);
             if (res?.error !== true) {
+                if(res?.user?.role !== "ADMIN"){
+                    context.alertBox("error", "You are not authorized to access this page");
+                    setIsLoading(false);
+                    return false;
+                }
                 setIsLoading(false);
                 context.alertBox("Success", res?.message);
                 setFormFields({
@@ -106,6 +118,64 @@ const Login = () => {
     function handleClickFb() {
         setLoadingFb(true);
     };
+
+    const authWithGoogle = () => {
+        setLoadingGoogle(true);
+        signInWithPopup(auth, googleProvider)
+            .then((result) => {
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                const token = credential.accessToken;
+                const user = result.user;
+
+                const field = {
+                    name: user.providerData[0].displayName,
+                    email: user.providerData[0].email,
+                    password: null,
+                    avatar: user.providerData[0].photoURL,
+                    mobile: user.providerData[0].phoneNumber,
+                    role: "ADMIN",
+
+                }
+
+                postData("/api/user/authWithGoogle", field).then((res) => {
+            
+                    if (res?.error !== true) {
+                        setIsLoading(false);
+                        console.log(res);
+                        
+                        if(res?.user?.role !== "ADMIN"){
+                            context.alertBox("error", "You are not authorized to access this page");
+                            setLoadingGoogle(false);
+                            return false;
+                        }
+
+
+                        context.alertBox("Success", res?.message);
+                        localStorage.setItem("accesstoken", res?.user?.accesstoken);
+                        localStorage.setItem("refreshToken", res?.user?.refreshToken);
+                        setIsLoading(false);
+                        context.setIsLogin(true);
+                        setLoadingGoogle(false);
+                        history('/');
+                    } else {
+                        context.alertBox("error", res?.message);
+                        setIsLoading(false); 
+                        setLoadingGoogle(false);
+                    }
+
+                })
+
+            }).catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                const email = error.customData ? error.customData.email : undefined;
+                const credential = GoogleAuthProvider.credentialFromError(error);
+                setLoadingGoogle(false);
+                setIsLoading(false);
+                context.alertBox("error", errorMessage || "Google sign-in failed");
+            })
+
+    }
 
 
   return (
@@ -146,28 +216,30 @@ const Login = () => {
             </h1>
 
             <div className='flex items-center justify-center w-full mt-5 gap-4'>
+
                 <LoadingButton
-                   size="small"
-                   onClick={handleClickGoogle}
-                   endIcon={<FcGoogle />}
+                    size="small"
+                    onClick={authWithGoogle}
+                    endIcon={<FcGoogle />}
                     loading={loadingGoogle}
                     loadingPosition="end"
                     variant="outlined"
                     className='bg-none! py-2! text-[15px]! capitalize! px-5! text-[rgba(0,0,0,0.7)]!'
                 >
-                     Signin with Google
+                    Signin with Google
                 </LoadingButton>
 
-                 <LoadingButton
-                   size="small"
-                   onClick={handleClickFb}
-                   endIcon={<BsFacebook />}
+
+                <LoadingButton
+                    size="small"
+                    onClick={handleClickFb}
+                    endIcon={<BsFacebook />}
                     loading={loadingFb}
                     loadingPosition="end"
                     variant="outlined"
                     className='bg-none! py-2! text-[15px]! capitalize! px-5! text-[rgba(0,0,0,0.7)]!'
                 >
-                     Signin with Facebook
+                    Signin with Facebook
                 </LoadingButton>
             </div>
 

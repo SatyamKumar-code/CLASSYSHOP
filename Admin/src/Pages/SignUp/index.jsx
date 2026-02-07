@@ -12,6 +12,13 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { postData } from '../../utils/api';
 import { MyContext } from '../../App';
 
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { firebaseApp } from '../../firebase';
+
+const auth = getAuth(firebaseApp);
+
+const googleProvider = new GoogleAuthProvider();
+
 const SignUp = () => {
     const [loadingGoogle, setLoadingGoogle] = useState(false);
     const [loadingFb, setLoadingFb] = useState(false);
@@ -77,13 +84,49 @@ const SignUp = () => {
         })
     }
 
-    function handleClickGoogle() {
-        setLoadingGoogle(true);
-    };
-
     function handleClickFb() {
         setLoadingFb(true);
     };
+
+    const authWithGoogle = () => {
+        setLoadingGoogle(true);
+        signInWithPopup(auth, googleProvider)
+            .then((result) => {
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                const token = credential.accessToken;
+                const user = result.user;
+
+                const field = {
+                    name: user.providerData[0].displayName,
+                    email: user.providerData[0].email,
+                    password: null,
+                    avatar: user.providerData[0].photoURL,
+                    mobile: user.providerData[0].phoneNumber,
+                    role: "ADMIN",
+                    
+                }
+
+                postData("/api/user/authWithGoogle", field).then((res) => {
+                    if (res?.error !== true) {
+                        setLoadingGoogle(false);
+                        context.alertBox("Success", res?.message);
+                        localStorage.setItem("accesstoken", res?.user?.accesstoken);
+                        localStorage.setItem("refreshToken", res?.user?.refreshToken);
+
+                        context.setIsLogin(true);
+                        history('/');
+                    } else {
+                        context.alertBox("error", res?.message);
+                        setLoadingGoogle(false);
+                    }
+             
+        })
+                
+            }).catch((error) => {
+                setLoadingGoogle(false);
+                context.alertBox("error", error.message || "Google sign-up failed");
+            })        
+    }
 
 
   return (
@@ -126,14 +169,14 @@ const SignUp = () => {
             <div className='flex items-center justify-center w-full mt-5 gap-4'>
                 <LoadingButton
                    size="small"
-                   onClick={handleClickGoogle}
+                   onClick={authWithGoogle}
                    endIcon={<FcGoogle />}
                     loading={loadingGoogle}
                     loadingPosition="end"
                     variant="outlined"
                     className='bg-none! py-2! text-[15px]! capitalize! px-5! text-[rgba(0,0,0,0.7)]!'
                 >
-                     Signin with Google
+                     Sign Up with Google
                 </LoadingButton>
 
                  <LoadingButton
@@ -145,7 +188,7 @@ const SignUp = () => {
                     variant="outlined"
                     className='bg-none! py-2! text-[15px]! capitalize! px-5! text-[rgba(0,0,0,0.7)]!'
                 >
-                     Signin with Facebook
+                     Sign Up with Facebook
                 </LoadingButton>
             </div>
 
@@ -153,7 +196,7 @@ const SignUp = () => {
             
             <div className='w-full flex items-center justify-center gap-3'>
                 <span className='flex items-center w-[100px] h-[1px] bg-[rgba(0,0,0,0.2)]'></span>
-                   <span className='text-[14px] font-[500]'>Or, Sign in with your email</span>
+                   <span className='text-[14px] font-[500]'>Or, Sign up with your email</span>
                 <span className='flex items-center w-[100px] h-[1px] bg-[rgba(0,0,0,0.2)]'></span>
             </div>
 
