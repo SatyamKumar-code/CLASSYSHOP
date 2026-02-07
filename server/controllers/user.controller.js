@@ -130,6 +130,86 @@ export async function verifyEmailController(req, res) {
     }
 }
 
+export async function authWithGoogleController(req, res) {
+    const { name, email, avatar, mobile, role } = req.body;
+
+    try {
+        const existingUser = await UserModel.findOne({ email: email });
+
+        if (!existingUser) {
+            const user = await UserModel.create({
+                name: name,
+                mobile: mobile,
+                email: email,
+                password: "null",
+                avatar: avatar,
+                role: role,
+                verify_email: true,
+                signUpWithGoogle: true
+            });
+
+            await user.save();
+
+            const accesstoken = await generateAccessToken(user._id);
+            const refreshToken = await generateRefreshToken(user._id)
+
+            await UserModel.findByIdAndUpdate(user?._id, {
+                last_login_date: Date.now()
+            })
+
+            const cookiesOptions = {
+                httpOnly: true,
+                secure: true,
+                sameSite: "None"
+            }
+            res.cookie('accessToken', accesstoken, cookiesOptions)
+            res.cookie('refreshToken', refreshToken, cookiesOptions)
+
+            return res.status(201).json({
+                message: "Login successfully",
+                error: false,
+                success: true,
+                user: {
+                    accessToken,
+                    refreshToken,
+                }
+            })
+        } else {
+            const accesstoken = await generateAccessToken(existingUser._id);
+            const refreshToken = await generateRefreshToken(existingUser._id);
+
+            await UserModel.findByIdAndUpdate(existingUser?._id, {
+                last_login_date: Date.now()
+            })
+
+            const cookiesOptions = {
+                httpOnly: true,
+                secure: true,
+                sameSite: "None"
+            }
+            res.cookie('accessToken', accesstoken, cookiesOptions)
+            res.cookie('refreshToken', refreshToken, cookiesOptions)
+
+            return res.json({
+                message: "Login successfully",
+                error: false,
+                success: true,
+                user: {
+                    accesstoken,
+                    refreshToken,
+                }
+            })
+        }
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
 export async function loginUserController(req, res) {
     try {
         const { email, password } = req.body;
@@ -525,9 +605,9 @@ export async function verifyForgotPasswordOtp(req, res) {
 export async function resetpassword(req, res) {
     try {
         const { email, oldPassword, newPassword, confirmPassword } = req.body;
-        if (!email || !oldPassword || !newPassword || !confirmPassword) {
+        if (!email || !newPassword || !confirmPassword) {
             return res.status(400).json({
-                message: "Provide required fields email, oldPassword, newPassword, confirmPassword",
+                message: "Provide required fields email, newPassword, confirmPassword",
                 error: true,
                 success: false
             })
@@ -542,14 +622,23 @@ export async function resetpassword(req, res) {
             })
         }
 
-        const checkPassword = await bcrypt.compare(oldPassword, user.password);
+        if(user?.signUpWithGoogle === false) {
+            if (!oldPassword) {
+                return res.status(400).json({
+                    message: "Provide old password",
+                    error: true,
+                    success: false
+                })
+            }
+            const checkPassword = await bcrypt.compare(oldPassword, user.password);
 
-        if(!checkPassword) {
-            return res.status(400).json({
-                message: "your old password is worng",
-                error: true,
-                success: false
-            })
+            if (!checkPassword) {
+                return res.status(400).json({
+                    message: "your old password is worng",
+                    error: true,
+                    success: false
+                })
+            }
         }
 
         if (newPassword !== confirmPassword) {
@@ -564,6 +653,7 @@ export async function resetpassword(req, res) {
         const hashedPassword = await bcrypt.hash(newPassword, salt);
 
         user.password = hashedPassword;
+        user.signUpWithGoogle = false;
         await user.save();
 
         return res.status(200).json({

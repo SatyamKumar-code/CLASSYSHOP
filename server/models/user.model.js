@@ -71,6 +71,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum : ["ADMIN", "USER"],
         default: "USER"
+    },
+    signUpWithGoogle: {
+        type: Boolean,
+        default: false
     }
 
 }, { timestamps: true });

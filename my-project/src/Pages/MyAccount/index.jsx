@@ -148,6 +148,12 @@ const myAccount = () => {
             if (res?.error !== true) {
                 setIsLoading2(false);
                 context.alertBox("Success", res?.message);
+                setChangePassword({
+                    email: '',
+                    oldPassword: '',
+                    newPassword: '',
+                    confirmPassword: ''
+                });
 
             } else {
                 context.alertBox("error", res?.message);
@@ -258,8 +264,10 @@ const myAccount = () => {
                         <hr />
 
                         <form className='mt-8' onSubmit={handleSubmitChangePassword}>
-                            <div className='flex items-center gap-5'>
-                                <div className='w-[50%]'>
+                            <div className='grid grid-cols-2 gap-5'>
+                                {
+                                    context?.userData?.signUpWithGoogle ===  false && 
+                                    <div className='col'>
                                     <TextField
                                         label="Old Password"
                                         variant='outlined'
@@ -271,8 +279,10 @@ const myAccount = () => {
                                         onChange={onChangeInput}
                                     />
                                 </div>
+                                }
+                                
 
-                                <div className='w-[50%]'>
+                                <div className='col'>
                                     <TextField
                                         type='text'
                                         label="New Password"
@@ -286,11 +296,7 @@ const myAccount = () => {
                                     />
                                 </div>
 
-
-                            </div>
-
-                            <div className='flex items-center mt-4 gap-5'>
-                                <div className='w-[50%]'>
+                                <div className='col'>
                                     <TextField
                                         label="Confirm Password"
                                         variant='outlined'
@@ -305,6 +311,8 @@ const myAccount = () => {
 
 
                             </div>
+
+                            
 
                             <br />
 

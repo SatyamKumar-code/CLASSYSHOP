@@ -9,6 +9,13 @@ import { MyContext } from '../../App';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
 
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { firebaseApp } from '../../firebase';
+
+const auth = getAuth(firebaseApp);
+
+const googleProvider = new GoogleAuthProvider();
+
 
 const Login = () => {
 
@@ -69,6 +76,49 @@ const Login = () => {
             }
             
         })
+    }
+
+    const authWithGoogle = () => {
+        signInWithPopup(auth, googleProvider)
+            .then((result) => {
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                const token = credential.accessToken;
+                const user = result.user;
+
+                const field = {
+                    name: user.providerData[0].displayName,
+                    email: user.providerData[0].email,
+                    password: null,
+                    avatar: user.providerData[0].photoURL,
+                    mobile: user.providerData[0].phoneNumber,
+                    role: "USER",
+                    
+                }
+
+                postData("/api/user/authWithGoogle", field).then((res) => {
+                    setIsLoading(false);
+                    if (res?.error !== true) {
+                        setIsLoading(false);
+                        context.alertBox("Success", res?.message);
+                        localStorage.setItem("accesstoken", res?.user?.accesstoken);
+                        localStorage.setItem("refreshToken", res?.user?.refreshToken);
+
+                        context.setIsLogin(true);
+                        history('/');
+                    } else {
+                        context.alertBox("error", res?.message);
+                        setIsLoading(false);
+                    }
+            
+        })
+                
+            }).catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                const email = error.customData.email;
+                const credential = GoogleAuthProvider.credentialFromError(error);
+            })
+        
     }
 
 
@@ -150,9 +200,10 @@ const Login = () => {
 
 
                     <Button className='flex gap-3 w-full !bg-[#f1f1f1] btn-lg !text-black'
+                        onClick={authWithGoogle}
                     >
                         <FcGoogle className='text-[20px]' />
-                        Login with Google
+                        Sign Up with Google
                     </Button>
 
                 </form>
