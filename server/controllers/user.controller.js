@@ -7,6 +7,7 @@ import generateAccessToken from '../utils/generatedAccessToken.js';
 import generateRefreshToken from '../utils/generatedRefreshToken.js';
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
+import ReviewModel from '../models/reviews.model.js';
 
 cloudinary.config({
     cloud_name: process.env.cloudinary_Config_Cloud_Name,
@@ -388,6 +389,12 @@ export async function userAvatarController(req, res) {
         user.avatar = imagesArr[0];
         await user.save();
 
+        // Update user's avatar in all their existing reviews
+        await ReviewModel.updateMany(
+            { userId: userId },
+            { image: imagesArr[0] }
+        );
+
         return res.status(200).json({
             _id: userId,
             avatar: imagesArr[0],
@@ -477,6 +484,17 @@ export async function updateUserDetails(req, res) {
                 text: "",
                 html: VerificationEmail(name, verifyCode)
             })
+        }
+
+        // Update user's name and avatar in all their existing reviews
+        if (name !== userExist.name || userExist.avatar) {
+            await ReviewModel.updateMany(
+                { userId: userId },
+                {
+                    userName: name,
+                    image: updateUser?.avatar
+                }
+            );
         }
 
         return res.status(200).json({
@@ -626,7 +644,7 @@ export async function resetpassword(req, res) {
             })
         }
 
-        if(user?.signUpWithGoogle !== true) {
+        if (user?.signUpWithGoogle !== true) {
             if (!oldPassword) {
                 return res.status(400).json({
                     message: "Provide old password",
@@ -665,7 +683,7 @@ export async function resetpassword(req, res) {
             success: true
         })
 
-    }catch (error) {
+    } catch (error) {
         return res.status(500).json({
             message: error.message || error,
             error: true,
@@ -714,7 +732,7 @@ export async function resetpasswordOtp(req, res) {
             success: true
         })
 
-    }catch (error) {
+    } catch (error) {
         return res.status(500).json({
             message: error.message || error,
             error: true,
@@ -755,7 +773,7 @@ export async function refreshToken(req, res) {
         }
 
         res.cookie('accessToken', newAccessToken, cookiesOptions);
-        
+
         return res.status(200).json({
             message: "New access token generated successfully",
             error: false,
@@ -775,7 +793,7 @@ export async function refreshToken(req, res) {
     }
 }
 
-export async function userDetails( req, res ) {
+export async function userDetails(req, res) {
     try {
         const userId = req.userId;
 
@@ -787,7 +805,82 @@ export async function userDetails( req, res ) {
             error: false,
             success: true,
         })
-        
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "something went wrong",
+            error: true,
+            success: false
+        })
+    }
+}
+
+export async function addReview(req, res) {
+    try {
+        const { image, userName, review, rating, productId } = req.body;
+        const userId = req.userId;
+
+        if (!productId || !review || rating === undefined) {
+            return res.status(400).json({
+                message: "productId, review, and rating are required",
+                error: true,
+                success: false
+            });
+        }
+
+        if (rating < 1 || rating > 5) {
+            return res.status(400).json({
+                message: "Rating must be between 1 and 5",
+                error: true,
+                success: false
+            });
+        }
+
+        const userReview = new ReviewModel({
+            image: image,
+            userName: userName,
+            review: review,
+            rating: rating,
+            userId: userId,
+            productId: productId
+        })
+
+        await userReview.save();
+
+        return res.status(201).json({
+            message: "Review added successfully",
+            error: false,
+            success: true,
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "something went wrong",
+            error: true,
+            success: false
+        })
+    }
+}
+export async function getReviews(req, res) {
+    try {
+        const productId = req.query.productId;
+        const reviews = await ReviewModel.find({ productId: productId });
+
+        if (!reviews) {
+            return res.status(404).json({
+                message: "No reviews found",
+                error: true,
+                success: false,
+            })
+        }
+
+        return res.status(200).json({
+            message: "Reviews fetched successfully",
+            error: false,
+            success: true,
+            reviews: reviews
+        })
+
     } catch (error) {
         return res.status(500).json({
             message: "something went wrong",

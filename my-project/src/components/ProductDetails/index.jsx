@@ -18,7 +18,7 @@ export const ProductDetailsComponent = (prpos) => {
               </span>
 
               <Rating name='size-small' defaultValue={4} size='small' readOnly />
-              <span className='text-[13px] cursor-pointer'>Review (5)</span>
+              <span className='text-[13px] cursor-pointer' onClick={prpos?.gotoReviews}>Review ({prpos?.reviewsCount ?? 0})</span>
             </div>
 
             <div className='flex items-center gap-4 mt-4'>
