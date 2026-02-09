@@ -81,6 +81,6 @@ export const deleteData = async (url) => {
             'Content-Type': 'application/json'
         }
     }
-    const { res } = await axios.delete(apiUrl + url, params);
-    return res;
+    const { data } = await axios.delete(apiUrl + url, params);
+    return data;
 }

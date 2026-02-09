@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { IoMdEye, IoMdEyeOff } from 'react-icons/io';
@@ -27,6 +27,10 @@ const Login = () => {
 
     const context = useContext(MyContext);
     const history = useNavigate();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     const forgotPassword = () => {
 

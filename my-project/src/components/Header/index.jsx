@@ -57,6 +57,7 @@ const Header = () => {
                 localStorage.removeItem("refreshToken");
                 context.alertBox("Success", res?.message);
                 context.setIsLogin(false);
+                context.setUserData(null);
                 history("/")
             }
         })
@@ -206,7 +207,7 @@ const Header = () => {
                             <li>
                                 <Tooltip title="Cart">
                                 <IconButton aria-label="cart" onClick={() => context.setOpenCartPanel(true)}>
-                                    <StyledBadge badgeContent={4} color="secondary">
+                                    <StyledBadge badgeContent={context?.cartData?.length} color="secondary">
                                         <ShoppingCartIcon />
                                     </StyledBadge>
                                 </IconButton>

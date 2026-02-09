@@ -1,13 +1,64 @@
-import CartProductModel from '../models/cartproduct.model.js';
+import CartProductModel from '../models/cart.model.js';
 import UserModel from '../models/user.model.js';
 
 export const addToCartItemController = async ( req, res, ) => {
     try {
         const userId = req.userId;
-        const { productId } = req.body;
+        const { productTitle, image, rating, price, quantity, subTotal, countInStock, productId } = req.body;
 
+        if ( !productTitle ) {
+            return res.status(400).json({
+                message: "provide productTitle",
+                error: true,
+                success: false
+            })
+        }
+        if ( !image ) {
+            return res.status(400).json({
+                message: "provide image",
+                error: true,
+                success: false
+            })
+        }
+        if ( rating === undefined || rating === null ) {
+            return res.status(400).json({
+                message: "provide rating",
+                error: true,
+                success: false
+            })
+        }
+        if ( price === undefined || price === null ) {
+            return res.status(400).json({
+                message: "provide price",
+                error: true,
+                success: false
+            })
+        }
+        if ( quantity === undefined || quantity === null ) {
+            return res.status(400).json({
+                message: "provide quantity",
+                error: true,
+                success: false
+            })
+        }
+
+        if ( subTotal === undefined || subTotal === null ) {
+            return res.status(400).json({
+                message: "provide subTotal",
+                error: true,
+                success: false
+            })
+        }
+
+        if ( countInStock === undefined || countInStock === null ) {
+            return res.status(400).json({
+                message: "provide countInStock",
+                error: true,
+                success: false
+            })
+        }
         if ( !productId ) {
-            return res.status(402).json({
+            return res.status(400).json({
                 message: "provide productId",
                 error: true,
                 success: false
@@ -22,22 +73,24 @@ export const addToCartItemController = async ( req, res, ) => {
         if( checkItemCart ) {
             return res.status(409).json({
                 message: "Item already in cart",
+                error: true,
+                success: false
             })
         }
 
         const cartItem = new CartProductModel({
-            quantity: 1,
+            productTitle: productTitle,
+            image: image,
+            rating: rating,
+            quantity: quantity,
+            price: price,
+            subTotal: subTotal,
+            countInStock: countInStock,
             userId: userId,
             productId: productId
         })
 
         const save = await cartItem.save();
-
-        const updateCartUser = await UserModel.updateOne({ _id : userId }, {
-            $push: {
-                shopping_cart: productId
-            }
-        })
 
         return res.status(201).json({
             message: "Item add Successfully",
@@ -62,7 +115,7 @@ export const getCartItemController = async ( req, res, ) => {
 
         const cartItems = await CartProductModel.find({ 
             userId: userId 
-        }).populate('productId');
+        })
 
 
         return res.status(200).json({
@@ -83,11 +136,11 @@ export const getCartItemController = async ( req, res, ) => {
 export const updateCartItemQtyController = async ( req, res ) => {
     try {
         const userId = req.userId;
-        const { _id, qty } = req.body;
+        const { _id, qty, subTotal } = req.body;
 
-        if ( !_id || !qty ) {
+        if ( !_id || qty === undefined || qty === null || subTotal === undefined || subTotal === null ) {
             return res.status(402).json({
-                message: "provide _id and qty",
+                message: "provide _id, qty and subTotal",
                 error: true,
                 success: false
             })
@@ -99,8 +152,10 @@ export const updateCartItemQtyController = async ( req, res ) => {
                 userId: userId
             }, 
             {
-            quantity: qty
-            }
+            quantity: qty,
+            subTotal: subTotal
+            },
+            { new: true }
         );
 
         return res.status(200).json({
@@ -123,18 +178,17 @@ export const deleteCartItemController = async ( req, res ) => {
     try {
 
         const userId = req.userId;
-        const { _id, productId } = req.body;
+        const { id } = req.params;
 
 
-        if(!_id) {
-            return res.status(402).json({
-                message: "provide _id",
+        if(!id) {
+            return res.status(400).json({
+                message: "provide id",
                 error: true,
                 success: false
             })
-        }
-        const deleteCartItem = await CartProductModel.deleteOne({
-            _id: _id,
+        }        const deleteCartItem = await CartProductModel.deleteOne({
+            _id: id,
             userId: userId
         });
 
@@ -145,18 +199,6 @@ export const deleteCartItemController = async ( req, res ) => {
                 success: false
             })
         }
-
-        const user = await UserModel.findOne({
-            _id : userId
-        })
-
-        const cartItems = user?.shopping_cart;
-
-        const updatedUserCart = [...cartItems.slice(0, cartItems.indexOf(productId)), ...cartItems.slice(cartItems.indexOf(productId) + 1)];
-
-        user.shopping_cart = updatedUserCart;
-
-        await user.save();
 
 
         return res.status(200).json({

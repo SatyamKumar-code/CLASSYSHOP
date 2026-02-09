@@ -25,7 +25,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import Checkout from './Pages/Checkout'
 import MyList from './Pages/MyList'
 import Orders from './Pages/Orders'
-import { fetchDataFromApi } from './utils/api'
+import { fetchDataFromApi, postData } from './utils/api'
 import Address from './Pages/MyAccount/address'
 
 
@@ -43,6 +43,7 @@ function App() {
   const [isLogin, setIsLogin] = useState(false);
   const [userData, setUserData] = useState(null);
   const [catData, setCatData] = useState([]);
+  const [cartData, setCartData] = useState([]);
 
 
   const [openCartPanel, setOpenCartPanel] = useState(false);
@@ -73,8 +74,6 @@ function App() {
       setIsLogin(true);
 
       fetchDataFromApi(`/api/user/user-details`).then((res) => {
-        setUserData(res.data);
-       
         if(res?.response?.data?.error === true){
           if(res?.response?.data?.message === "You have not login"){
             localStorage.removeItem("accesstoken");
@@ -85,10 +84,13 @@ function App() {
             window.location.href = "/login";
 
             setIsLogin(false);
+            return;
           }
         }
+        
+        setUserData(res.data);
+        getCartItems();
       })
-      
 
     }else{
       setIsLogin(false);
@@ -112,6 +114,50 @@ function App() {
     }
   }
 
+  const addToCart = (product, quantity) => {
+    if(!isLogin){
+      alertBox("error", "You are not logged in. Please login first");
+      return false;
+    }
+
+    const id = userData?._id;
+
+    const data = {
+      productTitle: product?.name,
+      image: product?.images?.[0],
+      rating: product?.rating,
+      quantity: quantity,
+      price: product?.price,
+      subTotal: Math.round(product?.price * quantity * 100) / 100,
+      countInStock: product?.countInStock,
+      productId: product?._id,
+      userId: id,
+      
+    }
+
+    postData("/api/cart/add", data).then((res) => {
+      if(res?.error !== false){
+        alertBox("error", res?.message);
+        return false;
+      }
+      alertBox("Success", res?.message);
+
+      getCartItems();
+      
+    }).catch((error) => {
+      alertBox("error", error?.message || "Failed to add to cart");
+    })
+    
+  }
+
+  const getCartItems = () => {
+    fetchDataFromApi(`/api/cart/get`).then((res) => {
+      if (res?.error === false) {
+        setCartData(res?.data);
+      }
+    })
+  }
+
   const values = {
     setOpenProductDetailsModal,
     handleOpenProductDetailModel,
@@ -124,7 +170,9 @@ function App() {
     setUserData,
     userData,
     setCatData,
-    catData
+    catData,
+    addToCart,
+    cartData,
   }
 
   return (
