@@ -128,10 +128,16 @@ function App() {
       rating: product?.rating,
       quantity: quantity,
       price: product?.price,
+      oldprice: product?.oldprice,
+      discount: product?.discount,
       subTotal: Math.round(product?.price * quantity * 100) / 100,
       countInStock: product?.countInStock,
       productId: product?._id,
       userId: id,
+      brand: product?.brand,
+      size: size,
+      weight: weight,
+      ram: ram
       
     }
 
@@ -173,6 +179,7 @@ function App() {
     catData,
     addToCart,
     cartData,
+    getCartItems
   }
 
   return (

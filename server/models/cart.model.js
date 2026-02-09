@@ -13,6 +13,17 @@ const cartProductSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    brand: {
+        type: String,
+    },
+    oldprice: {
+        type: Number,
+        required: true
+    },
+    discount: {
+        type: Number,
+        default: 0
+    },
     price: {
         type: Number,
         required: true
@@ -27,20 +38,30 @@ const cartProductSchema = new mongoose.Schema({
         required: true
     
     },
+    size: {
+        type: String,
+        required: true,
+    },
+    weight: {
+        type: String,
+    },
+    ram: {
+        type: String,
+    },
     productId : {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product",
         required: [true, "Provide product ID"]
     },
-    countInStock: {
-        type: Number,
-        required: true
-    },
     userId : {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: [true, "Provide user ID"]
-    }
+    },
+    countInStock: {
+        type: Number,
+        required: true
+    },
 },{ timestamps: true });
 
 const CartProductModel = mongoose.model("cart", cartProductSchema);

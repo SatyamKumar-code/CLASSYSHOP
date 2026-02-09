@@ -40,18 +40,18 @@ const CartItems = (props) => {
   return (
     <div className='cartItem w-full p-3 flex items-center gap-4 pb-5 border-b border-[rgba(0,0,0,0.1)]'>
                         <div className='img w-[15%] rounded-md overflow-hidden'>
-                            <Link to="/product/1" className='group'>
-                            <img src="https://www.jiomart.com/images/product/original/rvzv96iwuq/tnw-dark-blue-fabric-men-and-women-messenger-bag-15-l-product-images-rvzv96iwuq-0-202212062013.jpg" 
+                            <Link to={`/product/${props?.item?._id}`} className='group'>
+                            <img src={props?.item?.image} 
                             className='w-full group-hover:scale-105 transition-all' />
                             </Link>
                         </div>
 
                         <div className='info w-[85%] relative'>
                             <IoCloseSharp className='cursor-pointer absolute top-[0px] right-[0px] text-[22px] link transition-all'/>
-                            <span className='text-[13px]'>Sangria</span>
-                            <h3 className='text-[16px]'><Link to="/product/1" className='link'>Dark Blue Fabric Messenger Bag</Link></h3>
+                            <span className='text-[13px]'>{props?.item?.brand}</span>
+                            <h3 className='text-[16px]'><Link to={`/product/${props?.item?._id}`} className='link'>{props?.item?.productTitle}</Link></h3>
 
-                            <Rating name='size-small' defaultValue={4} size='small' readOnly />
+                            <Rating name='size-small' value={props?.item?.rating} size='small' readOnly />
                             <div className='flex items-center gap-4 mt-2'>
                                 <div className='relative'>
                                     <span className='flex items-center justify-center bg-[#f1f1f1] text-[11px] font-[600] py-1 px-2 rounded-md cursor-pointer'

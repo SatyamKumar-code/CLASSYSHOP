@@ -28,12 +28,12 @@ const ProductItem = (props) => {
   useEffect(() => {
     const item = context?.cartData?.filter((cartItem) =>
       cartItem?.productId?.includes(props?.item?._id)
-    )
+    );
 
     if(item?.length !==0) {
       setCartItem(item);
       setIsAdded(true);
-      setQuantity(item[0]?.qty || 1);
+      setQuantity(item[0]?.quantity || 1);
     } else {
       setCartItem([]);
       setIsAdded(false);
@@ -50,10 +50,10 @@ const ProductItem = (props) => {
     }
 
     editData(`/api/cart/update-qty`, obj).then((res) => {
-      if (res?.success === true) {
-        context?.alertBox("Success", res?.message);
+      if (res?.data?.success === true) {
+        context?.alertBox("Success", res?.data?.message);
       } else {
-        context?.alertBox("Error", res?.message || "Failed to update quantity");
+        context?.alertBox("Error", res?.data?.message || "Failed to update quantity");
       }
     }).catch((err) => {
       context?.alertBox("Error", "Failed to update quantity");
@@ -67,25 +67,26 @@ const ProductItem = (props) => {
       setQuantity(1);
     }
 
-    const obj = {
-      _id: cartItem[0]?._id,
-      qty: quantity - 1,
-      subTotal: props?.item?.price * (quantity - 1)
-    }
-
-    editData(`/api/cart/update-qty`, obj).then((res) => {
-      if(res?.success === true) {
-        context?.alertBox("Success", res?.message);
-      }
-      
-    })
-
     if(quantity === 1 && cartItem?.length > 0 && cartItem[0]?._id) {
       deleteData(`/api/cart/delete-cart-item/${cartItem[0]?._id}`).then((res) => {
         if(res?.success === true) {
           context?.alertBox("Success", res?.message);
-          setIsAdded(false);
+          context?.getCartItems();
+          setIsAdded(false); 
         }
+      })
+    } else {
+      const obj = {
+        _id: cartItem[0]?._id,
+        qty: quantity - 1,
+        subTotal: props?.item?.price * (quantity - 1)
+      }
+
+      editData(`/api/cart/update-qty`, obj).then((res) => {
+        if (res?.data?.success === true) {
+          context?.alertBox("Success", res?.data?.message);
+        }
+
       })
     }
   }
