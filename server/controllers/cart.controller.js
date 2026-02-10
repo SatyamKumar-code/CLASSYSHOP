@@ -4,7 +4,7 @@ import UserModel from '../models/user.model.js';
 export const addToCartItemController = async ( req, res, ) => {
     try {
         const userId = req.userId;
-        const { productTitle, image, rating, price, quantity, subTotal, countInStock, productId } = req.body;
+        const { productTitle, image, rating, price, oldPrice, quantity, subTotal, countInStock, productId, discount, size, weight, ram, brand } = req.body;
 
         if ( !productTitle ) {
             return res.status(400).json({
@@ -84,6 +84,12 @@ export const addToCartItemController = async ( req, res, ) => {
             rating: rating,
             quantity: quantity,
             price: price,
+            oldPrice: oldPrice,
+            discount: discount,
+            size: size,
+            weight: weight,
+            ram: ram,
+            brand: brand,
             subTotal: subTotal,
             countInStock: countInStock,
             userId: userId,

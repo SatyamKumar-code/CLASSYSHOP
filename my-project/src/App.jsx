@@ -124,20 +124,20 @@ function App() {
 
     const data = {
       productTitle: product?.name,
-      image: product?.images?.[0],
+      image: product?.image,
       rating: product?.rating,
       quantity: quantity,
       price: product?.price,
-      oldprice: product?.oldprice,
+      oldPrice: product?.oldPrice,
       discount: product?.discount,
       subTotal: Math.round(product?.price * quantity * 100) / 100,
       countInStock: product?.countInStock,
       productId: product?._id,
-      userId: id,
       brand: product?.brand,
-      size: size,
-      weight: weight,
-      ram: ram
+      discount: product?.discount,
+      size: product?.size,
+      weight: product?.weight,
+      ram: product?.ram
       
     }
 

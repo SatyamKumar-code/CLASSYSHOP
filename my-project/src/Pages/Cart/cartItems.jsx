@@ -68,11 +68,17 @@ const CartItems = (props) => {
                                         'aria-labelledby': 'basic-button',
                                     }}
                                     >
-                                    <MenuItem onClick={() => handleCloseSize("S")}>S</MenuItem>
-                                    <MenuItem onClick={() => handleCloseSize("M")}>M</MenuItem>
-                                    <MenuItem onClick={() => handleCloseSize("L")}>L</MenuItem>
-                                    <MenuItem onClick={() => handleCloseSize("XL")}>XL</MenuItem>
-                                    <MenuItem onClick={() => handleCloseSize("XXL")}>XXL</MenuItem>
+                                        {
+                                            props?.productSizeData?.map((item, index) => {
+                                                return (
+                                                    <MenuItem 
+                                                        key={index}  
+                                                        className={`${item?.name === selectedSize ? "bg-primary text-white" : ""}`}  
+                                                        onClick={() => handleCloseSize(item?.name)}
+                                                    >{item?.name}</MenuItem>
+                                                )
+                                            })
+                                        }
                                     </Menu>
                                 </div>
                                 
@@ -92,16 +98,19 @@ const CartItems = (props) => {
                                         'aria-labelledby': 'basic-button',
                                     }}
                                     >
-                                    <MenuItem onClick={() => handleCloseQty(1)}>1</MenuItem>
-                                    <MenuItem onClick={() => handleCloseQty(2)}>2</MenuItem>
-                                    <MenuItem onClick={() => handleCloseQty(3)}>3</MenuItem>
-                                    <MenuItem onClick={() => handleCloseQty(4)}>4</MenuItem>
-                                    <MenuItem onClick={() => handleCloseQty(5)}>5</MenuItem>
-                                    <MenuItem onClick={() => handleCloseQty(6)}>6</MenuItem>
-                                    <MenuItem onClick={() => handleCloseQty(7)}>7</MenuItem>
-                                    <MenuItem onClick={() => handleCloseQty(8)}>8</MenuItem>
-                                    <MenuItem onClick={() => handleCloseQty(9)}>9</MenuItem>
-                                    <MenuItem onClick={() => handleCloseQty(10)}>10</MenuItem>
+                                        {
+                                            props?.productSizeData?.map((item, index) => {
+                                                return (
+                                                    <MenuItem 
+                                                        key={index}  
+                                                        className={`${item?.name === selectedSize ? "bg-primary text-white" : ""}`}  
+                                                        onClick={() => handleCloseQty(1)}
+                                                    >{item?.name}</MenuItem>
+                                                )
+                                            })
+                                        }
+                                    
+                                    
                                     </Menu>
                                 </div>
                             </div>

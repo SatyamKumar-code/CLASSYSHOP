@@ -16,7 +16,7 @@ const cartProductSchema = new mongoose.Schema({
     brand: {
         type: String,
     },
-    oldprice: {
+    oldPrice: {
         type: Number,
         required: true
     },
@@ -40,7 +40,6 @@ const cartProductSchema = new mongoose.Schema({
     },
     size: {
         type: String,
-        required: true,
     },
     weight: {
         type: String,

@@ -17,12 +17,58 @@ const ProductItem = (props) => {
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
   const [cartItem, setCartItem] = useState([]);
+  const [activeTab, setActiveTab] = useState(null);
+  const [isShowTabs, setIsShowTabs] = useState(false);
+  const [selectedTabName, setSelectedTabName] = useState(null);
 
   const context = useContext(MyContext);
 
   const addToCart = (product, quantity) => {
-    context?.addToCart(product, quantity);
-    setIsAdded(true);
+
+    const productItem = {
+      _id: product?._id,
+      name: product?.name,
+      image: product?.images[0],
+      rating: product?.rating,
+      quantity: quantity,
+      price: product?.price,
+      oldPrice: product?.oldPrice,
+      discount: product?.discount,
+      subTotal: Math.round(product?.price * quantity * 100) / 100,
+      countInStock: product?.countInStock,
+      brand: product?.brand,
+      discount: product?.discount,
+      size: props?.item?.size?.length !== 0 ? selectedTabName : '',
+      weight: props?.item?.productWeight?.length !== 0 ? selectedTabName : '',
+      ram: props?.item?.productRam?.length !== 0 ? selectedTabName : ''
+    }
+
+    if(props?.item?.size?.length !== 0 || props?.item?.productWeight?.length !== 0 || props?.item?.productRam?.length !== 0 ) {
+      setIsShowTabs(true);
+    }else {
+      context?.addToCart(productItem, quantity); 
+      setIsAdded(true);
+      setIsShowTabs(false);
+    }
+
+
+    if (activeTab !== null) {
+      context?.addToCart(productItem, quantity);
+      setIsAdded(true);
+      setIsShowTabs(false);
+    }
+    
+    
+  }
+
+  const handleClickActiveTab = (index , name) => {
+    if (activeTab === index) {
+      setActiveTab(null);
+      setSelectedTabName(null);
+    } else {
+      setActiveTab(index);
+      setSelectedTabName(name);
+    }
   }
 
   useEffect(() => {
@@ -30,7 +76,7 @@ const ProductItem = (props) => {
       cartItem?.productId?.includes(props?.item?._id)
     );
 
-    if(item?.length !==0) {
+    if (item?.length !== 0) {
       setCartItem(item);
       setIsAdded(true);
       setQuantity(item[0]?.quantity || 1);
@@ -39,7 +85,7 @@ const ProductItem = (props) => {
       setIsAdded(false);
       setQuantity(1);
     }
-  },[context?.cartData, props?.item?._id])
+  }, [context?.cartData, props?.item?._id])
   const plusQty = () => {
     setQuantity(quantity + 1);
 
@@ -61,18 +107,21 @@ const ProductItem = (props) => {
   }
 
   const minusQty = () => {
-    if(quantity !== 1 && quantity > 1) {
+    if (quantity !== 1 && quantity > 1) {
       setQuantity(quantity - 1);
-    }else {
+    } else {
       setQuantity(1);
     }
 
-    if(quantity === 1 && cartItem?.length > 0 && cartItem[0]?._id) {
+    if (quantity === 1 && cartItem?.length > 0 && cartItem[0]?._id) {
       deleteData(`/api/cart/delete-cart-item/${cartItem[0]?._id}`).then((res) => {
-        if(res?.success === true) {
+        if (res?.success === true) {
           context?.alertBox("Success", res?.message);
           context?.getCartItems();
-          setIsAdded(false); 
+          setIsAdded(false);
+          setIsShowTabs(false);
+          setActiveTab(null);
+          setSelectedTabName(null);
         }
       })
     } else {
@@ -93,49 +142,97 @@ const ProductItem = (props) => {
 
   return (
     <div className='productItem shadow-lg rounded-md overflow-hidden border-1 border-[rgba(0,0,0,0.1)]'>
-        <div className="group imgWrapper w-[100%] overflow-hidden rounded-md relative">
+      <div className="group imgWrapper w-[100%] overflow-hidden rounded-md relative">
         <Link to={`/product/${props?.item?._id}`}>
           <div className='img h-[220px] overflow-hidden'>
             <img src={props?.item?.images?.[0]} alt="items" className='w-full' />
-            <img src={props?.item?.images?.[1]} alt="items" 
-            className='w-full transition-all duration-700 absolute top-0 left-0 opacity-0 group-hover:opacity-100 group-hover:scale-105' />
+            <img src={props?.item?.images?.[1]} alt="items"
+              className='w-full transition-all duration-700 absolute top-0 left-0 opacity-0 group-hover:opacity-100 group-hover:scale-105' />
           </div>
         </Link>
-            <span className='discount flex items-center absolute top-[10px] left-[10px] z-50 bg-[#ff5252] text-white rounded-lg px-2 py-1 text-[12px] font-[600] p-1 text-[12px] font-[500]'>{props?.item?.discount}%</span>
+        {
+          isShowTabs === true &&
+          <div className='flex items-center justify-center absolute top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.7)] z-55 p-3 gap-2'>
+           
+            {
+              props?.item?.size?.length !== 0 && (
+                <div className={`flex gap-2 ${props?.item?.size?.length > 3 ? 'flex-wrap grid grid-cols-4' : 'flex-nowrap'}`}>
+                  {
+                    props?.item?.size?.map((item, index) => {
+                      return (
+                        <span key={index} className={`flex items-center justify-center p-1 bg-[rgba(255,255,255,0.8)] max-w-[35px] h-[25px] px-2 rounded-sm cursor-pointer hover:bg-white ${activeTab === index && 'bg-primary text-white'}`} onClick={() => handleClickActiveTab(index , item)}>{item}</span>
+                      )
+                    })
+                  }
+                </div>
+              )
+            }
 
-            <div className='actions absolute top-[-200px] right-[5px] z-50 flex items-center gap-2 flex-col w-[50px] transition-all duration-300 group-hover:top-[15px] opacity-0 group-hover:opacity-100'>
-              <Tooltip title="View" placement='left-start'>
-                <Button className='!w-[30px] !h-[30px] !min-w-[30px] !rounded-full !bg-white !text-black hover:!bg-[#ff5252] hover:!text-white group'
-                onClick={() => context.handleOpenProductDetailModel(true, props?.item)}>
-                  <MdZoomOutMap className='text-[18px] !text-black group-hover:text-white' />
-                  </Button>
-                  </Tooltip>
-                  <Tooltip title="Compare" placement='left-start'>
-                  <Button className='!w-[30px] !h-[30px] !min-w-[30px] !rounded-full !bg-white !text-black hover:!bg-[#ff5252] hover:!text-white group'>
-                  <IoGitCompareOutline className='text-[18px] !text-black group-hover:text-white' />
-                  </Button>
-                  </Tooltip>
-                  <Tooltip title="Wishlist" placement='left-start'>
-                  <Button className='!w-[30px] !h-[30px] !min-w-[30px] !rounded-full !bg-white !text-black hover:!bg-[#ff5252] hover:!text-white group'>
-                  <FaRegHeart className='text-[18px] !text-black group-hover:text-white' />
-                  </Button>
-                  </Tooltip>
-            </div>
+            {
+              props?.item?.productRam?.length !== 0 && (
+                <div className={`flex gap-2 ${props?.item?.productRam?.length > 3 ? 'flex-wrap grid grid-cols-2' : 'flex-nowrap'}`}>
+                  {
+                    props?.item?.productRam?.map((item, index) => {
+                      return (
+                        <span key={index} className={`flex items-center justify-center p-1 bg-[rgba(255,255,255,0.8)] min-w-[65px]! h-[25px] px-2 rounded-sm cursor-pointer hover:bg-white ${activeTab === index && 'bg-primary text-white'}`} onClick={() => handleClickActiveTab(index, item)}>{item}</span>
+                      )
+                    })
+                  }
+                </div>
+              )
+            }
+
+            {
+              props?.item?.productWeight?.length !== 0 && (
+                <div className={`flex gap-2 ${props?.item?.productWeight?.length > 3 ? 'flex-wrap grid grid-cols-2' : 'flex-nowrap'}`}>
+                  {
+                    props?.item?.productWeight?.map((item, index) => {
+                      return (
+                        <span key={index} className={`flex items-center justify-center p-1 bg-[rgba(255,255,255,0.8)] min-w-[65px]! h-[25px] px-2 rounded-sm cursor-pointer hover:bg-white ${activeTab === index && 'bg-primary text-white'}`} onClick={() => handleClickActiveTab(index, item)}>{item}</span>
+                      )
+                    })
+                  }
+                </div>
+              )
+            }
+          </div>
+        }
+       
+        <span className='discount flex items-center absolute top-[10px] left-[10px] z-50 bg-[#ff5252] text-white rounded-lg px-2 py-1 text-[12px] font-[600] p-1 text-[12px] font-[500]'>{props?.item?.discount}%</span>
+
+        <div className='actions absolute top-[-200px] right-[5px] z-50 flex items-center gap-2 flex-col w-[50px] transition-all duration-300 group-hover:top-[15px] opacity-0 group-hover:opacity-100'>
+          <Tooltip title="View" placement='left-start'>
+            <Button className='!w-[30px] !h-[30px] !min-w-[30px] !rounded-full !bg-white !text-black hover:!bg-[#ff5252] hover:!text-white group'
+              onClick={() => context.handleOpenProductDetailModel(true, props?.item)}>
+              <MdZoomOutMap className='text-[18px] !text-black group-hover:text-white' />
+            </Button>
+          </Tooltip>
+          <Tooltip title="Compare" placement='left-start'>
+            <Button className='!w-[30px] !h-[30px] !min-w-[30px] !rounded-full !bg-white !text-black hover:!bg-[#ff5252] hover:!text-white group'>
+              <IoGitCompareOutline className='text-[18px] !text-black group-hover:text-white' />
+            </Button>
+          </Tooltip>
+          <Tooltip title="Wishlist" placement='left-start'>
+            <Button className='!w-[30px] !h-[30px] !min-w-[30px] !rounded-full !bg-white !text-black hover:!bg-[#ff5252] hover:!text-white group'>
+              <FaRegHeart className='text-[18px] !text-black group-hover:text-white' />
+            </Button>
+          </Tooltip>
         </div>
+      </div>
 
-        <div className='info p-3 py-5 relative pb-[50px] h-[190px]'>
-            <h6 className='text-[13px] !font-[400]'>{props?.item?.brand}</h6>
-            <h3 className='text-[13px] title mt-1 font-[500] mb-1 text-[#000]'>
-              <Link to={`/product/${props?.item?._id}`} 
-                className='link transition-all'>{props?.item?.name?.substr(0,30)+"..."}
-              </Link></h3>
+      <div className='info p-3 py-5 relative pb-[50px] h-[190px]'>
+        <h6 className='text-[13px] !font-[400]'>{props?.item?.brand}</h6>
+        <h3 className='text-[13px] title mt-1 font-[500] mb-1 text-[#000]'>
+          <Link to={`/product/${props?.item?._id}`}
+            className='link transition-all'>{props?.item?.name?.substr(0, 30) + "..."}
+          </Link></h3>
 
-            <Rating name='size-small' defaultValue={props?.item?.rating} size="small" readOnly />
+        <Rating name='size-small' defaultValue={props?.item?.rating} size="small" readOnly />
 
-            <div className='flex items-center gap-4'>
-                <span className='oldPrice line-through text-gray-500 text-[15px] font-[500]'>&#x20b9; {props?.item?.oldPrice}</span>
-                <span className='price text-[#ff5252] text-[15px] font-[600]'>&#x20b9; {props?.item?.price}</span>
-            </div>
+        <div className='flex items-center gap-4'>
+          <span className='oldPrice line-through text-gray-500 text-[15px] font-[500]'>&#x20b9; {props?.item?.oldPrice}</span>
+          <span className='price text-[#ff5252] text-[15px] font-[600]'>&#x20b9; {props?.item?.price}</span>
+        </div>
 
         <div className=" absolute! bottom-[15px] left-0 px-3 w-full">
           {
@@ -171,7 +268,7 @@ const ProductItem = (props) => {
 
 
         </div>
-        </div>
+      </div>
 
     </div>
   )
