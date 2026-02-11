@@ -134,7 +134,6 @@ function App() {
       countInStock: product?.countInStock,
       productId: product?._id,
       brand: product?.brand,
-      discount: product?.discount,
       size: product?.size,
       weight: product?.weight,
       ram: product?.ram

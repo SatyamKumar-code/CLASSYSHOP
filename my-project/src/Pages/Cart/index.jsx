@@ -1,13 +1,41 @@
-import React, { useContext, useState } from 'react' 
+import React, { useContext, useEffect, useState } from 'react' 
 import Button from '@mui/material/Button';
 import { BsFillBagCheckFill } from 'react-icons/bs';
 import CartItems from './cartItems';
 import { MyContext } from '../../App';
+import { fetchDataFromApi } from '../../utils/api';
 
 const CartPage = () => {
 
+    const [productSizeData, setProductSizeData] = useState([]);
+    const [productWeightData, setProductWeightData] = useState([]);
+    const [productRamsData, setProductRamsData] = useState([]);
+
      
   const context = useContext(MyContext);
+
+  useEffect(() => {
+
+    window.scrollTo(0,0);
+
+    fetchDataFromApi("/api/product/productSize/get").then((res) => {
+        if(res?.error === false) {
+            setProductSizeData(res?.data || []);
+        }
+    })
+
+    fetchDataFromApi("/api/product/productRAMS/get").then((res) => {
+        if(res?.error === false) {
+            setProductRamsData(res?.data || []);
+        }
+    })
+
+    fetchDataFromApi("/api/product/productWEIGHT/get").then((res) => {
+        if(res?.error === false) {
+            setProductWeightData(res?.data || []);
+        }
+    })
+  }, []);
 
   return (
     <section className='section py-5 pb-10'>
@@ -24,7 +52,7 @@ const CartPage = () => {
                       {
                         context?.cartData?.length !== 0 && context?.cartData?.map((item, index) => {
                             return (
-                                <CartItems size="S" qty={item?.quantity} item={item} key={index} />
+                                <CartItems selected={()=>selectedSize(item)} qty={item?.quantity} item={item} key={index} productSizeData={productSizeData} productRamsData={productRamsData} productWeightData={productWeightData} />
                             )
                         })
                       }

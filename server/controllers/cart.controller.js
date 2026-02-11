@@ -142,7 +142,7 @@ export const getCartItemController = async ( req, res, ) => {
 export const updateCartItemQtyController = async ( req, res ) => {
     try {
         const userId = req.userId;
-        const { _id, qty, subTotal } = req.body;
+        const { _id, qty, subTotal, size, weight, ram } = req.body;
 
         if ( !_id || qty === undefined || qty === null || subTotal === undefined || subTotal === null ) {
             return res.status(402).json({
@@ -159,13 +159,16 @@ export const updateCartItemQtyController = async ( req, res ) => {
             }, 
             {
             quantity: qty,
-            subTotal: subTotal
+            subTotal: subTotal,
+            size: size,
+            weight: weight,
+            ram: ram
             },
             { new: true }
         );
 
         return res.status(200).json({
-            message: "Update cart",
+            message: "Update cart item",
             success: true,
             error: false,
             data: updateCartitem
