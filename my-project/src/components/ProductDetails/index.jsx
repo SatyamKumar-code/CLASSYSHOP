@@ -15,6 +15,7 @@ export const ProductDetailsComponent = (props) => {
     const [quantity, setQuantity] = useState(1);
     const [selectedTabName, setSelectedTabName] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [tabError, setTabError] = useState(false);
 
     const context = useContext(MyContext);
 
@@ -63,11 +64,13 @@ export const ProductDetailsComponent = (props) => {
           setTimeout(() => {
             setIsLoading(false);
           }, 1000);
+          setTabError(false);
         } else {
           context.alertBox("error", res?.message);
           setTimeout(() => {
             setIsLoading(false);
           }, 500);
+          setTabError(false);
         };
 
       }).catch((error) => {
@@ -75,7 +78,10 @@ export const ProductDetailsComponent = (props) => {
         setTimeout(() => {
           setIsLoading(false);
         }, 500);
+        setTabError(false);
       })
+    } else {
+      setTabError(true);
     }
     
 
@@ -126,7 +132,15 @@ export const ProductDetailsComponent = (props) => {
                   {
                     props?.item?.size?.map((item, index) => {
                       return (
-                        <Button key={index} className={`${productActionIndex === index ? 'bg-primary text-white' : ''}`} onClick={() => handleClickActiveTab(index, item)}>{item}</Button>
+                        <Button 
+                          key={index} 
+                          className={`${productActionIndex === index ? 
+                            'bg-primary text-white' : ''
+                          } ${tabError === true && 'border! border-red-500!'}`} 
+                          onClick={() => handleClickActiveTab(index, item)}
+                        >
+                          {item}
+                        </Button>
                       )
                     })
                   }
