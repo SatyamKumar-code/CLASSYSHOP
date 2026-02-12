@@ -11,6 +11,7 @@ import { MyContext } from '../../App';
 import { FaMinus } from 'react-icons/fa6';
 import { FaPlus } from 'react-icons/fa6';
 import { deleteData, editData } from '../../utils/api';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const ProductItem = (props) => {
 
@@ -20,6 +21,7 @@ const ProductItem = (props) => {
   const [activeTab, setActiveTab] = useState(null);
   const [isShowTabs, setIsShowTabs] = useState(false);
   const [selectedTabName, setSelectedTabName] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const context = useContext(MyContext);
 
@@ -43,12 +45,17 @@ const ProductItem = (props) => {
       ram: props?.item?.productRam?.length !== 0 ? selectedTabName : ''
     }
 
+    setIsLoading(true);
+
     if(props?.item?.size?.length !== 0 || props?.item?.productWeight?.length !== 0 || props?.item?.productRam?.length !== 0 ) {
       setIsShowTabs(true);
     }else {
       context?.addToCart(productItem, quantity); 
       setIsAdded(true);
       setIsShowTabs(false);
+      setTimeout(() => {
+        setIsShowTabs(false);
+      }, 500)
     }
 
 
@@ -56,6 +63,11 @@ const ProductItem = (props) => {
       context?.addToCart(productItem, quantity);
       setIsAdded(true);
       setIsShowTabs(false);
+      setTimeout(() => {
+        setActiveTab(null);
+        setSelectedTabName(null);
+        setIsLoading(false);
+      }, 500)
     }
     
     
@@ -240,11 +252,17 @@ const ProductItem = (props) => {
               <Button className='btn-org btn-border flex w-full btn-sm gap-2' size='small'
                 onClick={() => addToCart(props?.item, quantity)}
               >
-                <MdOutlineShoppingCart className='text-[18px]' />
-                Add To Cart
+                <MdOutlineShoppingCart className='text-[20px]' /> Add to Cart
               </Button>
               :
-              <div className='flex items-center justify-between overflow-hidden rounded-full border border-[rgba(0,0,0,0.1)]'>
+            <>
+            {
+                isLoading === true ? <Button className='btn-org btn-border flex w-full btn-sm gap-2' size='small'
+              >
+                <CircularProgress size={20} className='text-primary' />
+              </Button> :
+
+                <div className='flex items-center justify-between overflow-hidden rounded-full border border-[rgba(0,0,0,0.1)]'>
                 <Button
                   className='min-w-[35px]! w-[35px]! h-[30px]! bg-[#f1f1f1]! rounded-none!'
                   onClick={minusQty}
@@ -263,6 +281,9 @@ const ProductItem = (props) => {
                   />
                 </Button>
               </div>
+              }
+            </>
+              
           }
 
 
