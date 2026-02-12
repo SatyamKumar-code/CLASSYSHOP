@@ -1,11 +1,11 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { IoCloseSharp } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { GoTriangleDown } from 'react-icons/go';
 import Rating from '@mui/material/Rating';
-import { deleteData, editData } from '../../utils/api';
+import { deleteData, editData, fetchDataFromApi } from '../../utils/api';
 import { MyContext } from '../../App';
 
 const CartItems = (props) => {
@@ -13,6 +13,8 @@ const CartItems = (props) => {
     const [sizeanchorEl, setSizeAnchorEl] = useState(null);
     const [selectedSize, setSelectedSize] = useState(props?.item?.size || "");
     const openSize = Boolean(sizeanchorEl);
+
+    const [productSizes, setProductSizes] = useState([]);
 
     const [qtyanchorEl, setQtyAnchorEl] = useState(null);
     const [selectedQty, setSelectedQty] = useState(props?.item?.quantity || props?.qty || 1);
@@ -27,6 +29,16 @@ const CartItems = (props) => {
     const openWEIGHT = Boolean(weightAnchorEl);
 
     const context = useContext(MyContext);
+
+    useEffect(() => {
+        if (!props?.item?.productId) return;
+
+        fetchDataFromApi(`/api/product/${props.item.productId}`).then((res) => {
+            if (res?.error === false && res?.product) {
+                setProductSizes(res.product.size || []);
+            }
+        });
+    }, [props?.item?.productId]);
 
     const handleClickSize = (event) => {
         setSizeAnchorEl(event.currentTarget);
@@ -141,7 +153,7 @@ const CartItems = (props) => {
                                     props?.item?.size !== "" &&
                                     <>
                                         {
-                                            props?.productSizeData?.length !== 0 &&
+                                            productSizes?.length !== 0 &&
                                             <div className='relative'>
                                                 <span className='flex items-center justify-center bg-[#f1f1f1] text-[11px] font-[600] py-1 px-2 rounded-md cursor-pointer'
                                                     onClick={handleClickSize}
@@ -158,13 +170,13 @@ const CartItems = (props) => {
                                                     }}
                                                 >
                                                     {
-                                                        props?.productSizeData?.map((item, index) => {
+                                                        productSizes?.map((item, index) => {
                                                             return (
                                                                 <MenuItem
                                                                     key={index}
-                                                                    className={`${item?.size === selectedSize ? "bg-primary text-white" : ""}`}
-                                                                    onClick={() => updateCart("size", item?.size)}
-                                                                >{item?.size}</MenuItem>
+                                                                    className={`${item === selectedSize ? "bg-primary text-white" : ""}`}
+                                                                    onClick={() => updateCart("size", item)}
+                                                                >{item}</MenuItem>
                                                             )
                                                         })
                                                     }

@@ -21,6 +21,11 @@ import Drawer from '@mui/material/Drawer'
 import CartPanel from '../CartPanel'
 import { MyContext } from '../../App'
 
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import { ProductZoom } from '../ProductZoom'
+import { ProductDetailsComponent } from '../ProductDetails'
+
 
 const Footer = () => {
 
@@ -216,6 +221,39 @@ const Footer = () => {
         }
         
       </Drawer>
+
+
+
+
+      <Dialog
+        fullWidth={context?.fullWidth}
+        maxWidth={context?.maxWidth}
+        open={context?.openProductDetailsModal.open}
+        onClose={context?.handleCloseProductDetailsModal}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        className='productDetailsModal'
+      >
+        
+        <DialogContent>
+          <div className='flex items-center wfull productDetailsModalContainer relative'>
+            <Button className='!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000] !absolute top-[15px] right-[15px] !bg-[#f1f1f1]' 
+            onClick={context?.handleCloseProductDetailsModal}><IoCloseSharp className='text-[20px]' /></Button>
+            {
+              context?.openProductDetailsModal?.item?.length !== 0 &&
+              <>
+                <div className='col1 w-[40%] px-3 py-8'>
+                  <ProductZoom images={context?.openProductDetailsModal?.item?.images} />
+                </div>
+
+                <div className='col2 w-[60%] py-8 px-8 pr-16 productContent'>
+                  <ProductDetailsComponent item={context?.openProductDetailsModal?.item} />
+                </div>
+              </>
+            }
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

@@ -55,9 +55,10 @@ const Header = () => {
             if(res?.error===false){
                 localStorage.removeItem("accesstoken");
                 localStorage.removeItem("refreshToken");
-                context.alertBox("Success", res?.message);
-                context.setIsLogin(false);
-                context.setUserData(null);
+                context?.alertBox("Success", res?.message);
+                context?.setIsLogin(false);
+                context?.setUserData(null);
+                context?.setCartData([]);
                 history("/")
             }
         })

@@ -5,7 +5,7 @@ import Rating from '@mui/material/Rating';
 import Button from '@mui/material/Button';
 import { FaRegHeart } from 'react-icons/fa';
 import { IoGitCompareOutline } from 'react-icons/io5';
-import { MdOutlineShoppingCart, MdZoomOutMap } from 'react-icons/md';
+import { MdClose, MdOutlineShoppingCart, MdZoomOutMap } from 'react-icons/md';
 import Tooltip from '@mui/material/Tooltip';
 import { MyContext } from '../../App';
 import { FaMinus } from 'react-icons/fa6';
@@ -165,7 +165,11 @@ const ProductItem = (props) => {
         {
           isShowTabs === true &&
           <div className='flex items-center justify-center absolute top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.7)] z-55 p-3 gap-2'>
-           
+            <Button className='absolute! top-1.5 right-1.5 min-w-[35px]! min-h-[35px]! w-[35px]! h-[35px]! rounded-full! bg-[rgba(255,255,255,0.9)]! text-black!'
+              onClick={() => setIsShowTabs(false)}
+            >
+              <MdClose className='z-90 text-[25px] text-black!' />
+            </Button>
             {
               props?.item?.size?.length !== 0 && (
                 <div className={`flex gap-2 ${props?.item?.size?.length > 3 ? 'flex-wrap grid grid-cols-4' : 'flex-nowrap'}`}>

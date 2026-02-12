@@ -8,12 +8,7 @@ import ProductListing from './Pages/ProductListing'
 import { ProductDetails } from './Pages/ProductDetails'
 import { createContext } from 'react'
 
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import { ProductZoom } from './components/ProductZoom'
-import { IoCloseSharp } from 'react-icons/io5'
-import { ProductDetailsComponent } from './components/ProductDetails'
+
 import Login from './Pages/Login'
 import Register from './Pages/Register'
 import CartPage from './Pages/Cart'
@@ -164,8 +159,10 @@ function App() {
   }
 
   const values = {
+    openProductDetailsModal,
     setOpenProductDetailsModal,
     handleOpenProductDetailModel,
+    handleCloseProductDetailsModal,
     setOpenCartPanel,
     toggleCartPanel,
     openCartPanel,
@@ -174,10 +171,11 @@ function App() {
     setIsLogin,
     setUserData,
     userData,
-    setCatData,
+    setCatData, 
     catData,
     addToCart,
     cartData,
+    setCartData,
     getCartItems
   }
 
@@ -208,35 +206,7 @@ function App() {
 
       <Toaster />
 
-      <Dialog
-        fullWidth={fullWidth}
-        maxWidth={maxWidth}
-        open={openProductDetailsModal.open}
-        onClose={handleCloseProductDetailsModal}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        className='productDetailsModal'
-      >
-        
-        <DialogContent>
-          <div className='flex items-center wfull productDetailsModalContainer relative'>
-            <Button className='!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000] !absolute top-[15px] right-[15px] !bg-[#f1f1f1]' 
-            onClick={handleCloseProductDetailsModal}><IoCloseSharp className='text-[20px]' /></Button>
-            {
-              openProductDetailsModal?.item?.length !== 0 &&
-              <>
-                <div className='col1 w-[40%] px-3 py-8'>
-                  <ProductZoom images={openProductDetailsModal?.item?.images} />
-                </div>
-
-                <div className='col2 w-[60%] py-8 px-8 pr-16 productContent'>
-                  <ProductDetailsComponent item={openProductDetailsModal?.item} />
-                </div>
-              </>
-            }
-          </div>
-        </DialogContent>
-      </Dialog>
+      
 
 
      

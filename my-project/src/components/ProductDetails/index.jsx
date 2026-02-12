@@ -55,34 +55,75 @@ export const ProductDetailsComponent = (props) => {
       ram: props?.item?.productRam?.length !== 0 ? selectedTabName : ''
     }
 
-    if (selectedTabName !== null) {
-      setIsLoading(true);
-      postData("/api/cart/add", productItem).then((res) => {
-        if (res?.error === false) {
-          context.alertBox("Success", res?.message);
-          context.getCartItems();
-          setTimeout(() => {
-            setIsLoading(false);
-          }, 1000);
-          setTabError(false);
-        } else {
-          context.alertBox("error", res?.message);
+    if (props?.item?.size?.length !== 0 || props?.item?.productWeight?.length !== 0 || props?.item?.productRam?.length !== 0) {
+      if (selectedTabName !== null) {
+        setIsLoading(true);
+        postData("/api/cart/add", productItem).then((res) => {
+          if (res?.error === false) {
+            context.alertBox("Success", res?.message);
+            context.getCartItems();
+            setTimeout(() => {
+              setIsLoading(false);
+            }, 1000);
+            setTabError(false);
+          } else {
+            context.alertBox("error", res?.message);
+            setTimeout(() => {
+              setIsLoading(false);
+            }, 500);
+            setTabError(false);
+          };
+
+        }).catch((error) => {
+          context.alertBox("error", error?.message || "Failed to add to cart");
           setTimeout(() => {
             setIsLoading(false);
           }, 500);
           setTabError(false);
-        };
+        })
+      } else {
+        setTabError(true);
 
-      }).catch((error) => {
-        context.alertBox("error", error?.message || "Failed to add to cart");
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 500);
-        setTabError(false);
-      })
+        let errorMessage = "Please select an option";
+
+        if (props?.item?.size?.length !== 0) {
+          errorMessage = "Please select a size";
+        } else if (props?.item?.productWeight?.length !== 0) {
+          errorMessage = "Please select a weight";
+        } else if (props?.item?.productRam?.length !== 0) {
+          errorMessage = "Please select a RAM option";
+        }
+
+        context?.alertBox("error", errorMessage);
+      }
     } else {
-      setTabError(true);
+      postData("/api/cart/add", productItem).then((res) => {
+          setIsLoading(true);
+          if (res?.error === false) {
+            context.alertBox("Success", res?.message);
+            context.getCartItems();
+            setTimeout(() => { 
+              setIsLoading(false);
+            }, 1000);
+            setTabError(false);
+          } else {
+            context.alertBox("error", res?.message); 
+            setTimeout(() => {
+              setIsLoading(false);
+            }, 500);
+            setTabError(false);
+          };
+
+        }).catch((error) => {
+          context.alertBox("error", error?.message || "Failed to add to cart");
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 500);
+          setTabError(false);
+        })
     }
+
+    
     
 
   }
@@ -116,7 +157,15 @@ export const ProductDetailsComponent = (props) => {
                   {
                     props?.item?.productRam?.map((item, index) => {
                       return (
-                        <Button key={index} className={`${productActionIndex === index ? 'bg-primary text-white' : ''}`} onClick={() => handleClickActiveTab(index, item)}>{item}</Button>
+                         <Button 
+                          key={index} 
+                          className={`${productActionIndex === index ? 
+                            'bg-primary text-white' : ''
+                          } ${tabError === true && 'border! border-red-500!'}`} 
+                          onClick={() => handleClickActiveTab(index, item)}
+                        >
+                          {item}
+                        </Button>
                       )
                     })
                   }
@@ -156,7 +205,15 @@ export const ProductDetailsComponent = (props) => {
                   {
                     props?.item?.productWeight?.map((item, index) => {
                       return (
-                        <Button key={index} className={`${productActionIndex === index ? 'bg-primary text-white' : ''}`} onClick={() => handleClickActiveTab(index, item)}>{item}</Button>
+                         <Button 
+                          key={index} 
+                          className={`${productActionIndex === index ? 
+                            'bg-primary text-white' : ''
+                          } ${tabError === true && 'border! border-red-500!'}`} 
+                          onClick={() => handleClickActiveTab(index, item)}
+                        >
+                          {item}
+                        </Button>
                       )
                     })
                   }

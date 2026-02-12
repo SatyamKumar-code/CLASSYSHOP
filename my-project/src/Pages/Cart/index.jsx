@@ -19,7 +19,7 @@ const CartPage = () => {
 
     window.scrollTo(0,0);
 
-    fetchDataFromApi("/api/product/productSize/get").then((res) => {
+    fetchDataFromApi(`/api/product/productSize/get`).then((res) => {
         if(res?.error === false) {
             setProductSizeData(res?.data || []);
         }
