@@ -121,6 +121,22 @@ const Address = () => {
             ...prevState,
             addressType: e.target.value
         }));
+    }
+
+    const resetFormFields = () => {
+        setFormFields((prevState) => ({
+            address_line1: '',
+            city: '',
+            state: '',
+            pincode: '',
+            country: '',
+            mobile: '',
+            userId: prevState.userId,
+            landmark: '',
+            addressType: ''
+        }));
+        setPhone('');
+        setAddressType('');
     }   
 
 
@@ -154,7 +170,9 @@ const Address = () => {
             setIsLoading(false);
             return false
         }
-        if (formFields.mobile.length < 10) {
+        // Extract only digits from phone number for validation
+        const phoneDigits = formFields.mobile.replace(/\D/g, '');
+        if (phoneDigits.length < 10) {
             context.alertBox("error", "Please enter your 10 digit mobile number")
             setIsLoading(false);
             return false
@@ -186,19 +204,7 @@ const Address = () => {
 
                     fetchDataFromApi(`/api/address/get?userId=${context?.userData?._id}`).then((res) => {
                         setAddress(res?.address);
-                        setFormFields({
-                            address_line1: '',
-                            city: '',
-                            state: '',
-                            pincode: '',
-                            country: '',
-                            mobile: '',
-                            userId: '',
-                            landmark: '',
-                            addressType: ''
-                        });
-                        setPhone('');
-                        setAddressType('');
+                        resetFormFields();
                     })
 
 
@@ -207,6 +213,9 @@ const Address = () => {
                     setIsLoading(false);
                 }
 
+            }).catch((err) => {
+                setIsLoading(false);
+                context.alertBox("error", err?.message || "Something went wrong");
             })
         }
 
@@ -221,19 +230,7 @@ const Address = () => {
 
                     fetchDataFromApi(`/api/address/get?userId=${context?.userData?._id}`).then((res) => {
                         setAddress(res?.address);
-                        setFormFields({
-                            address_line1: '',
-                            city: '',
-                            state: '',
-                            pincode: '',
-                            country: '',
-                            mobile: '',
-                            userId: '',
-                            landmark: '',
-                            addressType: ''
-                        });
-                        setPhone('');
-                        setAddressType(''); 
+                        resetFormFields();
                     }).catch((err) => {
                         context.alertBox("error", err?.message || "Something went wrong");
                     })
@@ -245,6 +242,9 @@ const Address = () => {
                     setIsLoading(false);
                 }
 
+            }).catch((err) => {
+                setIsLoading(false);
+                context.alertBox("error", err?.message || "Something went wrong");
             });
         }
 
@@ -300,8 +300,7 @@ const Address = () => {
             landmark: '',
             addressType: ''
         });
-        setPhone('');
-        setAddressType('');
+        resetFormFields();
         setAddressId("");
     }
 
@@ -350,7 +349,7 @@ const Address = () => {
                     </div>
                 </div>
 
-                <Dialog open={isOpenModel}>
+                <Dialog open={isOpenModel} onClose={handleClose}>
                     <DialogTitle>{mode === "add" ? "Add Address" : "Edit Address"}</DialogTitle>
 
                     <form className='px-8 py-3 pb-8' onSubmit={handleSubmit}>

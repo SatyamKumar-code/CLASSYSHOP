@@ -31,8 +31,7 @@ const AddressBox = (props) => {
     }
 
     return (
-        <div className="addressBox group relative w-full rounded-md border border-dashed border-[rgba(0,0,0,0.2)] bg-[#fafafa] p-4 rounded-md cursor-pointer">
-
+        <div className="addressBox group relative w-full rounded-md border border-dashed border-[rgba(0,0,0,0.2)] bg-[#fafafa] p-4 cursor-pointer">
             <span className='inline-block p-1 bg-[#e7e7e7] text-[12px] rounded-sm'>{props?.address?.addressType}</span>
 
             <h4 className='pt-2 flex items-center gap-4'>
@@ -88,7 +87,7 @@ const AddressBox = (props) => {
                         props?.removeAddress(props?.address?._id);
                         handleClose();
                     }}>
-                        DELETE
+                        Delete
                     </MenuItem>
                 </Menu>
             </div>

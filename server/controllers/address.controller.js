@@ -97,7 +97,7 @@ export const deleteAddressController = async ( req, res ) => {
 
 
         if(!_id) {
-            return res.status(402).json({
+            return res.status(400).json({
                 message: "provide _id",
                 error: true,
                 success: false
@@ -136,16 +136,17 @@ export const deleteAddressController = async ( req, res ) => {
 export const getSingleAddressController = async ( req, res ) => {
     try {
         const id = req.params.id;
+        const userId = req.userId;
 
         if(!id) {
-            return res.status(402).json({
+            return res.status(400).json({
                 message: "provide _id",
                 error: true,
                 success: false
             })
         }
 
-        const address = await AddressModel.findOne({ _id: id });
+        const address = await AddressModel.findOne({ _id: id, userId: userId });
 
         if(!address) {
             return res.status(404).json({
@@ -176,7 +177,19 @@ export const editAddressController = async ( req, res ) => {
     try {
 
         const id = req.params.id;
+        const userId = req.userId;
         const { address_line1, city, state, pincode, country, mobile, landmark, addressType} = req.body;
+
+        // Verify ownership first
+        const existingAddress = await AddressModel.findOne({ _id: id, userId: userId });
+        
+        if(!existingAddress) {
+            return res.status(404).json({
+                message: "Address not found",
+                error: true,
+                success: false
+            })
+        }
 
         const address = await AddressModel.findByIdAndUpdate(id, {
             address_line1: address_line1,
