@@ -107,7 +107,7 @@ h1,h2,h3,h4,h5,h6{
 .bg-primary{
     background: #ff5252;
 }
-.link:hover{color: #ff5252;}
+.link:hover, .Mui-checked{color: #ff5252 !important;}
 
 .MuiBadge-badge{background-color: #ff5252 !important;}
 

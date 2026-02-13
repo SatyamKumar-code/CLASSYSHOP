@@ -2,18 +2,22 @@ import React, { useContext, useEffect, useState } from 'react'
 import AccountSidebar from '../../components/AccountSidebar';
 import Button from '@mui/material/Button';
 import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
 import { MyContext } from '../../App';
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
-import { BsFillBagCheckFill } from 'react-icons/bs';
-import { deleteData, fetchDataFromApi, postData } from '../../utils/api';
+import { deleteData, editData, fetchDataFromApi, postData } from '../../utils/api';
 import { FaRegTrashAlt } from 'react-icons/fa';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import AddressBox from './addressBox';
+import CircularProgress from '@mui/material/CircularProgress';
+
 
 
 const label = { inputProps: { 'aria-label': 'Radio demo' } };
@@ -27,14 +31,11 @@ const Address = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [address, setAddress] = useState([]);
     const [phone, setPhone] = useState('');
-    const [status, setStatus] = useState(false);
     const [isOpenModel, setisOpenModel] = useState(false);
+    const [addressType, setAddressType] = useState('');
+    const [mode, setMode] = useState("add");
+    const [addressId, setAddressId] = useState("");
 
-    const [selectedValue, setSelectedValue] = useState('');
-
-    const handleChange = (event) => {
-        setSelectedValue(event.target.value);
-    }
 
 
     const [formFields, setFormFields] = useState({
@@ -44,9 +45,9 @@ const Address = () => {
         pincode: '',
         country: '',
         mobile: '',
-        status: '',
         userId: '',
-        selected: false
+        landmark: '',
+        addressType: ''
     });
 
     useEffect(() => {
@@ -68,14 +69,7 @@ const Address = () => {
         }
 
     }, [context?.userData])
-
-    const handleChangeStatus = (event) => {
-        setStatus(event.target.value);
-        setFormFields((prevState) => ({
-            ...prevState,
-            status: event.target.value
-        }))
-    };
+    
 
     const onChangeInput = (e) => {
         const { name, value } = e.target;
@@ -90,17 +84,44 @@ const Address = () => {
 
 
     const handleClose = () => {
-        setisOpenModel(false)
+        setisOpenModel(false);
+        setMode("add");
+        setFormFields({
+            address_line1: '',
+            city: '',
+            state: '',
+            pincode: '',
+            country: '',
+            mobile: '',
+            userId: context?.userData?._id || '',
+            landmark: '',
+            addressType: ''
+        });
+        setPhone('');
+        setAddressType('');
+        setAddressId("");
     };
 
-    const removeAddress = (id) => [
+    const removeAddress = (id) => {
         deleteData(`/api/address/${id}`).then((res) => {
             fetchDataFromApi(`/api/address/get?userId=${context?.userData?._id}`).then((res) => {
                 setAddress(res?.address);
+                context?.alertBox("Success", "Address deleted");
+            }).catch((err) => {
+                context?.alertBox("error", "Failed to fetch addresses");
             })
+        }).catch((err) => {
+            context?.alertBox("error", "Failed to delete address");
         })
-    ]
+    }
 
+    const handleChangeAddressType = (e) => {
+        setAddressType(e.target.value);
+        setFormFields((prevState) => ({
+            ...prevState,
+            addressType: e.target.value
+        }));
+    }   
 
 
     const handleSubmit = (e) => {
@@ -133,32 +154,155 @@ const Address = () => {
             setIsLoading(false);
             return false
         }
-        if (phone === "") {
+        if (formFields.mobile.length < 10) {
             context.alertBox("error", "Please enter your 10 digit mobile number")
             setIsLoading(false);
             return false
         }
 
-
-        postData(`/api/address/add`, formFields, { withCredentials: true }).then((res) => {
+        if (formFields.addressType === "") {
+            context.alertBox("error", "Please select address type")
             setIsLoading(false);
-            if (res?.error !== true) {
+            return false
+        }
+        
+        if (formFields.landmark === "") {
+            context.alertBox("error", "Please enter landmark")
+            setIsLoading(false);
+            return false
+        }
+
+
+        if (mode === "add") {
+            postData(`/api/address/add`, formFields, { withCredentials: true }).then((res) => {
                 setIsLoading(false);
-                context.alertBox("Success", res?.message);
+                if (res?.error !== true) {
+                    setTimeout(() => {
+                        setIsLoading(false);
+                        context.alertBox("Success", res?.message);
 
-                setisOpenModel(false);
+                        setisOpenModel(false);
+                    }, 500);
 
-                fetchDataFromApi(`/api/address/get?userId=${context?.userData?._id}`).then((res) => {
-                    setAddress(res?.address);
-                })
+                    fetchDataFromApi(`/api/address/get?userId=${context?.userData?._id}`).then((res) => {
+                        setAddress(res?.address);
+                        setFormFields({
+                            address_line1: '',
+                            city: '',
+                            state: '',
+                            pincode: '',
+                            country: '',
+                            mobile: '',
+                            userId: '',
+                            landmark: '',
+                            addressType: ''
+                        });
+                        setPhone('');
+                        setAddressType('');
+                    })
 
 
-            } else {
-                context.alertBox("error", res?.message);
-                setIsLoading(false);
-            }
+                } else {
+                    context.alertBox("error", res?.message);
+                    setIsLoading(false);
+                }
 
+            })
+        }
+
+        if (mode === "edit") {
+            editData(`/api/address/${addressId}`, formFields, { withCredentials: true }).then((res) => {
+                if (res?.data?.error !== true) {
+                    setTimeout(() => {
+                        setIsLoading(false);
+                        context.alertBox("Success", res?.data?.message);
+                        setisOpenModel(false);
+                    }, 500);
+
+                    fetchDataFromApi(`/api/address/get?userId=${context?.userData?._id}`).then((res) => {
+                        setAddress(res?.address);
+                        setFormFields({
+                            address_line1: '',
+                            city: '',
+                            state: '',
+                            pincode: '',
+                            country: '',
+                            mobile: '',
+                            userId: '',
+                            landmark: '',
+                            addressType: ''
+                        });
+                        setPhone('');
+                        setAddressType(''); 
+                    }).catch((err) => {
+                        context.alertBox("error", err?.message || "Something went wrong");
+                    })
+                    
+
+
+                }else {
+                    context.alertBox("error", res?.data?.message);
+                    setIsLoading(false);
+                }
+
+            });
+        }
+
+    }
+
+    const editAddress = (id) => {
+
+        setMode("edit");
+        setisOpenModel(true);
+
+        setAddressId(id);
+
+        setIsLoading(true);
+
+        fetchDataFromApi(`/api/address/${id}`).then((res) => {
+            setIsLoading(false);
+            setFormFields({
+                address_line1: res?.address?.address_line1 || '',
+                city: res?.address?.city || '',
+                state: res?.address?.state || '',
+                pincode: res?.address?.pincode || '',
+                country: res?.address?.country || '',
+                mobile: res?.address?.mobile || '',
+                userId: res?.address?.userId || '',
+                landmark: res?.address?.landmark || '',
+                addressType: res?.address?.addressType || ''
+            });
+
+            const ph = `"${res?.address?.mobile}"`;
+            setPhone(ph);
+            setAddressType(res?.address?.addressType || '');
+
+        }).catch((err) => {
+            setIsLoading(false);
+            context.alertBox("error", err?.message || "Something went wrong");
         })
+            
+        
+
+    }
+
+    const handleOpenAddModal = () => {
+        setMode("add");
+        setisOpenModel(true);
+        setFormFields({
+            address_line1: '',
+            city: '',
+            state: '',
+            pincode: '',
+            country: '',
+            mobile: '',
+            userId: context?.userData?._id || '',
+            landmark: '',
+            addressType: ''
+        });
+        setPhone('');
+        setAddressType('');
+        setAddressId("");
     }
 
     return (
@@ -180,7 +324,7 @@ const Address = () => {
                             <br />
 
                             <div className="flex items-center justify-center p-5 rounded-md border border-dashed border-[rgba(0,0,0,0.2)] bg-[#f1faff] hover:bg-[#e7f3f9] cursor-pointer"
-                                onClick={() => setisOpenModel(true)} >
+                                onClick={handleOpenAddModal} >
                                 <span className="text-[14px] font-[500]">Add Address </span>
                             </div>
 
@@ -189,36 +333,7 @@ const Address = () => {
                                 {
                                     address?.length > 0 && address?.map((address, index) => {
                                         return (
-                                            <>
-                                                <div className="addressBox group relative w-full rounded-md border border-dashed border-[rgba(0,0,0,0.2)] flex items-center justify-center bg-[#f1f1f1] p-3 rounded-md cursor-pointer">
-                                                    <label className='mr-auto'>
-                                                        <Radio {...label} name="address"
-                                                            checked={
-                                                                selectedValue === (
-                                                                    address?._id
-                                                                )
-                                                            }
-                                                            value={address?._id
-                                                            }
-                                                            onChange={handleChange} />
-                                                        <span className="text-[12px]">
-                                                            {
-                                                                address?.city + " " +
-                                                                address?.country + " " +
-                                                                address?.state + " " +
-                                                                address?.pincode
-                                                            }
-                                                        </span>
-                                                    </label>
-
-
-                                                    <span
-                                                        onClick={() => removeAddress(address?._id)}
-                                                        className='hidden z-50 group-hover:flex items-center justify-center w-[30px] h-[30px] rounded-full bg-gray-500 text-white ml-auto'>
-                                                        <FaRegTrashAlt />
-                                                    </span>
-                                                </div>
-                                            </>
+                                            <AddressBox key={address?._id} address={address} removeAddress={removeAddress} editAddress={editAddress} />
                                         )
                                     })
                                 }
@@ -236,7 +351,7 @@ const Address = () => {
                 </div>
 
                 <Dialog open={isOpenModel}>
-                    <DialogTitle>Add Address</DialogTitle>
+                    <DialogTitle>{mode === "add" ? "Add Address" : "Edit Address"}</DialogTitle>
 
                     <form className='px-8 py-3 pb-8' onSubmit={handleSubmit}>
                         <div className='flex items-center gap-5 pt-2 pb-5'>
@@ -317,23 +432,44 @@ const Address = () => {
                                     }}
                                 />
                             </div>
+
                             <div className='col w-[50%]'>
-                                <Select
-                                    value={status}
-                                    onChange={handleChangeStatus}
-                                    displayEmpty
-                                    inputProps={{ 'aria-label': 'Without label' }}
-                                    size='small'
-                                    className='w-full'
-                                >
-                                    <MenuItem value={true}>True</MenuItem>
-                                    <MenuItem value={false}>False</MenuItem>
-                                </Select>
+                                <TextField
+                                    label="Landmark"
+                                    variant='outlined'
+                                    size="small"
+                                    className="w-full"
+                                    name='landmark'
+                                    value={formFields.landmark}
+                                    onChange={onChangeInput}
+                                />
+                            </div>
+                        </div>
+                        <div className='flex items-center gap-5 pt-2 pb-5'>
+                            <div className='col w-[50%]'>
+                                <FormControl>
+                                    <FormLabel id="demo-controlled-radio-buttons-group">Address Type</FormLabel>
+                                    <RadioGroup
+                                        row
+                                        aria-labelledby="demo-row-radio-buttons-group-label"
+                                        name="addressType"
+                                        value={addressType}
+                                        onChange={handleChangeAddressType}
+                                        className='flex items-center gap-5'
+                                    >
+                                        <FormControlLabel value="Home" control={<Radio />} label="Home" />
+                                        <FormControlLabel value="Office" control={<Radio />} label="Office" />
+                                    </RadioGroup>
+                                </FormControl>
                             </div>
                         </div>
 
                         <div className='flex items-center gap-5'>
-                            <Button type='submit' className="btn-org btn-lg w-full flex items-center gap-3"> Save</Button>
+                            <Button type='submit' className="btn-org btn-lg w-full flex items-center gap-3">
+                                {
+                                    isLoading === true ? <CircularProgress size={24} color="inherit" /> : mode === "add" ? "Add Address" : "Update Address"
+                                }
+                            </Button>
                             <Button className="btn-org btn-border btn-lg w-full flex items-center gap-3" onClick={handleClose}> Cancel</Button>
                         </div>
                     </form>

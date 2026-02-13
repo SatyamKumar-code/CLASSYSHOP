@@ -3,10 +3,10 @@ import UserModel from "../models/user.model.js";
 
 export const AddAddressesController = async (req, res) => {
     try {
-        const { address_line1, city, state, pincode, country, mobile, status, selected } = req.body;
+        const { address_line1, city, state, pincode, country, mobile, landmark, addressType} = req.body;
         const userId = req.userId;
 
-        if (!address_line1 || !city || !state || !pincode || !country || !mobile || !userId ) {
+        if (!address_line1 || !city || !state || !pincode || !country || !mobile || !landmark || !addressType ) {
             return res.status(400).json({
                 message: "All fields are required",
                 error: true,
@@ -21,9 +21,9 @@ export const AddAddressesController = async (req, res) => {
             pincode,
             country,
             mobile,
-            status,
-            userId,
-            selected
+            landmark,
+            addressType,
+            userId
         })
 
         const savedAddress = await address.save();
@@ -123,6 +123,80 @@ export const deleteAddressController = async ( req, res ) => {
             error: false, 
             data: deleteItem
         })
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+export const getSingleAddressController = async ( req, res ) => {
+    try {
+        const id = req.params.id;
+
+        if(!id) {
+            return res.status(402).json({
+                message: "provide _id",
+                error: true,
+                success: false
+            })
+        }
+
+        const address = await AddressModel.findOne({ _id: id });
+
+        if(!address) {
+            return res.status(404).json({
+                message: "Address not found",
+                error: true,
+                success: false
+            })
+        }
+
+        return res.status(200).json({
+            message: "Address fetched successfully",
+            error: false,
+            success: true,
+            address: address
+        });
+
+
+    }catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+export const editAddressController = async ( req, res ) => {
+    try {
+
+        const id = req.params.id;
+        const { address_line1, city, state, pincode, country, mobile, landmark, addressType} = req.body;
+
+        const address = await AddressModel.findByIdAndUpdate(id, {
+            address_line1: address_line1,
+            city: city,
+            state: state,
+            pincode: pincode,
+            country: country,
+            mobile: mobile,
+            landmark: landmark,
+            addressType: addressType
+        },
+        { new: true }
+        );
+
+        return res.status(200).json({
+            message: "Address updated successfully",
+            error: false,
+            success: true,
+            address: address
+        });
 
     } catch (error) {
         return res.status(500).json({

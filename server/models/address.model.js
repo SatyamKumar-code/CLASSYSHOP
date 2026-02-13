@@ -23,13 +23,16 @@ const addressSchema = new mongoose.Schema({
         type : Number,
         default : null
     },
-    status : {
-        type : Boolean,
-        default : true
-    },
     selected : {
         type : Boolean,
         default : true
+    },
+    landmark : {
+        type : String,
+    },
+    addressType: {
+        type : String,
+        enum: ["Home", "Office"],
     },
     userId : {
         type : mongoose.Schema.Types.ObjectId,
