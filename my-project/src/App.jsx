@@ -33,12 +33,11 @@ function App() {
     open: false,
     item: {}
   });
-  const [maxWidth, setMaxWidth] = useState('lg');
-  const [fullWidth, setFullWidth] = useState(true);
   const [isLogin, setIsLogin] = useState(false);
   const [userData, setUserData] = useState(null);
   const [catData, setCatData] = useState([]);
   const [cartData, setCartData] = useState([]);
+  const [myListData, setMyListData] = useState([]);
 
 
   const [openCartPanel, setOpenCartPanel] = useState(false);
@@ -85,6 +84,7 @@ function App() {
         
         setUserData(res.data);
         getCartItems();
+        getMyListData();
       })
 
     }else{
@@ -158,6 +158,18 @@ function App() {
     })
   }
 
+  const getMyListData = () => {
+    fetchDataFromApi(`/api/mylist/`).then((res) => {
+      if (res?.error === false) {
+        setMyListData(res?.data);
+      }
+    }).catch((error) => {
+      alertBox("error", error?.message || "Failed to fetch wishlist items");
+    })
+  }
+
+  
+
   const values = {
     openProductDetailsModal,
     setOpenProductDetailsModal,
@@ -176,7 +188,11 @@ function App() {
     addToCart,
     cartData,
     setCartData,
-    getCartItems
+    getCartItems,
+    myListData,
+    setMyListData,
+    getMyListData
+    
   }
 
   return (

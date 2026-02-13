@@ -59,6 +59,7 @@ const Header = () => {
                 context?.setIsLogin(false);
                 context?.setUserData(null);
                 context?.setCartData([]);
+                context?.setMyListData([]);
                 history("/")
             }
         })
@@ -197,11 +198,13 @@ const Header = () => {
 
                             <li>
                                 <Tooltip title="Wish List">
+                                <Link to="/my-list">
                                 <IconButton aria-label="cart">
-                                    <StyledBadge badgeContent={4} color="secondary">
+                                    <StyledBadge badgeContent={context?.myListData?.length !== 0 ? context?.myListData?.length : 0} color="secondary">
                                         <FaRegHeart />
                                     </StyledBadge>
                                 </IconButton>
+                                </Link>
                                 </Tooltip>
                             </li>
 

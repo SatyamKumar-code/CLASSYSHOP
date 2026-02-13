@@ -5,3 +5,13 @@
 .productItem .actions button svg{
     pointer-events: none !important;
 }
+
+/* Wishlist button icon default and hover color */
+.productItem .actions .wishlist-btn svg{
+    color: #ff5252 !important;
+    transition: color 0.2s ease;
+}
+
+.productItem .actions .wishlist-btn:hover svg{
+    color: #fff !important;
+}

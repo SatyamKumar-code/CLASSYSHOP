@@ -10,13 +10,15 @@ import Tooltip from '@mui/material/Tooltip';
 import { MyContext } from '../../App';
 import { FaMinus } from 'react-icons/fa6';
 import { FaPlus } from 'react-icons/fa6';
-import { deleteData, editData } from '../../utils/api';
+import { deleteData, editData, postData } from '../../utils/api';
 import CircularProgress from '@mui/material/CircularProgress';
+import { IoMdHeart } from 'react-icons/io';
 
 const ProductItem = (props) => {
 
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
+  const [isAddedInMyList, setIsAddedInMyList] = useState(false);
   const [cartItem, setCartItem] = useState([]);
   const [activeTab, setActiveTab] = useState(null);
   const [isShowTabs, setIsShowTabs] = useState(false);
@@ -88,6 +90,10 @@ const ProductItem = (props) => {
       cartItem?.productId?.includes(props?.item?._id)
     );
 
+    const myListItem = context?.myListData?.filter((item) =>
+      item?.productId?.includes(props?.item?._id)
+    );
+
     if (item?.length !== 0) {
       setCartItem(item);
       setIsAdded(true);
@@ -97,7 +103,21 @@ const ProductItem = (props) => {
       setIsAdded(false);
       setQuantity(1);
     }
+
+    console.log(myListItem);
+    
+
+    if (myListItem?.length !== 0) {
+      setIsAddedInMyList(true);
+    } else {
+      setIsAddedInMyList(false);
+    }
+
+
+
   }, [context?.cartData, props?.item?._id])
+
+
   const plusQty = () => {
     setQuantity(quantity + 1);
 
@@ -148,6 +168,61 @@ const ProductItem = (props) => {
           context?.alertBox("Success", res?.data?.message);
         }
 
+      })
+    }
+  }
+
+  const handleAddToMyList = (item) => {
+    if(!context?.isLogin){
+      context?.alertBox("error", "You are not logged in. Please login first");
+      return false;
+    }
+
+    const obj = {
+      productTitle: item?.name,
+      image: item?.images?.[0],
+      rating: item?.rating,
+      price: item?.price,
+      oldPrice: item?.oldPrice,
+      discount: item?.discount,
+      productId: item?._id,
+      brand: item?.brand,
+    }
+
+    if (isAddedInMyList === false) {
+      postData("/api/mylist/add", obj).then((res) => {
+        if (res?.error !== false) {
+          context?.alertBox("error", res?.message);
+          return false;
+        }
+        context?.alertBox("Success", res?.message);
+        setIsAddedInMyList(true);
+
+        context?.getMyListData();
+
+      }).catch((error) => {
+        context?.alertBox("error", error?.message || "Failed to add to wishlist");
+      })
+    }else {
+      const myListItem = context?.myListData?.find((listItem) =>
+        listItem?.productId === item?._id
+      );
+
+      if (!myListItem?._id) {
+        context?.alertBox("error", "My List item not found for this product");
+        return;
+      }
+
+      deleteData(`/api/mylist/${myListItem?._id}`).then((res) => {
+        if (res?.error === false) {
+          context?.alertBox("Success", res?.message);
+          setIsAddedInMyList(false);
+          context?.getMyListData();
+        } else {
+          context?.alertBox("error", res?.message || "Failed to remove from wishlist");
+        }
+      }).catch((error) => {
+        context?.alertBox("error", error?.message || "Failed to remove from wishlist");
       })
     }
   }
@@ -229,8 +304,15 @@ const ProductItem = (props) => {
             </Button>
           </Tooltip>
           <Tooltip title="Wishlist" placement='left-start'>
-            <Button className='!w-[30px] !h-[30px] !min-w-[30px] !rounded-full !bg-white !text-black hover:!bg-[#ff5252] hover:!text-white group'>
-              <FaRegHeart className='text-[18px] !text-black group-hover:text-white' />
+            <Button className={`wishlist-btn !w-[30px] !h-[30px] !min-w-[30px] !rounded-full !bg-white hover:!bg-[#ff5252] group`}
+              onClick={()=> handleAddToMyList(props?.item)}
+            >
+              {
+              isAddedInMyList === true ? <IoMdHeart className='text-[18px]' /> 
+                :
+                <FaRegHeart className='text-[18px] text-black!' />
+              }
+              
             </Button>
           </Tooltip>
         </div>
