@@ -33,6 +33,7 @@ const Address = () => {
         deleteData(`/api/address/${id}`).then((res) => {
             fetchDataFromApi(`/api/address/get?userId=${context?.userData?._id}`).then((res) => {
                 setAddress(res?.address);
+                context?.getUserDetails();
                 context?.alertBox("Success", "Address deleted");
             }).catch((err) => {
                 context?.alertBox("error", "Failed to fetch addresses");

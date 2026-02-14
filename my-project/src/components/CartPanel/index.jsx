@@ -26,7 +26,7 @@ const CartPanel = (props) => {
           props?.data?.map((item, index) => {
             return (
               <div className='cartItem w-full flex items-center gap-4 border-b border-[rgba(0,0,0,0.1)] pb-4 pt-3' key={index}>
-                <div className='img w-[25%] overflow-hidden h-[80px] rounded-md'>
+                <div className='img w-[25%] flex items-center overflow-hidden h-[80px] rounded-md'>
                   <Link to={`/product/${item?._id}`} className='block group'>
                     <img src={item?.image} alt="cartItem"
                       className='w-full group-hover:scale-105' />
@@ -35,11 +35,11 @@ const CartPanel = (props) => {
 
                 <div className='info w-[75%] pr-15 relative pt-3'>
                   <h4 className='text-[14px] font-[500]'>
-                    <Link to={`/product/${item?._id}`} className='link transition-all'>{item?.productTitle?.length > 40 ? item?.productTitle.substr(0, 40) + '...' : item?.productTitle}</Link>
+                    <Link to={`/product/${item?._id}`} className='link transition-all'>{item?.productTitle?.length > 40 ? `${item?.productTitle.slice(0, 40)}...` : item?.productTitle}</Link>
                   </h4>
                   <p className='flex items-center gap-3 mt-2 mb-2'>
                     <span>Qty : <span>{item?.quantity}</span></span>
-                    <span className='text-primary font-bold'>Price : &#x20b9;{item?.price}</span>
+                    <span className='text-primary font-bold'>Price : {item?.price?.toLocaleString('en-US', {style: 'currency', currency: "INR"})}</span>
                   </p>
 
                   <MdOutlineDeleteOutline
