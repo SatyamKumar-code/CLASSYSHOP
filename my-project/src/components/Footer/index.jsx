@@ -25,6 +25,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import { ProductZoom } from '../ProductZoom'
 import { ProductDetailsComponent } from '../ProductDetails'
+import AddAddress from '../../Pages/MyAccount/addAddress'
 
 
 const Footer = () => {
@@ -221,6 +222,20 @@ const Footer = () => {
         }
         
       </Drawer>
+
+
+        {/* Address Modal */}
+        <Drawer open={context.openAddressPanel} onClose={context.toggleAddressPanel(false)} anchor='right'
+            className='addressPanel'>
+            <div className='flex items-center justify-between py-3 px-4 gap-3 border-b border-[rgba(0,0,0,0.1)]'>
+                <h4>{context?.addressMode === "add" ? "Add" : "Edit"} Delivery Address </h4>
+                <IoCloseSharp className='text-[20px] cursor-pointer' onClick={context.toggleAddressPanel(false)} />
+            </div>
+
+            <AddAddress /> 
+            
+
+        </Drawer>
 
 
 

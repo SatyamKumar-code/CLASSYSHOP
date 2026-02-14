@@ -37,7 +37,6 @@ const ProductItem = (props) => {
       quantity: quantity,
       price: product?.price,
       oldPrice: product?.oldPrice,
-      discount: product?.discount,
       subTotal: Math.round(product?.price * quantity * 100) / 100,
       countInStock: product?.countInStock,
       brand: product?.brand,

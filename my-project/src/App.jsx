@@ -41,6 +41,10 @@ function App() {
 
 
   const [openCartPanel, setOpenCartPanel] = useState(false);
+  const [openAddressPanel, setOpenAddressPanel] = useState(false);
+
+  const [addressMode, setAddressMode] = useState("add");
+  const [addressId, setAddressId] = useState('');
 
   const handleOpenProductDetailModel = (status, item) => {
     setOpenProductDetailsModal({
@@ -61,36 +65,52 @@ function App() {
     setOpenCartPanel(newOpen);
   }
 
+  const toggleAddressPanel = (newOpen) => () => {
+    if(newOpen == false){
+      setAddressMode("add");
+    }
+    setOpenAddressPanel(newOpen);
+  }
+
   useEffect(() => {
     const token = localStorage.getItem("accesstoken");
 
     if(token !== undefined && token !== null && token !== ""){
       setIsLogin(true);
 
-      fetchDataFromApi(`/api/user/user-details`).then((res) => {
-        if(res?.response?.data?.error === true){
-          if(res?.response?.data?.message === "You have not login"){
-            localStorage.removeItem("accesstoken");
-            localStorage.removeItem("refreshtoken");
+      
 
-            alertBox("error", "Session expired. Please login again.");
-
-            window.location.href = "/login";
-
-            setIsLogin(false);
-            return;
-          }
-        }
-        
-        setUserData(res.data);
-        getCartItems();
-        getMyListData();
-      })
+      getCartItems();
+      getMyListData();
+      getUserDetails();
 
     }else{
       setIsLogin(false);
     }
   }, [isLogin]);
+
+  const getUserDetails = () => {
+    fetchDataFromApi(`/api/user/user-details`).then((res) => {
+      if (res?.response?.data?.error === true) {
+        if (res?.response?.data?.message === "You have not login") {
+          localStorage.removeItem("accesstoken");
+          localStorage.removeItem("refreshtoken");
+
+          alertBox("error", "Session expired. Please login again.");
+
+          window.location.href = "/login";
+
+          setIsLogin(false);
+          return;
+        }
+      }
+
+      setUserData(res.data);
+
+    }).catch((err) => {
+      alertBox("error", err?.message || "Failed to fetch user details");
+    })
+  }
 
   useEffect(() => {
     fetchDataFromApi("/api/category").then((res) => {
@@ -178,6 +198,9 @@ function App() {
     setOpenCartPanel,
     toggleCartPanel,
     openCartPanel,
+    setOpenAddressPanel,
+    toggleAddressPanel,
+    openAddressPanel,
     alertBox,
     isLogin,
     setIsLogin,
@@ -191,7 +214,12 @@ function App() {
     getCartItems,
     myListData,
     setMyListData,
-    getMyListData
+    getMyListData,
+    getUserDetails,
+    addressMode,
+    setAddressMode,
+    addressId,
+    setAddressId,
     
   }
 
