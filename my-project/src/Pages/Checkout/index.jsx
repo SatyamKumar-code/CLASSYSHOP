@@ -5,17 +5,45 @@ import { BsFillBagCheckFill } from 'react-icons/bs';
 import { MyContext} from '../../App';
 import { FaPlus } from 'react-icons/fa6';
 import Radio from '@mui/material/Radio';
+import { deleteData, fetchDataFromApi, postData } from '../../utils/api';
+import { useNavigate } from 'react-router-dom';
+
+const VITE_API_RAZORPAY_KEY_ID = import.meta.env.VITE_API_RAZORPAY_KEY_ID;
+const VITE_API_RAZORPAY_KEY_SECRET = import.meta.env.VITE_API_RAZORPAY_KEY_SECRET;
 
 const Checkout = () => {
 
     const [userData, setUserData] = useState(null);
     const [isChecked, setIsChecked] = useState(0);
+    const [selectedAddress, setSelectedAddress] = useState("");
+    const [totalAmount, setTotalAmount] = useState();
 
     const context = useContext(MyContext);
+    const history = useNavigate();
 
     useEffect(() =>{
         setUserData(context?.userData);
+        setSelectedAddress(context?.userData?.address_details[0]?._id);
+
+        fetchDataFromApi(`/api/order/order-list`).then((res) => {
+            
+        })
     },[context?.userData, userData])
+
+    useEffect(() => {
+        setTotalAmount(
+            context?.cartData?.length !== 0 ?
+                context?.cartData?.map(item => parseInt(item?.price) * item?.quantity)
+                    .reduce((total, value) => total + value, 0) : 0)
+            ?.toLocaleString('en-US', { style: 'currency', currency: "INR" }
+            );
+
+        // localStorage.setItem("totalAmount", context?.cartData?.length !== 0 ?
+        //     context?.cartData?.map(item => parseInt(item?.price) * item?.quantity)
+        //         .reduce((total, value) => total + value, 0) : 0)
+        //     ?.toLocaleString('en-US', { style: 'currency', currency: "INR" })
+
+    }, [context?.cartData]);
 
     const editAddress = (id) => {
         context?.setAddressMode("edit");
@@ -26,13 +54,106 @@ const Checkout = () => {
     const handleChange = (e, index) => {
         if(e.target.checked){
             setIsChecked(index);
+            setSelectedAddress(e.target.value);
         }
     }
 
+    const checkout = (e) => {
+        e.preventDefault();
+
+        var option = {
+            key: VITE_API_RAZORPAY_KEY_ID,
+            key_secret: VITE_API_RAZORPAY_KEY_SECRET,
+            amount: parseInt(totalAmount * 100),
+            currency: "INR",
+            order_receipt: context?.userData?.name,
+            name: "classyShop",
+            description: "Test Transaction",
+            handler: function (response) {
+                const paymentId = response.razorpay_payment_id;
+
+                const user = context?.userData;
+
+                const payLoad = {
+                    userId: user?._id,
+                    products: context?.cartData,
+                    paymentId: paymentId,
+                    payment_status: "completed",
+                    delivery_address: selectedAddress,
+                    totalAmt: totalAmount,
+                    date: new Date().toLocaleDateString("en-US", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric"
+                    }),
+                }
+
+                postData(`/api/order/create`, payLoad).then((res) => {
+                    console.log(res);
+                    
+                    if(res?.error === false) {
+                        context?.alertBox("Success", res?.message);
+
+                        deleteData(`/api/cart/emptyCart/${user?._id}`).then((res) => {
+                            if(res?.error === false){
+                                context?.getCartItems();
+                            }
+                        })
+                        history("/");
+                    }else {
+                        context?.alertBox("error", res?.message);
+                    }
+                });
+            },
+
+            theme: {
+                color: "#ff5252",
+            },
+
+                
+        };
+        
+
+        var pay = new window.Razorpay(option);
+        pay.open();
+    }
+
+    const cashOnDelivery = () => {
+        const user = context?.userData;
+
+        const payLoad = {
+            userId: user?._id,
+            products: context?.cartData,
+            paymentId: "",
+            payment_status: "CASH ON DELIVERY",
+            delivery_address: selectedAddress,
+            totalAmt: totalAmount,
+            date: new Date().toLocaleDateString("en-US", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            }),
+        };
+
+        postData(`/api/order/create`, payLoad).then((res) => {
+            context?.alertBox("Success", res?.message);
+            if(res?.error === false) {
+                deleteData(`/api/cart/emptyCart/${user?._id}`).then((res) => {
+                    if(res?.error === false){
+                        context?.getCartItems();
+                    }
+                })
+                history("/");
+            }else {
+                context?.alertBox("error", res?.message);
+            }
+        })
+    }
 
     
   return (
     <section className='py-10'>
+        <form onSubmit={checkout}>
         <div className='w-[70%] m-auto flex gap-5'>
             <div className='leftCol w-[60%]'>
                 <div className='card bg-white p-5 rounded-md w-full'>
@@ -56,6 +177,7 @@ const Checkout = () => {
                                         <div>
                                             <Radio size='small' onChange={(e) => handleChange(e, index)}
                                                 checked={isChecked === index}
+                                                value={address?._id}
                                             />
                                         </div>
                                         <div className='info'>
@@ -133,10 +255,18 @@ const Checkout = () => {
 
                     </div>
 
-                    <Button className="btn-org btn-lg w-full flex items-center gap-3"><BsFillBagCheckFill className='text-[20px] ' /> Checkout</Button>
+                    <div className="flex flex-col items-center gap-3 mb-2">
+                        <Button type='submit' className="btn-org btn-lg w-full flex items-center gap-3"><BsFillBagCheckFill className='text-[20px] ' /> Checkout</Button>
+
+                        <Button type='button' className='btn-dark btn-lg w-full flex gap-2 items-center' onClick={cashOnDelivery}>
+                            <BsFillBagCheckFill className='text-[20px]' />
+                            Cash on Delivery
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>
+        </form>
     </section>
   )
 }

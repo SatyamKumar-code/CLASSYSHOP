@@ -225,3 +225,24 @@ export const deleteCartItemController = async ( req, res ) => {
         })
     }
 }
+
+export const emptyCartController = async (req, res) => {
+    try {
+        const userId = req.params.id; //middleware se aayega
+
+        await CartProductModel.deleteMany({ userId: userId });
+
+        return res.status(200).json({
+            success: true,
+            error: false,
+        })
+
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+} 

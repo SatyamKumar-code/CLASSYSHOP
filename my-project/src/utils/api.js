@@ -23,7 +23,7 @@ export const postData = async (url, formData) => {
 
 
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 }
 

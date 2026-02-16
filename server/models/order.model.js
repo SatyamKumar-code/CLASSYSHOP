@@ -5,34 +5,47 @@ const orderSchema = new mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId,
         ref : "User"
     },
-    orderId : {
-        type : String,
-        required : [true, "Provide order ID"],
-        unique : true
+    products : [
+        {
+            productId : {
+                type: String
+            },
+            productTitle : {
+                type: String
+            },
+            quantity : {
+                type: Number
+            },
+            price : {
+                type: Number
+            },
+            image : {
+                type: String
+            },
+            subTotal : {
+                type: Number
+            }
+        }
+    ],
+    paymentId: {
+        type: String,
+        default: ""
     },
-    productId : {
-        type : mongoose.Schema.Types.ObjectId,
-        ref : "product"
+    payment_status: {
+        type: String,
+        default: ""
     },
-    product_details : {
-        name : String,
-        image : Array,
+    order_status: {
+        type: String,
+        default: "pending"
     },
-    payment_status : {
-        type : String,
-        default : ""
+    delivery_address: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "address"
     },
-    delivery_address : {
-        type : mongoose.Schema.Types.ObjectId,
-        ref : "address"
-    },
-    subTotalAmt : {
-        type : Number,
-        default : 0
-    },
-    totalAmt : {
-        type : Number,
-        default : 0
+    totalAmt: {
+        type: Number,
+        default: 0
     }
 
 } , { timestamps : true });

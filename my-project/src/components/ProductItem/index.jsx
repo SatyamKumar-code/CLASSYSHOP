@@ -103,9 +103,6 @@ const ProductItem = (props) => {
       setQuantity(1);
     }
 
-    console.log(myListItem);
-    
-
     if (myListItem?.length !== 0) {
       setIsAddedInMyList(true);
     } else {

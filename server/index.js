@@ -15,6 +15,7 @@ import addressRouter from './router/address.route.js';
 import homeSlidesRouter from './router/homeSlides.route.js';
 import bannerRouter from './router/bannerV1.route.js';
 import blogRouter from './router/blog.route.js';
+import orderRouter from './router/order.route.js';
 
 const app = express();
 app.use(cors());
@@ -41,6 +42,7 @@ app.use("/api/address", addressRouter);
 app.use("/api/homeSlides", homeSlidesRouter);
 app.use("/api/bannerV1", bannerRouter);
 app.use("/api/blog", blogRouter);
+app.use("/api/order", orderRouter);
 
   
 connectDB().then(() => {
