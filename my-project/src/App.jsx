@@ -22,6 +22,8 @@ import MyList from './Pages/MyList'
 import Orders from './Pages/Orders'
 import { fetchDataFromApi, postData } from './utils/api'
 import Address from './Pages/MyAccount/address'
+import OrderSuccess from './Pages/Orders/success'
+import OrderFailed from './Pages/Orders/failed'
 
 
 
@@ -241,6 +243,8 @@ function App() {
         <Route path={"/my-account"} exact={true} element={ <MyAccount />} />
         <Route path={"/my-list"} exact={true} element={ <MyList />} />
         <Route path={"/my-orders"} exact={true} element={ <Orders />} />
+        <Route path={"/order/success"} exact={true} element={ <OrderSuccess />} />
+        <Route path={"/order/failed"} exact={true} element={ <OrderFailed />} />
         <Route path={"/address"} exact={true} element={ <Address />} />
         
       </Routes>

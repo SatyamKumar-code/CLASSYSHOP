@@ -415,3 +415,7 @@ button .MuiCircularProgress-root {
 header{
     box-shadow: 0px 2px 5px #0000001e;
 }
+
+#paypal-button-container {
+    width: 100% !important;
+}

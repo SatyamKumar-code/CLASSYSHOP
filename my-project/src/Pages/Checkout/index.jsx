@@ -25,15 +25,14 @@ const Checkout = () => {
 
     const context = useContext(MyContext);
     const history = useNavigate();
+    const goToFailed = (reason) => {
+        history("/order/failed", { state: { reason } });
+    };
 
     useEffect(() =>{
         window.scrollTo(0,0);
         setUserData(context?.userData);
         setSelectedAddress(context?.userData?.address_details[0]?._id);
-
-        fetchDataFromApi(`/api/order/order-list`).then((res) => {
-            
-        })
     },[context?.userData, userData])
 
     useEffect(() => {
@@ -113,13 +112,23 @@ const Checkout = () => {
                             const message = error?.response?.data?.message || "Payment capture failed.";
                             context?.alertBox("error", message);
                             paypalErrorShownRef.current = true;
+                            goToFailed("PAYPAL_CAPTURE_FAILED");
                             throw error;
                         }
                     },
                     onError: (err) => {
                         console.error("PayPal Checkout onError", err);
                         if (!paypalErrorShownRef.current) {
+                            paypalErrorShownRef.current = true;
                             context?.alertBox("error", "Payment failed. Please try again.");
+                            goToFailed("PAYPAL_ERROR");
+                        }
+                    },
+                    onCancel: () => {
+                        if (!paypalErrorShownRef.current) {
+                            paypalErrorShownRef.current = true;
+                            context?.alertBox("error", "Payment was canceled.");
+                            goToFailed("PAYPAL_CANCELED");
                         }
                     }
                 })
@@ -136,6 +145,13 @@ const Checkout = () => {
         script.src = `https://www.paypal.com/sdk/js?client-id=${VITE_API_PAPAL_CLIENT_ID}&disable-funding=card`;
         script.async = true;
         script.onload = renderButtons;
+        script.onerror = () => {
+            if (!paypalErrorShownRef.current) {
+                paypalErrorShownRef.current = true;
+                context?.alertBox("error", "Unable to load PayPal. Please try again.");
+                goToFailed("PAYPAL_SDK_LOAD_FAILED");
+            }
+        };
         document.body.appendChild(script);
     }, [context?.cartData, context?.userData, selectedAddress, totalAmount]);
 
@@ -179,6 +195,7 @@ const Checkout = () => {
         deleteData(`/api/cart/emptyCart/${context?.userData?._id}`).then((res) => {
             if(res?.error === false){
                 context?.getCartItems();
+                history("/order/success");
             }
         })
     }
@@ -236,11 +253,18 @@ const Checkout = () => {
                                 context?.getCartItems();
                             }
                         })
-                        history("/");
+                        history("/order/success");
                     }else {
                         context?.alertBox("error", res?.message);
+                        goToFailed("RAZORPAY_ORDER_FAILED");
                     }
                 });
+            },
+            modal: {
+                ondismiss: () => {
+                    context?.alertBox("error", "Payment was canceled.");
+                    goToFailed("RAZORPAY_CANCELED");
+                },
             },
 
             theme: {
@@ -252,6 +276,11 @@ const Checkout = () => {
         
 
         var pay = new window.Razorpay(option);
+        pay.on("payment.failed", (response) => {
+            const errorMessage = response?.error?.description || "Payment failed. Please try again.";
+            context?.alertBox("error", errorMessage);
+            goToFailed("RAZORPAY_FAILED");
+        });
         pay.open();
     }
 
@@ -273,16 +302,17 @@ const Checkout = () => {
         };
 
         postData(`/api/order/create`, payLoad).then((res) => {
-            context?.alertBox("Success", res?.message);
             if(res?.error === false) {
+                context?.alertBox("Success", res?.message);
                 deleteData(`/api/cart/emptyCart/${user?._id}`).then((res) => {
                     if(res?.error === false){
                         context?.getCartItems();
                     }
                 })
-                history("/");
+                history("/order/success");
             }else {
                 context?.alertBox("error", res?.message);
+                goToFailed("COD_ORDER_FAILED");
             }
         })
     }
@@ -299,7 +329,7 @@ const Checkout = () => {
                         <Button variant='outlined'
                             onClick={() => {
                                 context?.setOpenAddressPanel(true);
-                                context?.setAddressMod("add");
+                                context?.setAddressMode("add");
                             }}
                         > 
                             <FaPlus /> ADD NEW ADDRESS
