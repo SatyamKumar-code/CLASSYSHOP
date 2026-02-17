@@ -16,7 +16,7 @@
     "@mui/material": "^7.3.5",
     "@mui/styled-engine-sc": "^7.3.5",
     "@tailwindcss/vite": "^4.1.17",
-    "axios": "^1.13.2",
+    "axios": "^1.13.5",
     "firebase": "^12.9.0",
     "react": "^19.2.0",
     "react-collapse": "^5.1.1",

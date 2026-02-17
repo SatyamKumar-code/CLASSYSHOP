@@ -1,27 +1,33 @@
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { BsFillBagCheckFill } from 'react-icons/bs';
 import { MyContext} from '../../App';
 import { FaPlus } from 'react-icons/fa6';
 import Radio from '@mui/material/Radio';
 import { deleteData, fetchDataFromApi, postData } from '../../utils/api';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const VITE_API_RAZORPAY_KEY_ID = import.meta.env.VITE_API_RAZORPAY_KEY_ID;
 const VITE_API_RAZORPAY_KEY_SECRET = import.meta.env.VITE_API_RAZORPAY_KEY_SECRET;
+
+const VITE_API_PAPAL_CLIENT_ID = import.meta.env.VITE_API_PAPAL_CLIENT_ID;
+const VITE_API_URL = import.meta.env.VITE_API_URL;
 
 const Checkout = () => {
 
     const [userData, setUserData] = useState(null);
     const [isChecked, setIsChecked] = useState(0);
     const [selectedAddress, setSelectedAddress] = useState("");
-    const [totalAmount, setTotalAmount] = useState();
+    const [totalAmount, setTotalAmount] = useState(0);
+    const paypalContainerRef = useRef(null);
+    const paypalErrorShownRef = useRef(false);
 
     const context = useContext(MyContext);
     const history = useNavigate();
 
     useEffect(() =>{
+        window.scrollTo(0,0);
         setUserData(context?.userData);
         setSelectedAddress(context?.userData?.address_details[0]?._id);
 
@@ -31,12 +37,19 @@ const Checkout = () => {
     },[context?.userData, userData])
 
     useEffect(() => {
-        setTotalAmount(
-            context?.cartData?.length !== 0 ?
-                context?.cartData?.map(item => parseInt(item?.price) * item?.quantity)
-                    .reduce((total, value) => total + value, 0) : 0)
-            ?.toLocaleString('en-US', { style: 'currency', currency: "INR" }
-            );
+        const newTotal = context?.cartData?.length !== 0
+            ? context?.cartData
+                ?.map((item) => {
+                    const subTotal = Number(item?.subTotal);
+                    if (Number.isFinite(subTotal)) {
+                        return subTotal;
+                    }
+                    return parseInt(item?.price) * item?.quantity;
+                })
+                .reduce((total, value) => total + value, 0)
+            : 0;
+
+        setTotalAmount(newTotal);
 
         // localStorage.setItem("totalAmount", context?.cartData?.length !== 0 ?
         //     context?.cartData?.map(item => parseInt(item?.price) * item?.quantity)
@@ -44,6 +57,131 @@ const Checkout = () => {
         //     ?.toLocaleString('en-US', { style: 'currency', currency: "INR" })
 
     }, [context?.cartData]);
+
+    useEffect(() => {
+        if (!VITE_API_PAPAL_CLIENT_ID) {
+            return;
+        }
+
+        if (!paypalContainerRef.current) {
+            return;
+        }
+
+        if (!context?.cartData?.length || totalAmount <= 0) {
+            paypalContainerRef.current.innerHTML = "";
+            return;
+        }
+
+        const renderButtons = () => {
+            if (!window.paypal) {
+                return;
+            }
+
+            paypalContainerRef.current.innerHTML = "";
+
+            window.paypal
+                .Buttons({
+                    createOrder: async () => {
+                        try {
+                            paypalErrorShownRef.current = false;
+                            const headers = {
+                                'Authorization': `Bearer ${localStorage.getItem('accesstoken')}`,
+                                'Content-Type': 'application/json',
+                            };
+
+                            const data = {
+                                userId: context?.userData?._id,
+                                totalAmount: totalAmount,
+                            };
+
+                            const response = await axios.get(
+                                VITE_API_URL + `/api/order/create-order-paypal?userId=${data?.userId}&totalAmount=${data?.totalAmount}`,
+                                { headers }
+                            );
+                            return response?.data?.id; // Return order ID to PayPal SDK
+                        } catch (error) {
+                            const message = error?.response?.data?.message || "Unable to start PayPal checkout.";
+                            context?.alertBox("error", message);
+                            paypalErrorShownRef.current = true;
+                            throw error;
+                        }
+                    },
+                    onApprove: async (data) => {
+                        try {
+                            await onApprovePayment(data);
+                        } catch (error) {
+                            const message = error?.response?.data?.message || "Payment capture failed.";
+                            context?.alertBox("error", message);
+                            paypalErrorShownRef.current = true;
+                            throw error;
+                        }
+                    },
+                    onError: (err) => {
+                        console.error("PayPal Checkout onError", err);
+                        if (!paypalErrorShownRef.current) {
+                            context?.alertBox("error", "Payment failed. Please try again.");
+                        }
+                    }
+                })
+                .render(paypalContainerRef.current);
+        };
+
+        if (window.paypal) {
+            renderButtons();
+            return;
+        }
+
+        // Load the PayPal javaScript SDK
+        const script = document.createElement("script");
+        script.src = `https://www.paypal.com/sdk/js?client-id=${VITE_API_PAPAL_CLIENT_ID}&disable-funding=card`;
+        script.async = true;
+        script.onload = renderButtons;
+        document.body.appendChild(script);
+    }, [context?.cartData, context?.userData, selectedAddress, totalAmount]);
+
+    
+
+    const onApprovePayment = async (data) => {
+        const user = context?.userData;
+
+        const info = {
+            userId: user?._id,
+            products: context?.cartData,
+            payment_status: "COMPLETED",
+            delivery_address: selectedAddress,
+            totalAmt: totalAmount,
+            date: new Date().toLocaleString("en-US", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            })
+        };
+
+        // Send the order details to your server to create an order record
+
+        const headers = {
+            'Authorization': `Bearer ${localStorage.getItem('accesstoken')}`, // Include your API key in the Authorization header
+            'Content-Type': 'application/json', // Adjust the content type as needed
+
+        }
+
+        const response = await axios.post(
+            VITE_API_URL + "/api/order/capture-order-paypal",
+            {
+                ...info,
+                paymentId: data?.orderID
+            },
+            { headers }
+        );
+
+        context?.alertBox("Success", response?.data?.message);
+        paypalErrorShownRef.current = false;
+        deleteData(`/api/cart/emptyCart/${context?.userData?._id}`).then((res) => {
+            if(res?.error === false){
+                context?.getCartItems();
+            }
+        })
+    }
 
     const editAddress = (id) => {
         context?.setAddressMode("edit");
@@ -89,7 +227,6 @@ const Checkout = () => {
                 }
 
                 postData(`/api/order/create`, payLoad).then((res) => {
-                    console.log(res);
                     
                     if(res?.error === false) {
                         context?.alertBox("Success", res?.message);
@@ -256,9 +393,17 @@ const Checkout = () => {
                     </div>
 
                     <div className="flex flex-col items-center gap-3 mb-2">
-                        <Button type='submit' className="btn-org btn-lg w-full flex items-center gap-3"><BsFillBagCheckFill className='text-[20px] ' /> Checkout</Button>
+                        <Button
+                            type='submit'
+                            className="btn-org btn-lg w-full flex items-center gap-3"
+                            disabled={!context?.cartData?.length}
+                        >
+                            <BsFillBagCheckFill className='text-[20px] ' /> Checkout
+                        </Button>
 
-                        <Button type='button' className='btn-dark btn-lg w-full flex gap-2 items-center' onClick={cashOnDelivery}>
+                        <div id="paypal-button-container" ref={paypalContainerRef}></div>
+
+                        <Button type='button' className='btn-dark btn-lg w-full flex gap-2 items-center' onClick={cashOnDelivery} disabled={!context?.cartData?.length}>
                             <BsFillBagCheckFill className='text-[20px]' />
                             Cash on Delivery
                         </Button>
