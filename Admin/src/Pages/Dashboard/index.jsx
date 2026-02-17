@@ -1,10 +1,9 @@
-import React, { useState, PureComponent, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import DashboardBoxes from '../../Components/DashboardBoxes';
 import Button from '@mui/material/Button';
 import { FaPlus } from 'react-icons/fa6';
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
 import Badge from '../../Components/Badge'
-import Checkbox from '@mui/material/Checkbox';
 import { Link } from 'react-router-dom';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { FaRegEye } from 'react-icons/fa6';
@@ -30,10 +29,6 @@ import MenuItem from '@mui/material/MenuItem';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { MyContext } from '../../App';
 import { fetchDataFromApi } from '../../utils/api';
-
-
-
-const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 const columns = [
@@ -85,7 +80,7 @@ const Dashboard = () => {
   const [productData, setProductData] = useState([]);
   const [productSubCat, setProductSubCat] = useState('');
   const [productThirdLavelCat, setProductThirdLavelCat] = useState('');
-  const [sortedIds, setSortedIds] = useState([]);
+  const [orders, setOrders] = useState([])
 
   const isShowOrderdProduct = (index) => {
     if (isOpenOrderdProduct === index) {
@@ -96,8 +91,8 @@ const Dashboard = () => {
   }
 
 
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const [categoryFilterVal, setCategoryFilterVal] = useState('');
   const [chart1Data, setChart1Data] = useState([
@@ -181,37 +176,22 @@ const Dashboard = () => {
     getProducts();
   }, [context?.isOpenFullScreenPanel?.open]);
 
-  // Handle to toggle all checkboxes
-  const handleSelectAll = (e) => {
-    const isChecked = e.target.checked;
+  useEffect(() => {
+    fetchDataFromApi('/api/order/order-list').then((res) => {
+      if (res?.error === false) {
+        setOrders(res?.data)
+      }
+    })
+  }, []);
 
-    // Update all items' checked status
-    const updatedItems = productData.map((item) => ({
-      ...item,
-      checked: isChecked,
-    }));
-    setProductData(updatedItems);
 
-    // Update the sorted IDS satate
-    if (isChecked) {
-      const ids = updatedItems.map((item) => item._id).sort((a, b) => a - b);
-      console.log(ids);
-      setSortedIds(ids);
-
-    } else[
-      setSortedIds([])
-    ]
-  }
 
   const getProducts = async () => {
     setIsLoading(true);
     fetchDataFromApi("/api/product/getAllProducts").then((res) => {
       let productArr = [];
       if (res?.error === false) {
-        for (let i = 0; i < res?.products?.length; i++) {
-          productArr[i] = res?.products[i];
-          productArr[i].checked = false;
-        }
+        productArr = res?.products;
         setTimeout(() => {
           setIsLoading(false);
           setProductData(productArr);
@@ -424,13 +404,6 @@ const Dashboard = () => {
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
-                <TableCell>
-                  <Checkbox {...label} size='small'
-                    onChange={handleSelectAll}
-                    checked={productData?.length > 0 ? productData?.every((item) => item?.checked) : false}
-                  />
-                </TableCell>
-
                 {columns.map((column) => (
                   <TableCell
                     key={column.id}
@@ -452,13 +425,6 @@ const Dashboard = () => {
                   )?.map((product, index) => {
                     return (
                       <TableRow key={index}>
-                        <TableCell style={{ minWidth: columns.minWidth }}>
-                          <Checkbox {...label} size='small'
-                            checked={product?.checked === true ? true : false}
-                            onChange={(e) => handleCheckboxChange(e, product._id, index)}
-                          />
-                        </TableCell>
-
                         <TableCell style={{ minWidth: columns.minWidth }}>
                           <div className='flex items-center gap-4 w-[300px]'>
                             <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
@@ -580,7 +546,7 @@ const Dashboard = () => {
           <h2 className='text-[18px] font-[600]'>Recent Orders</h2>
         </div>
 
-        <div className="relative overflow-x-auto mt-5 pb-5">
+        <div className="relative overflow-x-auto mt-5">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50">
               <tr>
@@ -623,227 +589,125 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-              <tr className="bg-white border-b">
-                <td className="px-6 py-4 font-[500]">
-                  <Button className='!w-[35px] !h-[35px] !min-w-[35px] !rounded-full !bg-[#f1f1f1]'
-                    onClick={() => isShowOrderdProduct(0)}>
-                    {
-                      isOpenOrderdProduct === 0 ? <FaAngleUp className='text-[16px] text-[rgba(0,0,0,0.7)]' /> : <FaAngleDown className='text-[16px] text-[rgba(0,0,0,0.7)]' />
-                    }
-                  </Button>
-                </td>
-                <td className="px-6 py-4 font-[500]">
-                  <span className='text-primary font-[600]'>347593769375970703</span>
-                </td>
-                <td className="px-6 py-4 font-[500]">
-                  <span className='text-primary font-[600]'>Pay_PTPQqEXFhrteyyt</span>
-                </td>
-                <td className="px-6 py-4 font-[500] whitespace-nowrap">satyam Kumar</td>
-                <td className="px-6 py-4 font-[500]">6206627876</td>
-                <td className="px-6 py-4 font-[500]">
-                  <span className='block w-[400px]'>H No 22 Street No 6 Adarsh MohallaMaujpur Delhi mear shivam medical ph. +91-6201391650</span>
-                </td>
-                <td className="px-6 py-4 font-[500]">8474707</td>
-                <td className="px-6 py-4 font-[500]">3500</td>
-                <td className="px-6 py-4 font-[500]">satyamkumar@gmail.com</td>
-                <td className="px-6 py-4 font-[500]">
-                  <span className='text-primary font-[600]'>8979fg7927s25r</span>
-                </td>
-                <td className="px-6 py-4 font-[500]"><Badge status="pending" /></td>
-                <td className="px-6 py-4 font-[500] whitespace-nowrap">2025-12-13</td>
-
-              </tr>
 
               {
-                isOpenOrderdProduct === 0 && (
-                  <tr>
-                    <td className='pl-20' colSpan="6">
-                      <div className="relative overflow-x-auto">
-                        <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-                          <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-                            <tr>
+                orders?.length !== 0 && orders?.map((order, index) => {
+                  return (
+                    <>
+                      <tr className="bg-white border-b">
+                        <td className="px-6 py-4 font-[500]">
+                          <Button className='!w-[35px] !h-[35px] !min-w-[35px] !rounded-full !bg-[#f1f1f1]'
+                            onClick={() => isShowOrderdProduct(index)}>
+                            {
+                              isOpenOrderdProduct === index ? <FaAngleUp className='text-[16px] text-[rgba(0,0,0,0.7)]' /> : <FaAngleDown className='text-[16px] text-[rgba(0,0,0,0.7)]' />
+                            }
+                          </Button>
+                        </td>
+                        <td className="px-6 py-4 font-[500]">
+                          <span className='text-primary'>{order?._id}</span>
+                        </td>
+                        <td className="px-6 py-4 font-[500]">
+                          <span className='text-primary'>{order?.paymentId ? order?.paymentId : 'CASH ON DELIVERY'}</span>
+                        </td>
+                        <td className="px-6 py-4 font-[500] whitespace-nowrap">{order?.userId?.name}</td>
+                        <td className="px-6 py-4 font-[500]">{order?.delivery_address?.mobile}</td>
+                        <td className="px-6 py-4 font-[500]">
+                          <span className='block w-[400px]'>
+                            {order?.delivery_address?.address_line1 + " " +
+                              order?.delivery_address?.city + " " +
+                              order?.delivery_address?.landmark + " " +
+                              order?.delivery_address?.state + " " +
+                              order?.delivery_address?.country
+                            }
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 font-[500]">{order?.delivery_address?.pincode}</td>
+                        <td className="px-6 py-4 font-[500]">{order?.totalAmt?.toLocaleString('en-US', { style: 'currency', currency: 'INR' })}</td>
+                        <td className="px-6 py-4 font-[500]">{order?.userId?.email}</td>
+                        <td className="px-6 py-4 font-[500]">
+                          <span className='text-primary'>{order?.userId?._id}</span>
+                        </td>
+                        <td className="px-6 py-4 font-[500]"><Badge status={order?.order_status} /></td>
+                        <td className="px-6 py-4 font-[500] whitespace-nowrap">{order?.createdAt?.split("T")[0]}</td>
 
-                              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                Product Id
-                              </th>
-                              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                Product Title
-                              </th>
-                              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                Image
-                              </th>
-                              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                Quantity
-                              </th>
-                              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                Price
-                              </th>
-                              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                Sub Total
-                              </th>
+                      </tr>
 
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr className="bg-white border-b">
-                              <td className="px-6 py-4 font-[500]">
-                                <span className='text-gray-600'>347593769375970703</span>
-                              </td>
-                              <td className="px-6 py-4 font-[500]">A_Line Kurti With Sharara & Du...</td>
-                              <td className="px-6 py-4 font-[500]">
-                                <img src="https://www.jiomart.com/images/product/original/rvt6wzx9ww/tazo-mens-round-neck-regular-fit-full-length-sleeve-t-shirt-t-shirt-for-mens-mens-t-shirt-mens-tshirt-tshirt-for-mens-t-shirts-tshirts-gym-wear-sports-wear-mens-tshirt-dryfit-t-shirts-product-images-rvt6wzx9ww-0-202404152348.jpg"
-                                  className='w-[40px] h-[40px] object-cover rounded-md' />
-                              </td>
-                              <td className="px-6 py-4 font-medium">2</td>
-                              <td className="px-6 py-4 font-medium">1300</td>
-                              <td className="px-6 py-4 font-medium">2600</td>
+                      {
+                        isOpenOrderdProduct === index && (
+                          <tr>
+                            <td className='pl-20' colSpan="6">
+                              <div className="relative overflow-x-auto">
+                                <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+                                  <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                                    <tr>
 
+                                      <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                        Product Id
+                                      </th>
+                                      <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                        Product Title
+                                      </th>
+                                      <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                        Image
+                                      </th>
+                                      <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                        Quantity
+                                      </th>
+                                      <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                        Price
+                                      </th>
+                                      <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                        Sub Total
+                                      </th>
 
-                            </tr>
-
-                            <tr className="bg-white border-b">
-                              <td className="px-6 py-4 font-[500]">
-                                <span className='text-gray-600'>347593769375970703</span>
-                              </td>
-                              <td className="px-6 py-4 font-[500]">A_Line Kurti With Sharara & Du...</td>
-                              <td className="px-6 py-4 font-[500]">
-                                <img src="https://www.jiomart.com/images/product/original/rvt6wzx9ww/tazo-mens-round-neck-regular-fit-full-length-sleeve-t-shirt-t-shirt-for-mens-mens-t-shirt-mens-tshirt-tshirt-for-mens-t-shirts-tshirts-gym-wear-sports-wear-mens-tshirt-dryfit-t-shirts-product-images-rvt6wzx9ww-0-202404152348.jpg"
-                                  className='w-[40px] h-[40px] object-cover rounded-md' />
-                              </td>
-                              <td className="px-6 py-4 font-medium">2</td>
-                              <td className="px-6 py-4 font-medium">1300</td>
-                              <td className="px-6 py-4 font-medium">2600</td>
-
-
-                            </tr>
-
-                            <tr>
-                              <td className='bg-[#f1f1f1]' colSpan="12">
-
-                              </td>
-                            </tr>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {
+                                      order?.products?.length !== 0 && order?.products?.map((item, index) => {
+                                        return (
+                                          <tr className="bg-white border-b">
+                                            <td className="px-6 py-4 font-[500]">
+                                              <span className='text-gray-600'>{item?._id}</span>
+                                            </td>
+                                            <td className="px-6 py-4 font-[500]">
+                                              <div className='w-[200px]'>
+                                                {item?.productTitle?.length > 40 ? item?.productTitle?.slice(0, 40) + "..." : item?.productTitle}
+                                              </div>
+                                            </td>
+                                            <td className="px-6 py-4 font-[500]">
+                                              <img src={item?.image}
+                                                className='w-[40px] h-[40px] object-cover rounded-md' />
+                                            </td>
+                                            <td className="px-6 py-4 font-medium">{item?.quantity}</td>
+                                            <td className="px-6 py-4 font-medium">{item?.price?.toLocaleString('en-US', { style: 'currency', currency: 'INR' })}</td>
+                                            <td className="px-6 py-4 font-medium">{item?.subTotal?.toLocaleString('en-US', { style: 'currency', currency: 'INR' })}</td>
 
 
-                          </tbody>
-                        </table>
-                      </div>
-                    </td>
-                  </tr>
-                )
+                                          </tr>
+                                        )
+                                      })
+                                    }
+
+
+                                    <tr>
+                                      <td className='bg-[#f1f1f1]' colSpan="12">
+
+                                      </td>
+                                    </tr>
+
+
+                                  </tbody>
+                                </table>
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      }
+                    </>
+                  )
+                })
               }
-
-
-              <tr className="bg-white border-b">
-                <td className="px-6 py-4 font-[500]">
-                  <Button className='!w-[35px] !h-[35px] !min-w-[35px] !rounded-full !bg-[#f1f1f1]'
-                    onClick={() => isShowOrderdProduct(1)}>
-                    {
-                      isOpenOrderdProduct === 1 ? <FaAngleUp className='text-[16px] text-[rgba(0,0,0,0.7)]' /> : <FaAngleDown className='text-[16px] text-[rgba(0,0,0,0.7)]' />
-                    }
-                  </Button>
-                </td>
-                <td className="px-6 py-4 font-[500]">
-                  <span className='text-primary font-[600]'>347593769375970703</span>
-                </td>
-                <td className="px-6 py-4 font-[500]">
-                  <span className='text-primary font-[600]'>Pay_PTPQqEXFhrteyyt</span>
-                </td>
-                <td className="px-6 py-4 font-[500] whitespace-nowrap">satyam Kumar</td>
-                <td className="px-6 py-4 font-[500]">6206627876</td>
-                <td className="px-6 py-4 font-[500]">
-                  <span className='block w-[400px]'>H No 22 Street No 6 Adarsh MohallaMaujpur Delhi mear shivam medical ph. +91-6201391650</span>
-                </td>
-                <td className="px-6 py-4 font-[500]">8474707</td>
-                <td className="px-6 py-4 font-[500]">3500</td>
-                <td className="px-6 py-4 font-[500]">satyamkumar@gmail.com</td>
-                <td className="px-6 py-4 font-[500]">
-                  <span className='text-primary font-[600]'>8979fg7927s25r</span>
-                </td>
-                <td className="px-6 py-4 font-[500]"><Badge status="pending" /></td>
-                <td className="px-6 py-4 font-[500] whitespace-nowrap">2025-12-13</td>
-
-              </tr>
-
-              {
-                isOpenOrderdProduct === 1 && (
-                  <tr>
-                    <td className='pl-20' colSpan="6">
-                      <div className="relative overflow-x-auto">
-                        <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-                          <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-                            <tr>
-
-                              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                Product Id
-                              </th>
-                              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                Product Title
-                              </th>
-                              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                Image
-                              </th>
-                              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                Quantity
-                              </th>
-                              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                Price
-                              </th>
-                              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                Sub Total
-                              </th>
-
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr className="bg-white border-b">
-                              <td className="px-6 py-4 font-[500]">
-                                <span className='text-gray-600'>347593769375970703</span>
-                              </td>
-                              <td className="px-6 py-4 font-[500]">A_Line Kurti With Sharara & Du...</td>
-                              <td className="px-6 py-4 font-[500]">
-                                <img src="https://www.jiomart.com/images/product/original/rvt6wzx9ww/tazo-mens-round-neck-regular-fit-full-length-sleeve-t-shirt-t-shirt-for-mens-mens-t-shirt-mens-tshirt-tshirt-for-mens-t-shirts-tshirts-gym-wear-sports-wear-mens-tshirt-dryfit-t-shirts-product-images-rvt6wzx9ww-0-202404152348.jpg"
-                                  className='w-[40px] h-[40px] object-cover rounded-md' />
-                              </td>
-                              <td className="px-6 py-4 font-medium">2</td>
-                              <td className="px-6 py-4 font-medium">1300</td>
-                              <td className="px-6 py-4 font-medium">2600</td>
-
-
-                            </tr>
-
-                            <tr className="bg-white border-b">
-                              <td className="px-6 py-4 font-[500]">
-                                <span className='text-gray-600'>347593769375970703</span>
-                              </td>
-                              <td className="px-6 py-4 font-[500]">A_Line Kurti With Sharara & Du...</td>
-                              <td className="px-6 py-4 font-[500]">
-                                <img src="https://www.jiomart.com/images/product/original/rvt6wzx9ww/tazo-mens-round-neck-regular-fit-full-length-sleeve-t-shirt-t-shirt-for-mens-mens-t-shirt-mens-tshirt-tshirt-for-mens-t-shirts-tshirts-gym-wear-sports-wear-mens-tshirt-dryfit-t-shirts-product-images-rvt6wzx9ww-0-202404152348.jpg"
-                                  className='w-[40px] h-[40px] object-cover rounded-md' />
-                              </td>
-                              <td className="px-6 py-4 font-medium">2</td>
-                              <td className="px-6 py-4 font-medium">1300</td>
-                              <td className="px-6 py-4 font-medium">2600</td>
-
-
-                            </tr>
-
-                            <tr>
-                              <td className='bg-[#f1f1f1]' colSpan="12">
-
-                              </td>
-                            </tr>
-
-
-                          </tbody>
-                        </table>
-                      </div>
-                    </td>
-                  </tr>
-                )
-              }
-
-
-
             </tbody>
           </table>
         </div>

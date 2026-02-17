@@ -277,3 +277,33 @@ export const captureOrderPayPalController = async (req, res) => {
         });
     }
 }
+
+export const updateOrderStatusController = async (req, res) => {
+    try {
+        const { id, order_status } = req.body;
+
+        const updatedOrder = await OrderModel.findByIdAndUpdate(
+           {
+              _id: id,
+           },
+           {
+                order_status: order_status,
+           },
+           { new: true }
+        );
+
+        return res.status(200).json({
+            success : true,
+            error : false,
+            message : "Order status updated",
+            data : updatedOrder
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success : false,
+            message : "Error in updating order status",
+            error : error.message || JSON.stringify(error)
+        });
+    }
+}
