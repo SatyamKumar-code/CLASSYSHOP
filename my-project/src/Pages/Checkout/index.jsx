@@ -223,7 +223,7 @@ const Checkout = () => {
             currency: "INR",
             order_receipt: context?.userData?.name,
             name: "classyShop",
-            description: "Test Transaction",
+            description: "Total payable amount is " + totalAmount.toLocaleString('en-US', { style: 'currency', currency: "INR" }),
             handler: function (response) {
                 const paymentId = response.razorpay_payment_id;
 
