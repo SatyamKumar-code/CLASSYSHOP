@@ -29,6 +29,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { MyContext } from '../../App';
 import { fetchDataFromApi } from '../../utils/api';
+import { Pagination } from '@mui/material';
 
 
 const columns = [
@@ -80,7 +81,8 @@ const Dashboard = () => {
   const [productData, setProductData] = useState([]);
   const [productSubCat, setProductSubCat] = useState('');
   const [productThirdLavelCat, setProductThirdLavelCat] = useState('');
-  const [orders, setOrders] = useState([])
+  const [ordersData, setOrdersData] = useState([]);
+  const [orders, setOrders] = useState([]);
 
   const isShowOrderdProduct = (index) => {
     if (isOpenOrderdProduct === index) {
@@ -93,6 +95,13 @@ const Dashboard = () => {
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [pageOrder, setPageOrder] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [totalOrdersData, setTotalOrdersData] = useState([]);
+
+  const [users, setUsers] = useState([]);
+  const [allReviews, setAllReviews] = useState([]);
+  const [ordersCount, setOrdersCount] = useState(null);
 
   const [categoryFilterVal, setCategoryFilterVal] = useState('');
   const [chart1Data, setChart1Data] = useState([
@@ -177,9 +186,55 @@ const Dashboard = () => {
   }, [context?.isOpenFullScreenPanel?.open]);
 
   useEffect(() => {
-    fetchDataFromApi('/api/order/order-list').then((res) => {
+    fetchDataFromApi(`/api/order/order-list?page=${pageOrder}&limit=5`).then((res) => {
       if (res?.error === false) {
-        setOrders(res?.data)
+        setOrders(res);
+        setOrdersData(res?.data);
+      }
+    })
+    fetchDataFromApi(`/api/order/order-list`).then((res) => {
+      if (res?.error === false) {
+        setTotalOrdersData(res);
+      }
+    })
+    fetchDataFromApi('/api/order/count').then((res) => {
+      if(res?.error === false) {
+        setOrdersCount(res?.count);
+      }
+    })
+  }, [pageOrder]);
+
+  useEffect(() => {
+    if(searchQuery !== ""){
+      const filteredOrders = totalOrdersData?.data?.filter((order) => 
+        order?._id?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+        order?.userId?.name?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+        order?.userId?.email?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+        order?.createdAt?.includes(searchQuery)
+      );
+      setOrdersData(filteredOrders);
+    } else {
+      fetchDataFromApi(`/api/order/order-list?page=${pageOrder}&limit=5`).then((res) => {
+        if(res?.error === false) {
+          setOrders(res);
+          setOrdersData(res?.data);
+        }
+      })
+    }
+  },[searchQuery])
+
+  useEffect(() => {
+    // getTotalSalesByYear();
+
+    fetchDataFromApi("/api/user/getAllUsers").then((res) => {
+      if(res?.error === false){
+        setUsers(res?.users);
+      }
+    })
+
+    fetchDataFromApi("/api/user/getAllReviews").then((res) => {
+      if(res?.error === false){
+        setAllReviews(res?.reviews);
       }
     })
   }, []);
@@ -279,7 +334,11 @@ const Dashboard = () => {
 
         <img src="/shop-illustration.webp" className='w-[250px]' />
       </div>
-      <DashboardBoxes />
+
+      {
+        productData?.length !== 0 && users?.length !== 0 && allReviews?.length !== 0 && ordersCount !== null && 
+        <DashboardBoxes orders={ordersCount} products={productData?.length} users={users?.length} reviews={allReviews?.length} category={context?.catData?.length} />
+      }
 
       <div className='card my-4 pt-5 shadow-md sm:rounded-lg bg-white'>
 
@@ -544,6 +603,13 @@ const Dashboard = () => {
       <div className='card my-4 shadow-md sm:rounded-lg bg-white'>
         <div className='flex items-center justify-between px-5 py-5'>
           <h2 className='text-[18px] font-[600]'>Recent Orders</h2>
+          <div className='w-[25%]'>
+            <SearchBox
+              serchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              setPageOrdr={setPageOrder}
+            />
+          </div>
         </div>
 
         <div className="relative overflow-x-auto mt-5">
@@ -591,7 +657,7 @@ const Dashboard = () => {
             <tbody>
 
               {
-                orders?.length !== 0 && orders?.map((order, index) => {
+                ordersData?.length !== 0 && ordersData?.map((order, index) => {
                   return (
                     <>
                       <tr className="bg-white border-b">
@@ -666,7 +732,7 @@ const Dashboard = () => {
                                     {
                                       order?.products?.length !== 0 && order?.products?.map((item, index) => {
                                         return (
-                                          <tr className="bg-white border-b">
+                                          <tr key={index} className="bg-white border-b">
                                             <td className="px-6 py-4 font-[500]">
                                               <span className='text-gray-600'>{item?._id}</span>
                                             </td>
@@ -712,11 +778,24 @@ const Dashboard = () => {
           </table>
         </div>
 
+        {
+          orders?.totalPages > 1 && 
+          <div className='flex items-center justify-center mt-10 pb-5'>
+            <Pagination
+              showFirstButton showLastButton
+              count={orders?.totalPages}
+              page={pageOrder}
+              onChange={(e, value) => setPageOrder(value)}
+              
+            />
+          </div>
+        }
+
       </div>
 
       <div className='card my-4 shadow-md sm:rounded-lg bg-white'>
         <div className='flex items-center justify-between px-5 py-5 pb-0'>
-          <h2 className='text-[18px] font-[600]'>Tptal User & Total Sales</h2>
+          <h2 className='text-[18px] font-[600]'>Total User & Total Sales</h2>
         </div>
 
         <div className='flex items-center px-5 py-5 pt- gap-5'>

@@ -216,6 +216,7 @@ const Checkout = () => {
     const checkout = (e) => {
         e.preventDefault();
 
+        if(userData?.address_details?.length !== 0){
         var option = {
             key: VITE_API_RAZORPAY_KEY_ID,
             key_secret: VITE_API_RAZORPAY_KEY_SECRET,
@@ -282,12 +283,16 @@ const Checkout = () => {
             goToFailed("RAZORPAY_FAILED");
         });
         pay.open();
+        } else {
+            context?.alertBox("error", "Please add address");
+        }
     }
 
     const cashOnDelivery = () => {
         const user = context?.userData;
 
-        const payLoad = {
+        if(userData?.address_details?.length !== 0) {
+            const payLoad = {
             userId: user?._id,
             products: context?.cartData,
             paymentId: "",
@@ -315,6 +320,9 @@ const Checkout = () => {
                 goToFailed("COD_ORDER_FAILED");
             }
         })
+        } else {
+            context?.alertBox("error", "Please add address");
+        }
     }
 
     
@@ -431,7 +439,7 @@ const Checkout = () => {
                             <BsFillBagCheckFill className='text-[20px] ' /> Checkout
                         </Button>
 
-                        <div id="paypal-button-container" ref={paypalContainerRef}></div>
+                        <div id="paypal-button-container" className={`${userData?.address_details?.length === 0 ? 'pointer-events-none' : ''}`} ref={paypalContainerRef}></div>
 
                         <Button type='button' className='btn-dark btn-lg w-full flex gap-2 items-center' onClick={cashOnDelivery} disabled={!context?.cartData?.length}>
                             <BsFillBagCheckFill className='text-[20px]' />

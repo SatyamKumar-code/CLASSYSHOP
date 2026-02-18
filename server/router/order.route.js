@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import auth from '../middlewares/auth.js';
-import { captureOrderPayPalController, createOrderController, createOrderPayPalController, getOrderDetailsController, updateOrderStatusController } from '../controllers/order.controller.js';
+import { captureOrderPayPalController, createOrderController, createOrderPayPalController, getOrderDetailsController, getTotalOrdersCountController, updateOrderStatusController } from '../controllers/order.controller.js';
 
 const orderRouter = Router();
 
@@ -9,5 +9,6 @@ orderRouter.get('/order-list', auth, getOrderDetailsController);
 orderRouter.get('/create-order-paypal', auth, createOrderPayPalController);
 orderRouter.post('/capture-order-paypal', auth, captureOrderPayPalController);
 orderRouter.put('/order-status/:id', auth, updateOrderStatusController);
+orderRouter.get('/count', auth, getTotalOrdersCountController);
 
 export default orderRouter;

@@ -57,15 +57,48 @@ export  async function getOrderDetailsController(req, res) {
     try {
         const userid = req.userId; // order id
 
-        const orderlist = await OrderModel.find({ userId: userid }).sort({ createdAt: -1 }).populate('delivery_address userId');
+        const { page = 1, limit = 5 } = req.query;
+        const pageNum = parseInt(page);
+        const limitNum = parseInt(limit);
+        const skip = (pageNum - 1) * limitNum;
+
+        const orderlist = await OrderModel.find()
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limitNum)
+            .populate('delivery_address userId');
+
+        const total = await OrderModel.countDocuments();
 
         return res.status(200).json({
             message: "Order list",
             error: false,
             success: true,
             data: orderlist,
+            total: total,
+            page: pageNum,
+            totalPages: Math.ceil(total / limitNum)
         })
     } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+export async function getTotalOrdersCountController(req, res) {
+    try {
+        const ordersCount = await OrderModel.countDocuments();
+
+        return res.status(200).json({
+            error: false,
+            success: true,
+            count: ordersCount
+        })
+
+    }catch (error) {
         return res.status(500).json({
             message: error.message || error,
             error: true,

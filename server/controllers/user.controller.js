@@ -558,7 +558,7 @@ export async function forgotPasswordController(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: "uu",
+            messsage: error.message || error,
             error: true,
             success: false
         })
@@ -884,6 +884,58 @@ export async function getReviews(req, res) {
     } catch (error) {
         return res.status(500).json({
             message: "something went wrong",
+            error: true,
+            success: false
+        })
+    }
+}
+
+export async function getAllReviews(req, res) {
+    try {
+        const reviews = await ReviewModel.find();
+
+        if (!reviews || reviews.length === 0) {
+            return res.status(404).json({
+                error: true,
+                success: false,
+            })
+        }
+
+        return res.status(200).json({
+            error: false,
+            success: true,
+            reviews: reviews
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+export async function getAllUsers(req, res) {
+    try {
+        const users = await UserModel.find().select('-password -refresh_token -access_token -otp -otp_expiry -role -signUpWithGoogle -orderHistory -verify_email -address_details -shopping_cart');
+
+        if(!users || users.length === 0) {
+            return res.status(404).json({
+                error: true,
+                success: false,
+            })
+        }
+
+        return res.status(200).json({
+            error: false,
+            success: true,
+            users: users
+        });
+
+    }catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
             error: true,
             success: false
         })

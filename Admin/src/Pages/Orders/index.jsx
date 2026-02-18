@@ -8,12 +8,16 @@ import { editData, fetchDataFromApi } from '../../utils/api';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import { MyContext } from '../../App';
+import { Pagination } from '@mui/material';
 
 const Orders = () => {
 
   const [isOpenOrderdProduct, setIsOpenOrderdProduct] = useState(null);
-  const [orders, setOrders] = useState([])
-  const [orderStatus, setOrderStatus] = useState('')
+  const [orders, setOrders] = useState({});
+  const [orderStatus, setOrderStatus] = useState('');
+  const [pageOrder, setPageOrder] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [totalOrdersData, setTotalOrdersData] = useState({});
 
   const context = useContext(MyContext);
 
@@ -41,19 +45,42 @@ const Orders = () => {
   }
 
   useEffect(() => {
-    fetchDataFromApi('/api/order/order-list').then((res) => {
+    fetchDataFromApi(`/api/order/order-list?page=${pageOrder}&limit=5`).then((res) => {
       if (res?.error === false) {
-        setOrders(res?.data)
+        setOrders(res)
       }
     })
-  }, [orderStatus])
+    fetchDataFromApi(`/api/order/order-list`).then((res) => {
+      if (res?.error === false) {
+        setTotalOrdersData(res)
+      }
+    })
+  }, [pageOrder, orderStatus])
+
+  useEffect(() => {
+    if(searchQuery !== ""){
+      const filteredOrders = totalOrdersData?.data?.filter((order) => 
+        order?._id?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+        order?.userId?.name?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+        order?.userId?.email?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+        order?.createdAt?.includes(searchQuery)
+      );
+      setOrders({...orders, data: filteredOrders});
+    } else {
+      fetchDataFromApi(`/api/order/order-list?page=${pageOrder}&limit=5`).then((res) => {
+        if(res?.error === false) {
+          setOrders(res);
+        }
+      })
+    }
+  },[searchQuery])
 
 
   return (
     <div className='card my-4 shadow-md sm:rounded-lg bg-white'>
         <div className='flex items-center justify-between px-5 py-5'>
           <h2 className='text-[18px] font-[600]'>Recent Orders</h2>
-          <div className='w-[40%]'><SearchBox /></div>
+          <div className='w-[40%]'><SearchBox setSearchQuery={setSearchQuery} setPageOrdr={setPageOrder} /></div>
         </div>
 
       <div className="relative overflow-x-auto mt-5">
@@ -101,7 +128,7 @@ const Orders = () => {
           <tbody>
 
             {
-              orders?.length !== 0 && orders?.map((order, index) => {
+              orders?.data?.length !== 0 && orders?.data?.map((order, index) => {
                 return (
                   <>
                     <tr className="bg-white border-b">
@@ -240,6 +267,18 @@ const Orders = () => {
           </tbody>
         </table>
       </div>
+
+      {
+        orders?.totalPages > 1 &&
+        <div className='flex items-center justify-center mt-10 pb-5'>
+          <Pagination
+            showFirstButton showLastButton
+            count={orders?.totalPages}
+            page={pageOrder}
+            onChange={(e, value) => setPageOrder(value)}
+          />
+        </div>
+      }
 
       </div>
   )
