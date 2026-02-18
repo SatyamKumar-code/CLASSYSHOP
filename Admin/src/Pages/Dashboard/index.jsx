@@ -26,7 +26,7 @@ import TableRow from '@mui/material/TableRow';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar } from 'recharts';
 import { MyContext } from '../../App';
 import { fetchDataFromApi } from '../../utils/api';
 import { Pagination } from '@mui/material';
@@ -104,80 +104,8 @@ const Dashboard = () => {
   const [ordersCount, setOrdersCount] = useState(null);
 
   const [categoryFilterVal, setCategoryFilterVal] = useState('');
-  const [chart1Data, setChart1Data] = useState([
-    {
-      name: 'JAN',
-      TotalSales: 4000,
-      TotalUsers: 2400,
-      amt: 2400,
-    },
-    {
-      name: 'FEB',
-      TotalSales: 3000,
-      TotalUsers: 1398,
-      amt: 2210,
-    },
-    {
-      name: 'MAR',
-      TotalSales: 2000,
-      TotalUsers: 9800,
-      amt: 2290,
-    },
-    {
-      name: 'APR',
-      TotalSales: 2780,
-      TotalUsers: 3908,
-      amt: 2000,
-    },
-    {
-      name: 'MAY',
-      TotalSales: 1890,
-      TotalUsers: 4800,
-      amt: 2181,
-    },
-    {
-      name: 'JUN',
-      TotalSales: 2390,
-      TotalUsers: 3800,
-      amt: 2500,
-    },
-    {
-      name: 'JUL',
-      TotalSales: 3490,
-      TotalUsers: 4300,
-      amt: 2100,
-    },
-    {
-      name: 'AUG',
-      TotalSales: 8990,
-      TotalUsers: 3500,
-      amt: 4500,
-    },
-    {
-      name: 'SEP',
-      TotalSales: 5490,
-      TotalUsers: 4300,
-      amt: 2100,
-    },
-    {
-      name: 'OCT',
-      TotalSales: 3490,
-      TotalUsers: 6520,
-      amt: 2100,
-    },
-    {
-      name: 'NOV',
-      TotalSales: 3490,
-      TotalUsers: 2300,
-      amt: 2100,
-    },
-    {
-      name: 'DEC',
-      TotalSales: 3990,
-      TotalUsers: 5300,
-      amt: 2600,
-    }
-  ]);
+  const [chartData, setChartData] = useState([]);
+  const [year, setYear] = useState(new Date().getFullYear());
 
   const context = useContext(MyContext);
 
@@ -224,7 +152,7 @@ const Dashboard = () => {
   },[searchQuery])
 
   useEffect(() => {
-    // getTotalSalesByYear();
+    getTotalSalesByYear();
 
     fetchDataFromApi("/api/user/getAllUsers").then((res) => {
       if(res?.error === false){
@@ -313,6 +241,49 @@ const Dashboard = () => {
       }
     })
   };
+
+  const getTotalUsersByYear = () =>{
+    fetchDataFromApi('/api/order/users').then((res) => {
+      const users = [];
+      res?.TotalUsers?.length !== 0 && 
+      res?.TotalUsers?.map((item) => {
+        users.push({
+          name: item?.name,
+          TotalUsers: parseInt(item?.TotalUsers)
+        });
+      });
+
+      const uniqueArr = users.filter(
+        (obj, index, self) => 
+          index === self.findIndex((t) => t.name === obj.name)
+      );
+      setChartData(uniqueArr);
+    })
+  }
+
+  const getTotalSalesByYear = () => {
+    fetchDataFromApi('/api/order/sales').then((res) => {
+      const sales = [];
+      res?.monthlySales?.length !== 0 &&
+      res?.monthlySales?.map((item) => {
+        sales.push({
+          name: item?.name,
+          TotalSales: parseInt(item?.TotalSales)
+        });
+      });
+
+      const uniqueArr = sales.filter(
+        (obj, index, self) => 
+          index === self.findIndex((t) => t.name === obj.name)
+      );
+      setChartData(uniqueArr);
+    });
+  }
+
+
+  const handleChangeYear = (event) => {
+
+  }
 
   return (
     <>
@@ -799,46 +770,63 @@ const Dashboard = () => {
         </div>
 
         <div className='flex items-center px-5 py-5 pt- gap-5'>
-          <span className='flex items-center gap-1 text-[15px]'>
-            <span className='block w-[8px] h-[8px] rounded-full bg-green-600'></span>
-            Total Users
-          </span>
 
-          <span className='flex items-center gap-1 text-[15px]'>
-            <span className='block w-[8px] h-[8px] rounded-full bg-primary'></span>
+          <span className='flex items-center gap-1 text-[15px] cursor-pointer' onClick={getTotalSalesByYear}>
+            <span className='block w-[8px] h-[8px] rounded-full bg-[#16a34a]'></span>
             Total Sales
+          </span>
+          
+          <span className='flex items-center gap-1 text-[15px] cursor-pointer' onClick={getTotalUsersByYear}>
+            <span className='block w-[8px] h-[8px] rounded-full bg-[#0858f7]'></span>
+            Total Users
           </span>
         </div>
 
-        <LineChart
-          width={1200}
-          height={500}
-          data={chart1Data}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" stroke="none" />
-          <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-          <YAxis tick={{ fontSize: 12 }} />
-          <Tooltip />
-          <Legend />
-          <Line
-            type="monotone"
-            dataKey="TotalSales"
-            stroke="#8884d8"
-            strokeWidth={3}
-            activeDot={{ r: 8 }} />
-          <Line
-            type="monotone"
-            dataKey="TotalUsers"
-            stroke="#82ca9d"
-            strokeWidth={3} />
-
-        </LineChart>
+        {
+          chartData?.length !== 0 &&
+          <BarChart
+            width={1000}
+            height={500}
+            data={chartData}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <XAxis
+              dataKey="name"
+              scale="point"
+              padding={{ left: 10, right: 10 }}
+              tick={{ fontSize: 12 }}
+              label={{ position: "insideBottom", fontSize: 14 }}
+              style={{ fill: context?.them === "dark" ? "white" : "#000" }}
+            />
+            <YAxis
+              tick={{ fontSize: 12 }}
+              label={{ angle: -90, position: "insideLeft", fontSize: 14 }}
+              style={{ fill: context?.them === "dark" ? "white" : "#000" }}
+            />
+            <Tooltip 
+              contentStyle={{
+                backgroundColor: "#071739",
+                color: "white",
+              }} // Set tooltip background and text color
+              labelStyle={{ color: "yellow"}} // label text color
+              itemStyle={{ color: "cyan "}} // set color for individul item in the tooltip
+              cursor={{ fill: "white" }} // Customize the tooltip cursor background color
+            />
+            <Legend />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              horizontal={false}
+              vertical={false}
+            />
+              <Bar dataKey="TotalSales" stackId="a" fill="#16a34a"/>
+              <Bar dataKey="TotalUsers" stackId="b" fill="#0858f7" />
+          </BarChart>
+        }
       </div>
     </>
   )
