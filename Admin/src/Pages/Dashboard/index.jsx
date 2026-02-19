@@ -84,11 +84,11 @@ const Dashboard = () => {
   const [ordersData, setOrdersData] = useState([]);
   const [orders, setOrders] = useState([]);
 
-  const isShowOrderdProduct = (index) => {
-    if (isOpenOrderdProduct === index) {
+  const isShowOrderdProduct = (orderId) => {
+    if (isOpenOrderdProduct === orderId) {
       setIsOpenOrderdProduct(null);
     } else {
-      setIsOpenOrderdProduct(index);
+      setIsOpenOrderdProduct(orderId);
     }
   }
 
@@ -113,14 +113,9 @@ const Dashboard = () => {
     getProducts();
   }, [context?.isOpenFullScreenPanel?.open]);
 
+  // Fetch all orders data and count only once on mount
   useEffect(() => {
-    fetchDataFromApi(`/api/order/order-list?page=${pageOrder}&limit=5`).then((res) => {
-      if (res?.error === false) {
-        setOrders(res);
-        setOrdersData(res?.data);
-      }
-    })
-    fetchDataFromApi(`/api/order/order-list`).then((res) => {
+    fetchDataFromApi(`/api/order/order-list?limit=10000`).then((res) => {
       if (res?.error === false) {
         setTotalOrdersData(res);
       }
@@ -130,7 +125,19 @@ const Dashboard = () => {
         setOrdersCount(res?.count);
       }
     })
-  }, [pageOrder]);
+  }, []);
+
+  // Fetch paginated orders when page changes
+  useEffect(() => {
+    if(searchQuery === "") {
+      fetchDataFromApi(`/api/order/order-list?page=${pageOrder}&limit=5`).then((res) => {
+        if (res?.error === false) {
+          setOrders(res);
+          setOrdersData(res?.data);
+        }
+      })
+    }
+  }, [pageOrder, searchQuery]);
 
   useEffect(() => {
     if(searchQuery !== ""){
@@ -138,16 +145,18 @@ const Dashboard = () => {
         order?._id?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
         order?.userId?.name?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
         order?.userId?.email?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
-        order?.createdAt?.includes(searchQuery)
+        order?.userId?.delivery_address?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+        order?.order_status?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+        String(order?.delivery_address?.mobile)?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+        order?.createdAt?.toLowerCase()?.includes(searchQuery?.toLowerCase())
       );
       setOrdersData(filteredOrders);
-    } else {
-      fetchDataFromApi(`/api/order/order-list?page=${pageOrder}&limit=5`).then((res) => {
-        if(res?.error === false) {
-          setOrders(res);
-          setOrdersData(res?.data);
-        }
-      })
+    }
+  },[searchQuery, totalOrdersData])
+
+  useEffect(() => {
+    if(searchQuery !== ""){
+      setPageOrder(1);
     }
   },[searchQuery])
 
@@ -578,7 +587,7 @@ const Dashboard = () => {
             <SearchBox
               serchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
-              setPageOrdr={setPageOrder}
+              setPageOrdr={() => setPageOrder(1)}
             />
           </div>
         </div>
@@ -628,15 +637,21 @@ const Dashboard = () => {
             <tbody>
 
               {
-                ordersData?.length !== 0 && ordersData?.map((order, index) => {
+                ordersData?.length !== 0 && (searchQuery !== "" 
+                  ? ordersData?.slice(
+                      (pageOrder - 1) * 5,
+                      (pageOrder - 1) * 5 + 5
+                    )
+                  : ordersData
+                )?.map((order, index) => {
                   return (
                     <>
                       <tr className="bg-white border-b">
                         <td className="px-6 py-4 font-[500]">
                           <Button className='!w-[35px] !h-[35px] !min-w-[35px] !rounded-full !bg-[#f1f1f1]'
-                            onClick={() => isShowOrderdProduct(index)}>
+                            onClick={() => isShowOrderdProduct(order?._id)}>
                             {
-                              isOpenOrderdProduct === index ? <FaAngleUp className='text-[16px] text-[rgba(0,0,0,0.7)]' /> : <FaAngleDown className='text-[16px] text-[rgba(0,0,0,0.7)]' />
+                              isOpenOrderdProduct === order?._id ? <FaAngleUp className='text-[16px] text-[rgba(0,0,0,0.7)]' /> : <FaAngleDown className='text-[16px] text-[rgba(0,0,0,0.7)]' />
                             }
                           </Button>
                         </td>
@@ -670,7 +685,7 @@ const Dashboard = () => {
                       </tr>
 
                       {
-                        isOpenOrderdProduct === index && (
+                        isOpenOrderdProduct === order?._id && (
                           <tr>
                             <td className='pl-20' colSpan="6">
                               <div className="relative overflow-x-auto">
@@ -750,11 +765,11 @@ const Dashboard = () => {
         </div>
 
         {
-          orders?.totalPages > 1 && 
+          (searchQuery !== "" ? Math.ceil(ordersData?.length / 5) : orders?.totalPages) > 1 && 
           <div className='flex items-center justify-center mt-10 pb-5'>
             <Pagination
               showFirstButton showLastButton
-              count={orders?.totalPages}
+              count={searchQuery !== "" ? Math.ceil(ordersData?.length / 5) : orders?.totalPages}
               page={pageOrder}
               onChange={(e, value) => setPageOrder(value)}
               

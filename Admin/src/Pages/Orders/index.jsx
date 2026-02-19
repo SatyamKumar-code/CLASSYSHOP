@@ -30,32 +30,42 @@ const Orders = () => {
   };
 
   const handleChange = (event , id) => {
-    setOrderStatus(event.target.value);
+    const newStatus = event.target.value;
+    setOrderStatus(newStatus);
 
     const obj = {
       id : id,
-      order_status : event.target.value
+      order_status : newStatus
     }
 
     editData(`/api/order/order-status/${id}`, obj).then((res) => {
       if (res?.data?.error === false) {
         context?.alertBox("Success", res?.data?.message)
+        // Update local state to reflect immediately
+        setOrderStatus(newStatus);
       }
     })
   }
 
+  // Initial load - fetch all orders for search functionality
   useEffect(() => {
-    fetchDataFromApi(`/api/order/order-list?page=${pageOrder}&limit=5`).then((res) => {
-      if (res?.error === false) {
-        setOrders(res)
-      }
-    })
-    fetchDataFromApi(`/api/order/order-list`).then((res) => {
+    fetchDataFromApi(`/api/order/order-list?limit=10000`).then((res) => {
       if (res?.error === false) {
         setTotalOrdersData(res)
       }
     })
-  }, [pageOrder, orderStatus])
+  }, [orderStatus])
+
+  // Fetch paginated orders when not searching
+  useEffect(() => {
+    if(searchQuery === "") {
+      fetchDataFromApi(`/api/order/order-list?page=${pageOrder}&limit=5`).then((res) => {
+        if (res?.error === false) {
+          setOrders(res)
+        }
+      })
+    }
+  }, [pageOrder, searchQuery, orderStatus])
 
   useEffect(() => {
     if(searchQuery !== ""){
@@ -63,15 +73,22 @@ const Orders = () => {
         order?._id?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
         order?.userId?.name?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
         order?.userId?.email?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
-        order?.createdAt?.includes(searchQuery)
+        order?.delivery_address?.address_line1?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+        order?.order_status?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+        String(order?.delivery_address?.mobile)?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+        order?.createdAt?.toLowerCase()?.includes(searchQuery)
       );
-      setOrders({...orders, data: filteredOrders});
-    } else {
-      fetchDataFromApi(`/api/order/order-list?page=${pageOrder}&limit=5`).then((res) => {
-        if(res?.error === false) {
-          setOrders(res);
-        }
-      })
+      setOrders({
+        ...totalOrdersData,
+        data: filteredOrders,
+        totalResults: filteredOrders?.length
+      });
+    }
+  },[searchQuery, totalOrdersData])
+
+  useEffect(() => {
+    if(searchQuery !== ""){
+      setPageOrder(1);
     }
   },[searchQuery])
 
@@ -80,7 +97,13 @@ const Orders = () => {
     <div className='card my-4 shadow-md sm:rounded-lg bg-white'>
         <div className='flex items-center justify-between px-5 py-5'>
           <h2 className='text-[18px] font-[600]'>Recent Orders</h2>
-          <div className='w-[40%]'><SearchBox setSearchQuery={setSearchQuery} setPageOrdr={setPageOrder} /></div>
+          <div className='w-[40%]'>
+            <SearchBox 
+              serchQuery={searchQuery}
+              setSearchQuery={setSearchQuery} 
+              setPageOrdr={() => setPageOrder(1)} 
+            />
+          </div>
         </div>
 
       <div className="relative overflow-x-auto mt-5">
@@ -127,8 +150,14 @@ const Orders = () => {
           </thead>
           <tbody>
 
-            {
-              orders?.data?.length !== 0 && orders?.data?.map((order, index) => {
+          {
+            orders?.data?.length !== 0 && (searchQuery !== "" 
+              ? orders?.data?.slice(
+                  (pageOrder - 1) * 5,
+                  (pageOrder - 1) * 5 + 5
+                )
+              : orders?.data
+            )?.map((order, index) => {
                 return (
                   <>
                     <tr className="bg-white border-b">
@@ -269,11 +298,11 @@ const Orders = () => {
       </div>
 
       {
-        orders?.totalPages > 1 &&
+        (searchQuery !== "" ? Math.ceil(orders?.data?.length / 5) : orders?.totalPages) > 1 &&
         <div className='flex items-center justify-center mt-10 pb-5'>
           <Pagination
             showFirstButton showLastButton
-            count={orders?.totalPages}
+            count={searchQuery !== "" ? Math.ceil(orders?.data?.length / 5) : orders?.totalPages}
             page={pageOrder}
             onChange={(e, value) => setPageOrder(value)}
           />
