@@ -24,6 +24,7 @@ import { fetchDataFromApi, postData } from './utils/api'
 import Address from './Pages/MyAccount/address'
 import OrderSuccess from './Pages/Orders/success'
 import OrderFailed from './Pages/Orders/failed'
+import SearchPage from './Pages/Search'
 
 
 
@@ -47,6 +48,8 @@ function App() {
 
   const [addressMode, setAddressMode] = useState("add");
   const [addressId, setAddressId] = useState('');
+
+  const [searchData, setSearchData] = useState([]);
 
   const handleOpenProductDetailModel = (status, item) => {
     setOpenProductDetailsModal({
@@ -222,6 +225,8 @@ function App() {
     setAddressMode,
     addressId,
     setAddressId,
+    searchData,
+    setSearchData
     
   }
 
@@ -246,6 +251,7 @@ function App() {
         <Route path={"/order/success"} exact={true} element={ <OrderSuccess />} />
         <Route path={"/order/failed"} exact={true} element={ <OrderFailed />} />
         <Route path={"/address"} exact={true} element={ <Address />} />
+        <Route path={"/search"} exact={true} element={ <SearchPage />} />
         
       </Routes>
       <Footer />

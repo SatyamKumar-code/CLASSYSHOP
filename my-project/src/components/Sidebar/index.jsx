@@ -38,6 +38,8 @@ export const Sidebar = (props) => {
   const location = useLocation();
 
   const handleCheckboxChange = (field, value) => {
+
+    context?.setSearchData([]) // to reset search data when we apply any filter from sidebar
     const currentValues = filters[field] || []
     const updatedValues = currentValues.includes(value) ?
       currentValues.filter((item) => item !== value) :
@@ -72,6 +74,7 @@ export const Sidebar = (props) => {
       filters.subCatId = [];
       filters.thirdsubCatId = [];
       filters.rating = [];
+      context?.setSearchData([]) // to reset search data when we apply any filter from sidebar or when we visit category page by clicking on category from homepage
     }
 
     if(url.includes('subCatId')) {
@@ -82,6 +85,7 @@ export const Sidebar = (props) => {
       filters.catId = [];
       filters.thirdsubCatId = [];
       filters.rating = [];
+      context?.setSearchData([]) // to reset search data when we apply any filter from sidebar or when we visit category page by clicking on category from homepage
     }
 
     if(url.includes('thirdsubCatId')) {
@@ -92,6 +96,7 @@ export const Sidebar = (props) => {
       filters.catId = [];
       filters.subCatId = [];
       filters.rating = [];
+      context?.setSearchData([]) // to reset search data when we apply any filter from sidebar or when we visit category page by clicking on category from homepage
     }
 
     filters.page = 1;
@@ -103,14 +108,22 @@ export const Sidebar = (props) => {
 
   }, [location])
 
-  const filtesData = () =>{
+  const filtesData = () => {
     props.setIsLoading(true);
-    postData(`/api/product/filters`, filters).then((res)=> {
-      props.setProductsData(res);
-      props.setIsLoading(false);
-      props.setTotalPages(res?.totalPages);
-      window.scrollTo(0,0);
-    })
+
+    if (context?.searchData?.products?.length > 0) {
+      props?.setProductsData(context?.searchData);
+      props?.setIsLoading(false);
+      props?.setTotalPages(context?.searchData?.totalPages);
+      window.scrollTo(0, 0);
+    } else {
+      postData(`/api/product/filters`, filters).then((res) => {
+        props.setProductsData(res);
+        props.setIsLoading(false);
+        props.setTotalPages(res?.totalPages);
+        window.scrollTo(0, 0);
+      })
+    }
   }
 
   useEffect(() => {

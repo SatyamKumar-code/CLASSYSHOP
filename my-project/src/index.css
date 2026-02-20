@@ -419,3 +419,8 @@ header{
 #paypal-button-container {
     width: 100% !important;
 }
+
+.searchBox .MuiCircularProgress-root {
+    width: 20px !important;
+    height: 20px !important;
+}

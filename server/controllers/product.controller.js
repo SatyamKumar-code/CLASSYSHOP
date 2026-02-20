@@ -1485,3 +1485,52 @@ export async function sortBy(req, res) {
         totalPages: 0
     })
 }
+
+export async function searchProductsController(req, res) {
+    try {
+        const { query, page, limit } = req.body;
+
+        if(!query) {
+            return res.status(400).json({
+                message: "Query is required",
+                error: true,
+                success: false
+            })
+        }
+
+        const products = await ProductModel.find({
+            $or: [
+                { name: { $regex: query, $options: "i" } },
+                { brand: { $regex: query, $options: "i" } },
+                { catName: { $regex: query, $options: "i" } },
+                { subCat: { $regex: query, $options: "i" } },
+                { thirdsubCat: { $regex: query, $options: "i" } },
+                { description: { $regex: query, $options: "i" } },
+            ]
+        }).populate("category")
+
+        if(!products?.length) {
+            return res.status(404).json({
+                message: "No products found",
+                error: true,
+                success: false
+            })
+        }
+
+        return res.status(200).json({
+            error: false,
+            success: true,
+            products: products,
+            total: 1,
+            page: parseInt(page),
+            totalPages: 1
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
