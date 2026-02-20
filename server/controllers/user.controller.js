@@ -918,7 +918,7 @@ export async function getAllReviews(req, res) {
 
 export async function getAllUsers(req, res) {
     try {
-        const users = await UserModel.find().select('-password -refresh_token -access_token -otp -otp_expiry -role -signUpWithGoogle -orderHistory -verify_email -address_details -shopping_cart');
+        const users = await UserModel.find().select('-password -refresh_token -access_token -otp -otp_expiry -role -signUpWithGoogle -orderHistory -address_details -shopping_cart');
 
         if(!users || users.length === 0) {
             return res.status(404).json({
@@ -934,6 +934,35 @@ export async function getAllUsers(req, res) {
         });
 
     }catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+
+export async function updateUserStatus(req, res) {
+    try {
+        const { id, status } = req.body;
+
+        const updatedUserStatus = await UserModel.findByIdAndUpdate(
+            {
+                _id: id,
+            },
+            {
+                status: status
+            },
+            { new: true }
+        )
+        return res.status(200).json({
+            error: false,
+            success: true,
+            message: "User status updated",
+            user: updatedUserStatus
+        })
+    } catch (error) {
         return res.status(500).json({
             message: error.message || error,
             error: true,

@@ -1,7 +1,4 @@
-import Button from '@mui/material/Button';
-import React, { use, useContext, useEffect, useState } from 'react'
-import { IoMdAdd } from 'react-icons/io';
-import Checkbox from '@mui/material/Checkbox';
+import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
 import { MdLocalPhone, MdOutlineMarkEmailRead } from 'react-icons/md';
 
@@ -15,13 +12,14 @@ import TableRow from '@mui/material/TableRow';
 import SearchBox from '../../Components/SearchBox';
 import { MyContext } from '../../App';
 import { SlCalender } from 'react-icons/sl';
-import { deleteMultipleData, fetchDataFromApi } from '../../utils/api';
+import { editData, fetchDataFromApi } from '../../utils/api';
 import UserTableSkeleton from '../../Components/Skeleton/UserTableSkeleton';
 
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select'
 
 
 
-const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 const columns = [
@@ -32,6 +30,11 @@ const columns = [
         id: 'userEmail',
         label: 'USER EMAIL',
         minWidth: 150,
+    },
+    {
+        id: 'emailVerify',
+        label: 'EMAIL VERIFY',
+        minWidth: 20,
     },
     {
         id: 'userPh',
@@ -53,6 +56,7 @@ const Users = () => {
     const [userTotalData, setUserTotalData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+    const [status, setStatus] = useState('');
 
     const context = useContext(MyContext);
 
@@ -66,37 +70,74 @@ const Users = () => {
         setPage(0);
     };
 
-    useEffect(() => {
-        getUsers();
-    },[])
+    
 
     const getUsers = () => {
-        setIsLoading(true);
         fetchDataFromApi('/api/user/getAllUsers').then((res) => {
-            setIsLoading(false);
             setUserTotalData(res?.users);
             setUserData(res?.users);
-            
         })
     }
 
     useEffect(() => {
         setIsLoading(true);
         if(searchQuery !== "") {
-            const filteredUsers = userTotalData?.filter((user) => 
-                user?._id?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
-                user?.name?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
-                user?.email?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
-                String(user?.mobile)?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
-                user?.createdAt?.toLowerCase()?.includes(searchQuery?.toLowerCase())
-            );
+            const query = searchQuery?.toLowerCase();
+            const filteredUsers = userTotalData?.filter((user) => {
+                const isVerified = user?.verify_email === true;
+                const verifyMatch = 
+                    (query.includes('verified') && isVerified) ||
+                    ((query.includes('not') || query.includes('unverified')) && !isVerified);
+                
+                return (
+                    user?._id?.toLowerCase()?.includes(query) ||
+                    user?.name?.toLowerCase()?.includes(query) ||
+                    user?.email?.toLowerCase()?.includes(query) ||
+                    String(user?.mobile)?.toLowerCase()?.includes(query) ||
+                    user?.createdAt?.toLowerCase()?.includes(query) ||
+                    user?.status?.toLowerCase() === query ||
+                    verifyMatch
+                );
+            });
             setUserData(filteredUsers);
             setIsLoading(false);
         }else {
             setIsLoading(false)
             setUserData(userTotalData);
         }
-    }, [searchQuery])
+    }, [searchQuery, userTotalData])
+
+    useEffect(() => {
+        setIsLoading(true);
+        getUsers();
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 500)
+
+    },[])
+
+    
+
+    const handleChange = (event, id) => {
+
+        console.log(id);
+        
+        const newStatus = event.target.value;
+        setStatus(newStatus);
+
+        const obj = {
+            id: id,
+            status: newStatus
+        }
+
+        editData(`/api/user/updateUserStatus/${id}`, obj).then((res) => {
+            if (res?.data?.error === false) {
+                context?.alertBox("Success", res?.data?.message)
+                setStatus(newStatus);
+                getUsers();
+            }
+        })
+    };
 
 
     return (
@@ -129,7 +170,7 @@ const Users = () => {
                                         align={column.align}
                                         style={{ minWidth: column.minWidth }}
                                     >
-                                        {column.label}
+                                        <span className='whitespace-nowrap'>{column.label}</span>
                                     </TableCell>
                                 ))}
                             </TableRow>
@@ -145,11 +186,19 @@ const Users = () => {
                                     return (
                                         <TableRow key={index}>
                                             <TableCell style={{ minWidth: columns.minWidth }}>
-                                                {user?.status === "Active" ? (
-                                                    <span className='bg-green-700 text-white text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-700 dark:text-white'>{user?.status}</span>
-                                                ) : (
-                                                    <span className='bg-red-700 text-white text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-700 dark:text-white'>{user?.status}</span>
-                                                )}
+
+                                               
+                                                <Select
+                                                    labelId="demo-simple-select-label"
+                                                    id="demo-simple-select"
+                                                    value={user?.status !== null ? user?.status : status }
+                                                    label="Status"
+                                                    onChange={(e) => handleChange(e, user?._id)}
+                                                    className={user?.status === "Active" ? 'text-green-500! min-w-26' : 'text-red-500! max-w-26'}
+                                                >
+                                                    <MenuItem value={"Active"} className='text-green-500!'>Active</MenuItem>
+                                                    <MenuItem value={"Inactive"} className='text-red-500!'>Inactive</MenuItem>
+                                                </Select>
                                             </TableCell>
 
                                             <TableCell style={{ minWidth: columns.minWidth }}>
@@ -170,6 +219,18 @@ const Users = () => {
 
                                             <TableCell style={{ minWidth: columns.minWidth }}>
                                                 <span className='flex items-center gap-2'><MdOutlineMarkEmailRead /> {user?.email}</span>
+                                            </TableCell>
+
+                                            <TableCell style={{ minWidth: columns.minWidth }}>
+                                                <span className='flex items-center gap-2'>
+
+                                                    {user?.verify_email === true ? (
+                                                        <span className=" text-green-500">Verified</span>
+                                                    ) : (
+                                                        <span className=" text-red-500">Not Verified</span>
+                                                    )
+                                                    }
+                                                </span>
                                             </TableCell>
 
                                             <TableCell style={{ minWidth: columns.minWidth }}>
