@@ -94,10 +94,10 @@ const Orders = () => {
 
 
   return (
-    <div className='card my-4 shadow-md sm:rounded-lg bg-white'>
-        <div className='flex items-center justify-between px-5 py-5'>
-          <h2 className='text-[18px] font-[600]'>Recent Orders</h2>
-          <div className='w-[40%]'>
+    <div className='card my-2 md:mt-4 shadow-md sm:rounded-lg bg-white'>
+        <div className='grid grid-col-1 lg:grid-cols-2 px-5 py-5 flex-col sm:flex-row'>
+          <h2 className='text-[18px]  font-[600] text-left mb-2 lg:mb-0'>Recent Orders</h2>
+          <div className='ml-auto w-full md:w-[45%]'>
             <SearchBox 
               serchQuery={searchQuery}
               setSearchQuery={setSearchQuery} 
@@ -202,6 +202,7 @@ const Orders = () => {
                           }
                           label="Status"
                           size='small'
+                          style={{ zoom: '80%'}}
                           className='w-full'
                           onChange={(e) => handleChange(e, order?._id)}
                         >
@@ -299,7 +300,7 @@ const Orders = () => {
 
       {
         (searchQuery !== "" ? Math.ceil(orders?.data?.length / 5) : orders?.totalPages) > 1 &&
-        <div className='flex items-center justify-center mt-10 pb-5'>
+        <div className='flex items-center justify-center mt-3 pb-3 paginationSmall'>
           <Pagination
             showFirstButton showLastButton
             count={searchQuery !== "" ? Math.ceil(orders?.data?.length / 5) : orders?.totalPages}

@@ -139,10 +139,10 @@ export const AddBannerV1 = () => {
 
     return (
         <section className='p-5 bg-gray-50'>
-            <form className='form py-3 p-8' onSubmit={handleSubmit}>
+            <form className='form py-1 p-1 md:p-8 md:py-1' onSubmit={handleSubmit}>
                 <div className='scroll max-h-[72vh] overflow-y-scroll pr-4 pt-4'>
 
-                    <div className='grid grid-cols-5 mb-3 gap-5'>
+                    <div className='grid grid-cols-1 sm:grid-cols-5 md:grid-cols-5 lg:grid-cols-5 mb-3 gap-5'>
                         <div className='col'>
                             <h3 className='text-[14px] font-medium mb-0 text-black'>Banner Title</h3>
                             <input type='text' className='w-full h-10 border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white'
@@ -285,12 +285,12 @@ export const AddBannerV1 = () => {
 
                     <br />
 
-                    <div className='grid grid-cols-7 gap-4'>
+                    <div className='grid grid-cols-2 md:grid-cols-7 gap-4'>
 
                         {
                             previews?.length !== 0 && previews?.map((image, index) => {
                                 return (
-                                    <div className='uploadBoxWrapper relative' key={index}>
+                                    <div className='uploadBoxWrapper mr-3 relative' key={index}>
                                         <span className='absolute w-5 h-5 rounded-full overflow-hidden bg-red-700 -top-1.25 -right-1.25 flex items-center justify-center z-50 cursor-pointer'
                                             onClick={() => removeImg(image, index)}
                                         >
@@ -298,14 +298,6 @@ export const AddBannerV1 = () => {
                                         </span>
 
                                         <div key={index} className='uploadBox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-37.5 w-full bg-gray-100 cursor-pointer hover:bg-gray-200 flex items-center justify-center flex-col relative'>
-                                            {/* <LazyLoadImage
-                                                alt={"image"}
-                                                effect="blur"
-                                                wrapperProps={{
-                                                    style: { transitionDelay: "1s" }
-                                                }}
-                                                src={image}
-                                            /> */}
                                             <img src={image} className='w-full' />
                                         </div>
 

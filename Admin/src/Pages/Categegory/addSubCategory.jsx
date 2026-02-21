@@ -149,12 +149,12 @@ const AddSubCategory = () => {
 
 
     return (
-        <div className='p-5 bg-gray-50 grid grid-cols-2 gap-10'>
-            <form className='form py-3 p-8' onSubmit={handleSubmit}>
+        <div className='p-5 bg-gray-50 grid grid-cols-1 md:grid-cols-2 gap-10'>
+            <form className='form py-1 p-1 md:p-8 md:py-1' onSubmit={handleSubmit}>
                 <h3 className='font-[600]'>Add Sub Category</h3>
                 <div className='scroll max-h-[72vh] overflow-y-scroll pr-4 pt-4'>
 
-                    <div className='grid grid-cols-2 mb-3 gap-5'>
+                    <div className='grid grid-cols-1 md:grid-cols-1 mb-3 gap-5'>
                         <div className='col'>
                             <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Category</h3>
                             <Select
@@ -209,11 +209,11 @@ const AddSubCategory = () => {
                 </div>
             </form>
 
-            <form className='form py-3 p-8' onSubmit={handleSubmit2}>
+            <form className='form py-1 p-1 md:p-8 md:py-1' onSubmit={handleSubmit2}>
                 <h3 className='font-[600]'>Add Third Laavel Category</h3>
                 <div className='scroll max-h-[72vh] overflow-y-scroll pr-4 pt-4'>
 
-                    <div className='grid grid-cols-2 mb-3 gap-5'>
+                    <div className='grid grid-cols-1 md:grid-cols-1 mb-3 gap-5'>
                         <div className='col'>
                             <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Category</h3>
                             <Select

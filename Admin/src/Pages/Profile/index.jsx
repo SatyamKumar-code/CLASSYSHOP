@@ -245,7 +245,7 @@ const Profile = () => {
 
     return (
         <>
-        <div className="card my-4 pt-5 w-[65%] shadow-md sm:rounded-lg bg-white px-5 pb-5">
+        <div className="card my-2 mx-auto pt-3 pb-5 px-5 shadow-md sm:rounded-lg bg-white w-full sm:w-full md:w-[80%] lg:w-[65%]">
             <div className="flex items-center justify-between">
                 <h2 className="text-[18px] font-[600]">
                     User Profile
@@ -301,8 +301,8 @@ const Profile = () => {
 
 
             <form className='form mt-8' onSubmit={handleSubmit}>
-                <div className='flex items-center gap-5'>
-                    <div className='w-[50%]'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 items-center gap-5 mb-3'>
+                    <div className='col'>
                         <input 
                         type='text' 
                         name="name"
@@ -313,7 +313,7 @@ const Profile = () => {
                         
                     </div>
 
-                    <div className='w-[50%]'>
+                    <div className='col'>
                         
                         <input 
                         type='email' 
@@ -327,8 +327,8 @@ const Profile = () => {
 
                 </div>
 
-                <div className='flex items-center mt-4 gap-5'>
-                    <div className='w-[50%]'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 items-center gap-5'>
+                    <div className='col w-full md:w-[102%]'>
                         <PhoneInput
                             defaultCountry="in"
                             value={phone}
@@ -409,14 +409,14 @@ const Profile = () => {
         </div>
         
         <Collapse isOpened={isChangePasswordFormShow}>
-                    <div className='card w-[65%] bg-white p-5 shadow-md rounded-md'>
+                    <div className='card my-4 mx-auto pt-5 pb-5 px-5 shadow-md sm:rounded-lg bg-white w-full sm:w-full md:w-[80%] lg:w-[65%]'>
                         <div className='flex items-center pb-3'>
                             <h2 className='pb-0 text-[18px] font-[600]'>Change Password</h2>
                         </div>
                         <hr />
 
                         <form className='mt-8' onSubmit={handleSubmitChangePassword}>
-                            <div className='grid grid-cols-2 gap-5'>
+                            <div className='grid grid-cols-1 sm:grid-cols-2 items-center gap-5 mb-3'>
                             {
                                 context?.userData?.signUpWithGoogle === false &&
                                 <div className='col'>

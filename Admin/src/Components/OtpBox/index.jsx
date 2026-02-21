@@ -34,7 +34,7 @@ const  OtpBox = ({ lenght, onChange }) => {
                     value={otp[index]}
                     onChange={(e) => handleChange(e.target, index)}
                     onKeyDown={(e) => handleKeyDown(e, index)}
-                    className="w-[45px] h-[45px] text-center text-[17px]"
+                    className="w-[40px] h-[40px] sm:w-[45px] sm:h-[45px] text-center text-[17px]"
                 />
             ))}
         </div>

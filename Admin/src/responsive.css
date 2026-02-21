@@ -42,4 +42,38 @@
         overflow-x: scroll;
     }
 
+
+    .sidebarOverlay{pointer-events: inherit;}
+
+    .btn-sm{padding: 3px 10px !important; font-size: 11px !important;}
+    .btn-lg{padding: 5px 10px !important; font-size:  14px !important;}
+    .btn{padding: 5px 10px !important; font-size: 12px !important;}
+    .btn svg{font-size: 15px !important;}
+
+    .MuiPagination-root{white-space: 80% !important; margin: auto !important;}
+    .MuiPagination-ul{white-space: nowrap !important; overflow-x: scroll !important; display: block !important; width: 100% !important;}
+    .MuiPagination-ul li{ display: inline-block !important; vertical-align: top !important;}
+
+    .paginationSmall .MuiPagination-root {
+        font-size: 12px !important;
+    }
+
+    .paginationSmall .MuiIconButton-root {
+        padding: 4px !important;
+        font-size: 14px !important;
+    }
+
+    .paginationSmall .MuiButtonBase-root {
+        min-width: 24px !important;
+        height: 24px !important;
+    }
+
+    .contentRight { padding-left: 15px !important;}
+
+    .css-7mt0f-MuiTablePagination-root:last-child{ width: 100% !important; font-size: 14px !important;}
+
+}
+
+@media only screen and (min-width: 320px) and (max-width: 922px) {
+    .MuiTableCell-head{white-space: nowrap !important;}
 }

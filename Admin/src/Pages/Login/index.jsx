@@ -109,16 +109,6 @@ const Login = () => {
         })
     }
 
-
-
-    function handleClickGoogle() {
-        setLoadingGoogle(true);
-    };
-
-    function handleClickFb() {
-        setLoadingFb(true);
-    };
-
     const authWithGoogle = () => {
         setLoadingGoogle(true);
         signInWithPopup(auth, googleProvider)
@@ -300,7 +290,6 @@ const Login = () => {
                 <div className='flex items-center justify-between mb-4'>
                     <span className='text-[14px]'>Don't have an account?</span>
                     <Link to='/sign-up'
-                        onClick={forgotPassword}
                         className='text-primary text-[15px] font-[700] text-[rgba(0,0,0,0.7)] hover:underline hover:text-gray-700! cursor-pointer'>
                         Sign Up
                     </Link>

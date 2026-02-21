@@ -1,42 +1,10 @@
 import Button from '@mui/material/Button';
-import React, { useContext, useEffect, useState } from 'react'
-import { IoMdAdd } from 'react-icons/io';
-import Checkbox from '@mui/material/Checkbox';
-import { Link } from 'react-router-dom';
-import Progress from '../../Components/ProgressBar';
-import { AiOutlineEdit } from 'react-icons/ai';
-import TooltipMUI from '@mui/material/Tooltip';
-import { GoTrash } from 'react-icons/go';
-import Chip from '@mui/material/Chip';
+import React, { useContext, useState } from 'react'
 
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import { FaAngleDown, FaRegEye } from 'react-icons/fa';
-import SearchBox from '../../Components/SearchBox';
+import { FaAngleDown } from 'react-icons/fa';
 import { MyContext } from '../../App';
-import { fetchDataFromApi } from '../../utils/api';
 import EditSubCatBox from './EditSubCatBox';
 
-
-
-
-const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
-
-
-const columns = [
-    { id: 'image', label: 'CATEGORY IMAGE', minWidth: 250 },
-    { id: 'catName', label: 'CATEGORY NAME', minWidth: 250 },
-    { id: 'subCatName', label: 'SUB CATEGORY NAME', minWidth: 400 },
-    { id: 'action', label: 'Action', minWidth: 100 },
-
-];
 
 const SubCategoryList = () => {
 
@@ -55,10 +23,10 @@ const SubCategoryList = () => {
     return (
         <>
 
-            <div className='flex items-center justify-between px-2 py-0 mt-3'>
-                <h2 className='text-[18px] font-[600]'>Sub Category List</h2>
+            <div className='flex items-center flex-col md:flex-row justify-start md:justify-between px-2 py-0 mt-3'>
+                <h2 className='text-[18px] font-[600] w-full md:w-[50%] mb-1 md:mb-0'>Sub Category List</h2>
 
-                <div className='col w-[30%] ml-auto flex items-center gap-3 justify-end'>
+                <div className='col mr-auto md:mr-0 md:ml-auto flex items-center gap-3 justify-end'>
                     {/* <Button className='btn bg-green-600! text-white! btn-sm'>
                         Export
                     </Button> */}

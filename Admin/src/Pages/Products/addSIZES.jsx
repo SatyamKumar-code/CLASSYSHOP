@@ -123,7 +123,7 @@ const AddSIZE = () => {
 
             </div>
 
-            <div className="card my-4 pt-5 pb-5 shadow-md sm:rounded-lg bg-white w-[65%]">
+            <div className="card my-4 mx-auto pt-5 pb-5 shadow-md sm:rounded-lg bg-white w-full sm:w-full md:w-[80%] lg:w-[65%] ">
                 <form className='form py-3 p-6' onSubmit={handleSubmit}>
                     <div className="col mb-4">
                         <h3 className='text-[14px] font-[500] mb-1 text-black'>{editMode ? "Edit" : "Add"} Product Size</h3>
@@ -149,7 +149,7 @@ const AddSIZE = () => {
             {
                 data?.length !== 0 &&
 
-                <div className="card my-4 pt-5 pb-5 shadow-md sm:rounded-lg bg-white w-[65%]">
+                <div className="card my-4 mx-auto pt-5 pb-5 shadow-md sm:rounded-lg bg-white w-full sm:w-full md:w-[80%] lg:w-[65%]">
                     <div className="relative overflow-x-auto mt-5 pb-5">
                         <table className="w-full text-sm text-left rtl:text-right text-gray-500">
                             <thead className="text-xs text-gray-700 uppercase bg-gray-1 00">

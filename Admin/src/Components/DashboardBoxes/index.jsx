@@ -2,8 +2,9 @@ import React, { useContext } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
+import 'swiper/css/free-mode';
 
-import { Navigation } from 'swiper/modules';
+import { FreeMode, Navigation } from 'swiper/modules';
 import { FiPieChart } from "react-icons/fi";
 import { IoStatsChartSharp } from 'react-icons/io5';
 import { MdOutlineReviews } from 'react-icons/md';
@@ -20,7 +21,8 @@ const DashboardBoxes = (props) => {
     <Swiper
         slidesPerView={4.5}
         spaceBetween={10}
-        modules={[Navigation]}
+        modules={[Navigation, FreeMode]}
+        freeMode={true}
         className="dashboardBoxesSlider"
         breakpoints={{
             300 : {

@@ -240,3 +240,12 @@ input[type="text"]:disabled, input[type="email"]:disabled {
 .contentRight{ 
     padding-top: 70px !important;
 }
+
+.rsw-editor{min-height: 200px !important; background: #fff !important;}
+
+.sidebar ul{padding-right: 5px !important;}
+.sidebar ul::-webkit-scrollbar{width: 5px !important;}
+
+.contentRight { padding-left: 20px !important;}
+
+.uploadBox h4{ text-align: center;}

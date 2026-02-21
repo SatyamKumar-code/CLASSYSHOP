@@ -69,14 +69,14 @@ const ChangePassword = () => {
 
   return (
     <section className='bg-white w-full '>
-        <header className='w-full fixed top-0 left-0 px-4 py-3 flex items-center justify-between z-50'>
+        <header className='w-full static lg:fixed top-0 left-0 px-4 py-3 flex items-center justify-center sm:justify-between z-50'>
             <Link to="/">
                 <img src="/logo1.svg" alt="Logo"
                 className='w-[150px]!'/>
             </Link>
 
 
-            <div className='flex items-center gap-0'>
+            <div className='hidden sm:flex items-center gap-0'>
               <NavLink to="/login" exact={true} activeClassName="active">
                 <Button className='rounded-full! text-[rgba(0,0,0,0.8)]! px-5! flex gap-1'>
                    <CgLogIn className='text-[18px]' /> Login
@@ -93,12 +93,12 @@ const ChangePassword = () => {
              <img src="https://t3.ftcdn.net/jpg/05/88/24/10/360_F_588241010_cdQJ2QTsyDtt36jZsAFR45aAXICnPAzR.jpg" 
         className='w-full fixed top-0 left-0 opacity-20'/>
 
-        <div className='loginBox card w-[600px] h-auto pb-20 mx-auto pt-20 relative z-50'>
+        <div className='loginBox card md:w-[600px] w-full h-auto px-3 pb-20 mx-auto pt-5 lg:pt-20 relative z-50'>
             <div className='text-center'>
                 <img src="/logo.svg"  className='m-auto'/>
             </div>
 
-            <h1 className='text-center text-[35px] font-[800] mt-4'>
+            <h1 className='text-center text-[18px] sm:text-[35px] font-[800] mt-4'>
                 Welcome Back
                 !<br />
                 You can change your password from here.
@@ -107,7 +107,7 @@ const ChangePassword = () => {
 
             <br />
 
-            <form className='w-full px-8 mt-3' onSubmit={handleSubmit}>
+            <form className='w-full px-3 sm:px-8 mt-3' onSubmit={handleSubmit}>
 
                 <div className='form-group mb-4 w-full'>
                     <h4 className='text-[14px] font-[500] mb-1'>

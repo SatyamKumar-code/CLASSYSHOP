@@ -141,10 +141,10 @@ const HomeSliderBanners = () => {
     return (
         <>
 
-            <div className='flex items-center justify-between px-2 py-0 mt-3'>
-                <h2 className='text-[18px] font-[600]'>Home Slider Banners </h2>
+            <div className='grid grid-cols-1 md:grid-cols-2 items-center justify-between px-2 py-0 mt-1 md:mt-2'>
+                <h2 className='text-[18px] font-[600]'>Home Slider Banners <span className='font-[400] text-[14px]'></span></h2>
                 
-                <div className='col w-[45%] ml-auto flex items-center gap-3 justify-end'>
+                <div className='col flex items-center gap-3 justify-start md:justify-end'>
                     {
                         sortedIds?.length !== 0 && <Button variant='contained' className='btn-sm px-3!' size='small' color='error'
                             onClick={deleteMultipleSlides}

@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Button } from "@mui/material";
-import { IoMdAdd } from "react-icons/io";
 
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -8,21 +7,12 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
 import TablePagination from "@mui/material/TablePagination";
-import MenuItem from '@mui/material/MenuItem';
-import { Link } from 'react-router-dom';
-import Progress from "../../Components/ProgressBar"
 import { AiOutlineEdit } from "react-icons/ai";
-import { FaRegEye } from "react-icons/fa6";
 import { GoTrash } from "react-icons/go";
-import SearchBox from '../../Components/SearchBox';
 import { MyContext } from "../../App";
 import { deleteData, fetchDataFromApi } from '../../utils/api';
 
-
-
-const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 const columns = [
     {id: "image", label: "IMAGE", minWidth: 100},
@@ -36,7 +26,6 @@ export const BlogList = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
     const [blogData, setBlogData] = useState([]);
-    const [sortedIds, setSortedIds] = useState([]);
 
     const context = useContext(MyContext);
 
@@ -109,7 +98,7 @@ export const BlogList = () => {
                                         <TableRow key={index}>
 
                                             <TableCell width={100}>
-                                                <div className='flex items-center gap-4 w-50'>
+                                                <div className='flex items-center gap-4 w-30 md:w-50 lg:w-62.5'>
                                                     <div className='img w-full rounded-md overflow-hidden group'>
                                                         <img src={item?.images[0]} 
                                                             className='w-full group-hover:scale-105 transition-all'/>
@@ -119,11 +108,11 @@ export const BlogList = () => {
                                             </TableCell>
 
                                             <TableCell width={200}>
-                                                <span className='text-[15px] font-medium'>{item?.title}</span>
+                                                <span className='text-[15px] font-medium inline-block w-50 sm:w-50 md:w-75'>{item?.title}</span>
                                             </TableCell>
 
                                             <TableCell width={300}>
-                                                <div dangerouslySetInnerHTML={{ __html: item?.description?.substr(0,150)+'...' }} />
+                                                <div className='w-62.5 sm:w-50 md:w-75' dangerouslySetInnerHTML={{ __html: item?.description?.substr(0,150)+'...' }} />
                                             </TableCell>
 
                                             <TableCell width={100}>
@@ -134,12 +123,12 @@ export const BlogList = () => {
                                                             model: "Edit Blog",
                                                             id: item?._id
                                                     })}>
-                                                        <AiOutlineEdit className='text-[rgba(0,0,0,0.7) text-[20px]' />
+                                                        <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
                                                     </Button>
 
                                                     <Button className='w-8.75! h-8.75! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.4)] rounded-full! hover:bg-[#f1f1f1]! min-w-8.75!'
                                                         onClick={() => deleteBlog(item?._id)}>
-                                                        <GoTrash className='text-[rgba(0,0,0,0.7) text-[18px]' />
+                                                        <GoTrash className='text-[rgba(0,0,0,0.7)] text-[18px]' />
                                                     </Button>
                                                 </div> 
                                             </TableCell>
@@ -158,6 +147,7 @@ export const BlogList = () => {
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
+                    className='paginationSmall'
                 >
                     
                 </TablePagination>

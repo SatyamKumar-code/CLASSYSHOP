@@ -82,8 +82,8 @@ const EditSubCatBox = (props) => {
             {
                 editMode === true &&
                 <>
-                    <div className='flex items-center justify-between py-2 gap-4'>
-                        <div className='w-[150px]'>
+                    <div className='flex items-center justify-between py-2 gap-4 whitespace-nowrap overflow-x-scroll'>
+                        <div className='w-45 md:w-37.5'>
                             <Select 
                                 style={{ zoom: '75%'}}
                                 className='w-full'
@@ -105,12 +105,12 @@ const EditSubCatBox = (props) => {
                             </Select>
                         </div>
 
-                        <input type="text" className="w-full h-[30px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus-border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm " 
+                        <input type="text" className="w-45 md:w-full h-[30px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus-border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm " 
                             name="name" value={formFields?.name} onChange={onChangeInput}>
                             
                         </input>
 
-                        <div className='flex items-center gap-2'>
+                        <div className='flex items-center gap-2 mr-5'>
                             <Button
                                 size='small'
                                 className='btn-sml'
@@ -124,13 +124,13 @@ const EditSubCatBox = (props) => {
                                         </>
                                     }
                                 </Button>
-                                <button 
+                                <Button 
                                     size="small"
-                                    variant="outlilned"
+                                    variant="outlined"
                                     onClick={() => setEditMode(false)}
                                 >
                                     Cancel
-                                </button>
+                                </Button>
                         </div>
                     </div>
                 </>

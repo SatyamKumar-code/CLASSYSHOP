@@ -316,8 +316,8 @@ const AddProduct = () => {
 
     return (
         <section className='p-5 bg-[rgba(240,240,240,0.5)]'>
-            <form className='form py-3 p-8 ' onSubmit={handleSubmit}>
-                <div className='scroll max-h-[73vh] overflow-y-scroll pr-4'>
+            <form className='form py-1 p-1 md:p-8 md:py-1' onSubmit={handleSubmit}>
+                <div className='scroll max-h-[72vh] overflow-y-scroll pr-1 md:pr-4 pt-4'>
                     <div className='grid grid-cols-1 mb-3'>
                         <div className='col'>
                             <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Name</h3>
@@ -343,7 +343,7 @@ const AddProduct = () => {
                         </div>
                     </div>
 
-                    <div className='grid grid-cols-4 mb-3 gap-4'>
+                    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  mb-3 gap-4'>
                         <div className='col'>
                             <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Category</h3>
 
@@ -586,10 +586,12 @@ const AddProduct = () => {
 
                         </div>
 
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Rating</h3>
-                            <Rating name='half-rating' defaultValue={1} precision={0.1}
-                                onChange={onChangeRating} />
+                        <div className='grid grid-cols-1 sm:grid-cols1 md:grid-cols-3 lg:grid-cols-4 mb-3 gap-4'>
+                            <div className='col'>
+                                <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Rating</h3>
+                                <Rating name='half-rating' defaultValue={1} precision={0.1}
+                                    onChange={onChangeRating} />
+                            </div>
                         </div>
 
 
@@ -600,27 +602,19 @@ const AddProduct = () => {
 
 
 
-                        <div className='grid grid-cols-7 gap-4'>
+                        <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4'>
 
                         {
                             previews?.length !== 0 && previews?.map((image, index) => {
                                 return (
-                                    <div className='uploadBoxWrapper relative'>
+                                    <div className='uploadBoxWrapper mr-3 relative'>
                                         <span className='absolute w-[20px] h-[20px] rounded-full overflow-hidden bg-red-700 -top-[5px] -right-[5px] flex items-center justify-center z-50 cursor-pointer'
                                             onClick={() => removeImg(image, index)}
                                         >
                                             <IoMdClose className='text-white text-[17px]' />
                                         </span>
 
-                                        <div key={index} className='uploadBox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-[150px] w-[100%] bg-gray-100 cursor-pointer hover:bg-gray-200 flex items-center justify-center flex-col relative'>
-                                            {/* <LazyLoadImage
-                                                alt={"image"}
-                                                effect="blur"
-                                                wrapperProps={{
-                                                    style: { transitionDelay: "1s" }
-                                                }}
-                                                src={image}
-                                            /> */}
+                                        <div key={index} className='uploadBox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-[80px] sm:h-[150px] w-[100%] bg-gray-100 cursor-pointer hover:bg-gray-200 flex items-center justify-center flex-col relative'>
                                             <img src={image} className='w-full' />
                                         </div>
 
@@ -647,7 +641,7 @@ const AddProduct = () => {
                                     checked={checkedSwitch}
                                 />
                             </div>
-                            <div className='grid grid-cols-7 gap-4'>
+                            <div className='grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4'>
                                 
 
                                 {
@@ -660,15 +654,7 @@ const AddProduct = () => {
                                                     <IoMdClose className='text-white text-[17px]' />
                                                 </span>
 
-                                                <div key={index} className='uploadBox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-[150px] w-[100%] bg-gray-100 cursor-pointer hover:bg-gray-200 flex items-center justify-center flex-col relative'>
-                                                    {/* <LazyLoadImage
-                                                alt={"image"}
-                                                effect="blur"
-                                                wrapperProps={{
-                                                    style: { transitionDelay: "1s" }
-                                                }}
-                                                src={image}
-                                            /> */}
+                                                <div key={index} className='uploadBox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-[80px] sm:h-[150px] w-[100%] bg-gray-100 cursor-pointer hover:bg-gray-200 flex items-center justify-center flex-col relative'>
                                                     <img src={image} className='w-full' />
                                                 </div>
 

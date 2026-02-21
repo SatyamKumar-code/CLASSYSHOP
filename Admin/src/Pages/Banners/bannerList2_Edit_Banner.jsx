@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 import { deleteImages, editData, fetchDataFromApi, postData } from '../../utils/api';
 
-export const EditBannerV1 = () => {
+export const BannerList2_Edit_Banner = () => {
 
     const [formFields, setFormFields] = useState({
         bannerTitle: '',
@@ -63,6 +63,10 @@ export const EditBannerV1 = () => {
     const handleChangeProductCat = (event) => {
         setProductCat(event.target.value);
         formFields.catId = event.target.value;
+    }
+
+    const selectCatByName = (name) => {
+        formFields.catName = name;
     }
 
     const handleChangeProductSubCat = (event) => {

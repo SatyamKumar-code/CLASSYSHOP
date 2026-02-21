@@ -238,9 +238,6 @@ const Products = () => {
                             Delete({sortedIds?.length})
                         </Button>
                     }
-                    <Button className='btn bg-green-600! text-white! btn-sm'>
-                        Export
-                    </Button>
                     <Button className='btn-blue text-white! btn-sm'
                         onClick={() => context.setIsOpenFullScreenPanel({
                             open: true,
@@ -254,8 +251,8 @@ const Products = () => {
             <div className='card my-4 pt-5 shadow-md sm:rounded-lg bg-white'>
 
 
-                <div className='flex items-center w-full px-5 justify-between gap-4'>
-                    <div className='col w-[15%]'>
+                <div className='grid grid-cols-1 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 items-center w-full px-5 justify-between gap-4'>
+                    <div className='col'>
                         <h4 className='font-[600] text-[13px] mb-2'>Category By</h4>
 
                         {
@@ -286,7 +283,7 @@ const Products = () => {
                         }
                     </div>
 
-                    <div className='col w-[15%]'>
+                    <div className='col'>
                         <h4 className='font-[600] text-[13px] mb-2'>Sub Category By</h4>
 
                         {
@@ -322,7 +319,7 @@ const Products = () => {
                         }
                     </div>
 
-                    <div className='col w-[20%]'>
+                    <div className='col'>
                         <h4 className='font-[600] text-[13px] mb-2'>Third Lavel Sub Category By</h4>
 
                         {
@@ -362,8 +359,10 @@ const Products = () => {
                         }
                     </div>
 
-                    <div className='col w-[20%] ml-auto'>
-                        <SearchBox />
+                    <div className='col w-full ml-auto flex items-center'>
+                        <div style={{ alignSelf: 'end' }} className='w-full'>
+                            <SearchBox />
+                        </div>
                     </div>
 
 
@@ -514,6 +513,7 @@ const Products = () => {
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
+                    className='paginationSmall'
                 />
 
             </div>

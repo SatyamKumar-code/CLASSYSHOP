@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import { MyContext } from '../../App';
@@ -8,9 +8,9 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { FaCloudUploadAlt } from 'react-icons/fa';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
-import { deleteImages, editData, fetchDataFromApi, postData } from '../../utils/api';
+import { deleteImages, postData } from '../../utils/api';
 
-export const EditBannerV1 = () => {
+export const BannerList2_AddBanner = () => {
 
     const [formFields, setFormFields] = useState({
         bannerTitle: '',
@@ -32,24 +32,6 @@ export const EditBannerV1 = () => {
 
     const context = useContext(MyContext);
 
-    useEffect(() => {
-        const id = context?.isOpenFullScreenPanel?.id;
-
-        fetchDataFromApi(`/api/bannerV1/${id}`).then((res) => {
-            setFormFields({
-                bannerTitle: res?.banner?.bannerTitle,
-                images: res?.banner?.images,
-                price: res?.banner?.price,
-                alignInfo: res?.banner?.alignInfo,
-            });
-            setPreviews(res?.banner?.images);
-            setProductCat(res?.banner?.catId || '');
-            setProductSubCat(res?.banner?.subCatId || '');
-            setProductThirdLavelCat(res?.banner?.thirdsubCatId || '');
-            setAlignInfo(res?.banner?.alignInfo || '');
-        })
-    }, [])
-
     const onChangeInput = (e) => {
         const { name, value } = e.target;
         setFormFields(() => {
@@ -65,6 +47,10 @@ export const EditBannerV1 = () => {
         formFields.catId = event.target.value;
     }
 
+    const selectCatByName = (name) => {
+        formFields.catName = name;
+    }
+
     const handleChangeProductSubCat = (event) => {
         setProductSubCat(event.target.value);
         formFields.subCatId = event.target.value;
@@ -74,6 +60,11 @@ export const EditBannerV1 = () => {
         setProductThirdLavelCat(event.target.value);
         formFields.thirdsubCatId = event.target.value;
     };
+
+    const handleChangeAlignInfo = (event) => {
+        setAlignInfo(event.target.value);
+        formFields.alignInfo = event.target.value;
+    }
 
 
     const setPreviewsFun = (previewsArr) => {
@@ -102,15 +93,11 @@ export const EditBannerV1 = () => {
         })
     }
 
-    const handleChangeAlignInfo = (event) => {
-        setAlignInfo(event.target.value);
-        formFields.alignInfo = event.target.value;
-    }
-
     const handleSubmit = (e) => {
             e.preventDefault();
     
             setIsLoading(true);
+            console.log(formFields);
             
     
             if (formFields.bannerTitle === '') {
@@ -130,8 +117,8 @@ export const EditBannerV1 = () => {
                 return false;
             }
     
-            editData(`/api/bannerV1/${context?.isOpenFullScreenPanel?.id}`, formFields).then((res) => {
-                if (res?.data?.success === true) {
+            postData("/api/bannerV1/add", formFields).then((res) => {
+                if (res?.success === true) {
                     setTimeout(() => {
                         context.alertBox("Success", "Banner created successfully.");
                         setIsLoading(false);
@@ -143,7 +130,7 @@ export const EditBannerV1 = () => {
                     }, 2000)
                     
                 } else {
-                    context.alertBox("error", res?.data?.message || "Failed to create banner.");
+                    context.alertBox("error", res?.message || "Failed to create banner.");
                     setIsLoading(false);
                 }
             })
@@ -311,14 +298,6 @@ export const EditBannerV1 = () => {
                                         </span>
 
                                         <div key={index} className='uploadBox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-37.5 w-full bg-gray-100 cursor-pointer hover:bg-gray-200 flex items-center justify-center flex-col relative'>
-                                            {/* <LazyLoadImage
-                                                alt={"image"}
-                                                effect="blur"
-                                                wrapperProps={{
-                                                    style: { transitionDelay: "1s" }
-                                                }}
-                                                src={image}
-                                            /> */}
                                             <img src={image} className='w-full' />
                                         </div>
 
