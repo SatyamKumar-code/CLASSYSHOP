@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react' 
 import Button from '@mui/material/Button';
 import { BsFillBagCheckFill } from 'react-icons/bs';
-import MyListItems from './MyListItems'; 
+import MyListItems from './myListItems'; 
 import AccountSidebar from '../../components/AccountSidebar';
 import { MyContext } from '../../App';
 import { Link } from 'react-router-dom';
