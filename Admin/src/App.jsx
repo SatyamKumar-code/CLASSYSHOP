@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import './App.css'
+import './responsive.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Header from './Components/Header'
 import Sidebar from './Components/Sidebar'
@@ -44,12 +45,23 @@ function App() {
   const [userData, setUserData] = useState(null);
   const [address, setAddress] = useState([]);
   const [catData, setCatData] = useState([]);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [sidebarWidth, setSidebarWidth] = useState(18);
 
   const [isOpenFullScreenPanel, setIsOpenFullScreenPanel] = useState({
     open: false,
     Modal: '',
     id: ""
   });
+
+  useEffect(() => {
+    if(windowWidth < 922) {
+      setisSidebarOpen(false);
+      setSidebarWidth(100);
+    }else {
+      setSidebarWidth(18);
+    }
+  },[windowWidth])
 
 
   useEffect(() => {
@@ -82,6 +94,16 @@ function App() {
 
   useEffect(() => {
     getCat();
+
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    }
   }, []) // ← Now runs only once on mount
 
   const getCat = () => {
@@ -107,13 +129,13 @@ function App() {
       exaxt: true,
       element: (
         <ProtectedRoute>
-          <section className='main'>
+          <section className='main'> 
             <Header />
             <div className='contentMain flex'>
-              <div className={`overflow-hidden sidebarWrapper ${isSidebarOpen === true ? 'w-[18%]' : 'w-[0%] opacity-0'} transition-all duration-300`}>
+              <div className={`overflow-hidden sidebarWrapper ${isSidebarOpen === true ? windowWidth < 922 ? `w-[${sidebarWidth/1.5}%]`: `w-[${sidebarWidth}%]`  : 'w-[0%] opacity-0'} transition-all duration-300`}>
                 <Sidebar />
               </div>
-              <div className={`contentRight py-4 px-5 ${isSidebarOpen === false ? 'w-[100%]' : 'w-[82%]'} transition-all duration-300`}>
+              <div className={`contentRight py-4 px-5 ${ isSidebarOpen === true && windowWidth < 922 && 'w-[100%]'} ${isSidebarOpen === false ? 'w-[100%]' : `w-[${100 - sidebarWidth}%]`} transition-all duration-300`}>
                 <Dashboard />
               </div>
             </div>
@@ -437,7 +459,10 @@ function App() {
     address,
     catData,
     setCatData,
-    getCat
+    getCat,
+    windowWidth,
+    setSidebarWidth,
+    sidebarWidth
   };
 
   return (

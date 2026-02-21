@@ -1,0 +1,45 @@
+@media only screen and (min-width: 320px) and (max-width: 922px) {
+    html,body{
+        overflow-x: hidden;
+    }
+
+    /* .dashboardBoxesSlider .swiper-wrapper{
+        overflow-x: scroll !important;
+        white-space: nowrap;
+        display: block !important;
+    }
+    .dashboardBoxesSlider .swiper-wrapper .swiper-slide{
+        width: 300px !important;
+        display: inline-block;
+        vertical-align: top;
+    } */
+
+    .dashboardFilters{
+        display: block !important;
+        white-space: nowrap;
+        overflow-x: scroll;
+    }
+
+    .dashboardFilters::-webkit-scrollbar{
+        display: none !important;
+    }
+
+    .dashboardFilters .col{
+        display: inline-block;
+        vertical-align: top;
+        width: 250px ;
+        padding-right: 15px;
+    }
+
+    .dashboardFilters .search_box{
+        position: relative;
+        top: 23px;
+    }
+
+    .dashboardBoxesSlider{
+        display: block !important;
+        white-space: nowrap;
+        overflow-x: scroll;
+    }
+
+}

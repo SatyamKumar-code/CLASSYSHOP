@@ -97,6 +97,7 @@ const Dashboard = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [pageOrder, setPageOrder] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [orderSearchQuery, setOrderSearchQuery] = useState('');
   const [totalOrdersData, setTotalOrdersData] = useState([]);
 
   const [users, setUsers] = useState([]);
@@ -290,15 +291,11 @@ const Dashboard = () => {
   }
 
 
-  const handleChangeYear = (event) => {
-
-  }
-
   return (
     <>
-      <div className='w-full py-2 px-5 border bg-[#f1faff] border-[rgba(0,0,0,0.1)] flex items-center gap-8 mb-5 justify-between rounded-md'>
+      <div className='w-full py-5 px-5 border bg-[#f1faff] border-[rgba(0,0,0,0.1)] flex items-center gap-8 mb-5 justify-between rounded-md'>
         <div className='info'>
-          <h1 className='text-[35px] font-bold leading-10 mb-3'>Good Morning, <br /> Cameron👋 </h1>
+          <h1 className='text-[28px] sm:text-[35px] font-bold leading-10 mb-3'>Welcome, <br /><span className='text-blue-600'> {context?.userData?.name || "User"} </span></h1>
           <p>Hear's What happening on your store today. See the statistics at once.</p>
           <br />
           <Button className="btn-blue capitalize!"
@@ -312,7 +309,7 @@ const Dashboard = () => {
           </Button>
         </div>
 
-        <img src="/shop-illustration.webp" className='w-[250px]' />
+        <img src="/shop-illustration.webp" className='w-[250px] hidden lg:block' />
       </div>
 
       {
@@ -323,7 +320,7 @@ const Dashboard = () => {
       <div className='card my-4 pt-5 shadow-md sm:rounded-lg bg-white'>
 
 
-        <div className='flex items-center w-full px-5 justify-between gap-4'>
+        <div className='flex items-center w-full px-5 justify-between gap-4 dashboardFilters'>
           <div className='col w-[15%]'>
             <h4 className='font-[600] text-[13px] mb-2'>Category By</h4>
 
@@ -431,8 +428,12 @@ const Dashboard = () => {
             }
           </div>
 
-          <div className='col w-[20%] ml-auto'>
-            <SearchBox />
+          <div className='col w-[20%] ml-auto search_box mb-6'>
+            <SearchBox 
+              serchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              setPageOrdr={() => setPageOrder(1)}
+            />
           </div>
 
 
@@ -581,12 +582,12 @@ const Dashboard = () => {
 
 
       <div className='card my-4 shadow-md sm:rounded-lg bg-white'>
-        <div className='flex items-center justify-between px-5 py-5'>
-          <h2 className='text-[18px] font-[600]'>Recent Orders</h2>
-          <div className='w-[25%]'>
+        <div className='flex items-center justify-between px-5 py-5 flex-col sm:flex-row'>
+          <h2 className='text-[18px] font-[600] w-[75%] text-left md:text-center'>Recent Orders</h2>
+          <div className='w-[75%] md:w-[25%]'>
             <SearchBox
-              serchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
+              serchQuery={orderSearchQuery}
+              setSearchQuery={setOrderSearchQuery}
               setPageOrdr={() => setPageOrder(1)}
             />
           </div>
@@ -800,7 +801,7 @@ const Dashboard = () => {
         {
           chartData?.length !== 0 &&
           <BarChart
-            width={1000}
+            width={context?.windowWidth > 922 ? (context?.windowWidth - 300) : (context?.windowWidth - 25)}
             height={500}
             data={chartData}
             margin={{
