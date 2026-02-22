@@ -1,25 +1,12 @@
-import https from 'https';
 import nodemailer from 'nodemailer';
+import sgTransport from 'nodemailer-sendgrid-transport';
 
-const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,  // Use STARTTLS instead of implicit TLS
-    requireTLS: true,
+// Use SendGrid for Render deployment (more reliable than Gmail on cloud)
+const transporter = nodemailer.createTransport(sgTransport({
     auth: {
-        user: process.env.EMAIL,
-        pass: process.env.EMAIL_PASS,
+        api_key: process.env.SENDGRID_API_KEY,
     },
-    connectionTimeout: 15000, // 15 seconds
-    socketTimeout: 15000,
-    greetingTimeout: 15000,
-    pool: {
-        maxConnections: 5,
-        maxMessages: 100,
-        rateDelta: 4000,
-        rateLimit: true,
-    },
-});
+}));
 
 async function sendEmail(to, subject, text, html, maxRetries = 3) {
     let lastError;
@@ -33,21 +20,21 @@ async function sendEmail(to, subject, text, html, maxRetries = 3) {
                 text,
                 html,
             });
-            console.log(`Email sent successfully to ${to} (Attempt ${attempt})`);
+            console.log(`Email sent successfully to ${to}`);
             return { success: true, messageId: info.messageId };
         } catch (error) {
             lastError = error;
-            console.error(`Email send attempt ${attempt} failed:`, error.code || error.message);
+            console.error(`Email send attempt ${attempt} failed:`, error.message);
             
             // Don't retry if it's an auth error
-            if (error.code === 'EAUTH') {
-                console.error('Authentication failed - check EMAIL and EMAIL_PASS environment variables');
+            if (error.code === 'EAUTH' || error.message?.includes('unauthorized')) {
+                console.error('SendGrid API key is invalid - check SENDGRID_API_KEY');
                 return { success: false, error: 'Authentication failed', code: error.code };
             }
             
-            // Retry on connection timeout
-            if (error.code === 'ETIMEDOUT' && attempt < maxRetries) {
-                const delay = Math.pow(2, attempt - 1) * 1000; // Exponential backoff
+            // Retry on timeout/network errors
+            if (attempt < maxRetries && (error.code === 'ETIMEDOUT' || error.code === 'ECONNREFUSED')) {
+                const delay = Math.pow(2, attempt) * 1000;
                 console.log(`Retrying in ${delay}ms...`);
                 await new Promise(resolve => setTimeout(resolve, delay));
             } else if (attempt === maxRetries) {
