@@ -76,7 +76,7 @@ export async function registerUserController(req, res) {
         });
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -125,7 +125,7 @@ export async function verifyEmailController(req, res) {
         }
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -207,7 +207,7 @@ export async function authWithGoogleController(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -282,7 +282,7 @@ export async function loginUserController(req, res) {
         })
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -316,7 +316,7 @@ export async function logoutController(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -402,7 +402,7 @@ export async function userAvatarController(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -432,7 +432,7 @@ export async function removeImageFromCloudinary(request, response) {
 
     } catch (error) {
         return response.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -512,7 +512,7 @@ export async function updateUserDetails(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -558,7 +558,7 @@ export async function forgotPasswordController(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })

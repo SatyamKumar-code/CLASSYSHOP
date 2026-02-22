@@ -45,7 +45,7 @@ export async function uploadImages(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || 'Image upload failed',
             error: true,
             success: false
         })
@@ -84,7 +84,7 @@ export async function addBanner(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -112,7 +112,7 @@ export async function getBanners(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -140,7 +140,7 @@ export async function getBanner(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -187,7 +187,7 @@ export async function deleteBanner(req, res) {
         
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -229,7 +229,7 @@ export async function updatedBanner(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         });

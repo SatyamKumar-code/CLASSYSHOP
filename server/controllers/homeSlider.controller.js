@@ -43,7 +43,7 @@ export async function uploadImages(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -77,7 +77,7 @@ export async function addHomeSlide(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -106,7 +106,7 @@ export async function getHomeSlides(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -134,7 +134,7 @@ export async function getSlide(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -213,7 +213,7 @@ export async function deleteSlide(req, res) {
         
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -250,7 +250,7 @@ export async function updatedSlide(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         });
@@ -302,7 +302,7 @@ export async function deleteMultipleSlides(req, res) {
 
         } catch (error) {
             return res.status(500).json({
-                messsage: error.message || error,
+                message: error.message || error,
                 error: true,
                 success: false
             })
@@ -310,7 +310,7 @@ export async function deleteMultipleSlides(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })

@@ -45,7 +45,7 @@ export async function uploadImages(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || 'Image upload failed',
             error: true,
             success: false
         })
@@ -80,7 +80,7 @@ export async function addBlog(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -127,7 +127,7 @@ export async function getBlogs(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -155,7 +155,7 @@ export async function getBlog(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -202,7 +202,7 @@ export async function deleteBlog(req, res) {
         
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -240,7 +240,7 @@ export async function updatedBlog(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         });

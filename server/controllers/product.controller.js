@@ -47,7 +47,7 @@ export async function uploadImages(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -86,7 +86,7 @@ export async function uploadBannerImages(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -146,7 +146,7 @@ export async function createProduct( req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -198,7 +198,7 @@ export async function getAllProducts(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -252,7 +252,7 @@ export async function getAllProductsByCatId(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -306,7 +306,7 @@ export async function getAllProductsByCatName(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -361,7 +361,7 @@ export async function getAllProductsBySubCatId(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -415,7 +415,7 @@ export async function getAllProductsBySubCatName(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -471,7 +471,7 @@ export async function getAllProductsByThirdLavelCatId(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
@@ -525,7 +525,7 @@ export async function getAllProductsByThirdLavelCatId(req, res) {
 
     } catch (error) {
         return res.status(500).json({
-            messsage: error.message || error,
+            message: error.message || error,
             error: true,
             success: false
         })
