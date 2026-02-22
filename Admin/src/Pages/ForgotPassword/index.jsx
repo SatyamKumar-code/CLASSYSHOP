@@ -57,7 +57,7 @@ const ForgotPassword = () => {
     }
 
   return (
-    <section className='bg-white w-full h-[100vh] '>
+    <section className='w-full h-[100vh] relative' style={{background: 'linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%'}}>
         <header className='w-full static lg:fixed top-0 left-0 px-4 py-3 flex items-center justify-center sm:justify-between z-50'>
             <Link to="/">
                 <img src="/logo1.svg" alt="Logo"
@@ -79,8 +79,6 @@ const ForgotPassword = () => {
               </NavLink>
             </div>
         </header>
-             <img src="https://t3.ftcdn.net/jpg/05/88/24/10/360_F_588241010_cdQJ2QTsyDtt36jZsAFR45aAXICnPAzR.jpg" 
-        className='w-full fixed top-0 left-0 opacity-20'/>
 
         <div className='loginBox card md:w-[600px] w-full h-auto px-3 pb-20 mx-auto pt-5 lg:pt-20 relative z-50'>
             <div className='text-center'>

@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 
-const  OtpBox = ({ lenght, onChange }) => {
+const  OtpBox = React.memo(({ lenght, onChange }) => {
     const [otp, setOtp] = useState(new Array(lenght).fill(""));
 
-    const handleChange = (element, index) => {
+    const handleChange = useCallback((element, index) => {
         const value = element.value;
         if (isNaN(value)) return;
 
@@ -13,15 +13,17 @@ const  OtpBox = ({ lenght, onChange }) => {
         onChange(newOtp.join(""));
 
         if (value && index < lenght - 1) {
-            document.getElementById(`otp-input-${index + 1}`).focus();
+            const nextInput = document.getElementById(`otp-input-${index + 1}`);
+            if (nextInput) nextInput.focus();
         }
-    };
+    }, [otp, lenght, onChange]);
 
-    const handleKeyDown = (event, index) => {
+    const handleKeyDown = useCallback((event, index) => {
         if (event.key === "Backspace" && !otp[index] && index > 0) {
-            document.getElementById(`otp-input-${index - 1}`).focus();
+            const prevInput = document.getElementById(`otp-input-${index - 1}`);
+            if (prevInput) prevInput.focus();
         }
-    };
+    }, [otp]);
 
     return (
         <div style={{display:"flex", gap: "5px", justifyContent:"center"}} className="otpBox">
@@ -39,6 +41,6 @@ const  OtpBox = ({ lenght, onChange }) => {
             ))}
         </div>
     )
-};
+});
 
 export default OtpBox;

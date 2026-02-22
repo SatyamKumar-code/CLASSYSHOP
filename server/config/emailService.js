@@ -3,23 +3,21 @@ import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
+    port: 587,
+    secure: false,  // Use STARTTLS instead of implicit TLS
+    requireTLS: true,
     auth: {
         user: process.env.EMAIL,
         pass: process.env.EMAIL_PASS,
     },
-    connectionTimeout: 10000, // 10 seconds
-    socketTimeout: 10000,     // 10 seconds
-    greetingTimeout: 10000,
+    connectionTimeout: 15000, // 15 seconds
+    socketTimeout: 15000,
+    greetingTimeout: 15000,
     pool: {
         maxConnections: 5,
         maxMessages: 100,
         rateDelta: 4000,
         rateLimit: true,
-    },
-    tls: {
-        rejectUnauthorized: false, // For development; use true in production with valid certs
     },
 });
 
