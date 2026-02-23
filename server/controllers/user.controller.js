@@ -57,7 +57,7 @@ export async function registerUserController(req, res) {
 
         await sendEmailFun({
             to: email,
-            subject: "Verify email from Classifyshop App",
+            subject: "Verify email from Classyshop App",
             text: "",
             html: VerificationEmail(name, verifyCode)
         })
@@ -480,7 +480,7 @@ export async function updateUserDetails(req, res) {
         if (email !== userExist.email) {
             await sendEmailFun({
                 to: email,
-                subject: "verify email from Classifyshop App",
+                subject: "verify email from Classyshop App",
                 text: "",
                 html: VerificationEmail(name, verifyCode)
             })
@@ -542,7 +542,7 @@ export async function forgotPasswordController(req, res) {
 
             await sendEmailFun({
                 to: email,
-                subject: "Reset Password - Classifyshop App",
+                subject: "Reset Password - Classyshop App",
                 text: "",
                 html: VerificationEmail(user?.name, verifyCode)
             })

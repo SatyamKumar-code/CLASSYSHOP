@@ -77,3 +77,15 @@
 @media only screen and (min-width: 320px) and (max-width: 922px) {
     .MuiTableCell-head{white-space: nowrap !important;}
 }
+
+@media only screen and (min-width: 320px) and (max-width: 500px) {
+    .sidebar{width: 80% !important;}
+}
+
+@media only screen and (min-width: 500px) and (max-width: 767px) {
+    .sidebar{width: 60% !important;}
+}
+
+@media only screen and (min-width: 767px) and (max-width: 922px) {
+    .sidebar{width: 40% !important;}
+}

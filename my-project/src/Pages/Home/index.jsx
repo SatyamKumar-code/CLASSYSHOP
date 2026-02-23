@@ -19,6 +19,7 @@ import HomeBannerV2 from '../../components/HomeSliderV2';
 import BannerBoxV2 from '../../components/bannerBoxV2';
 import { fetchDataFromApi } from '../../utils/api';
 import { MyContext } from '../../App';
+import HomeSliderSkeleton from '../../components/skeleton/BannerLoading';
 
 const Home = () => {
 
@@ -87,9 +88,12 @@ const Home = () => {
 
   return (
     <>
-    {
-      homeSlidesData?.length !== 0 && <HomeSlider data={homeSlidesData} />
-    }
+      <div className='min-h-full relative'>
+        {
+          homeSlidesData?.length !== 0  ? <HomeSlider data={homeSlidesData} /> : <HomeSliderSkeleton />
+        }
+        
+      </div>
 
     {
       context?.catData?.length !== 0 && <HomeCatSlider data={context?.catData} />

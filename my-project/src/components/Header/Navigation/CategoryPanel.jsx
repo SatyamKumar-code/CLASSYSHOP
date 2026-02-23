@@ -13,6 +13,7 @@ const CategoryPanel = (props) => {
 
     const toggleDrawer = (newOpen) => () => {
         props.setIsOpenCategoryPanel(newOpen);
+        props.propsSetIsOpenCatPanel(newOpen);
     }
 
 

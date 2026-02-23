@@ -51,6 +51,7 @@ function App() {
   const [addressId, setAddressId] = useState('');
 
   const [searchData, setSearchData] = useState([]);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const handleOpenProductDetailModel = (status, item) => {
     setOpenProductDetailsModal({
@@ -124,6 +125,16 @@ function App() {
         setCatData(res?.categories);
       }
     })
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+
   }, []);
 
   const alertBox = (type, msg) => {
@@ -227,7 +238,8 @@ function App() {
     addressId,
     setAddressId,
     searchData,
-    setSearchData
+    setSearchData,
+    windowWidth
     
   }
 

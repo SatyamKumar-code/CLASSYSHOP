@@ -9,14 +9,19 @@ import CategoryPanel from './CategoryPanel';
 import "../Navigation/style.css";
 import { fetchDataFromApi } from '../../../utils/api';
 import { MyContext } from '../../../App';
+import MobileNav from './mobileNav';
 
 
-const Navigation = () => {
+const Navigation = (props) => {
 
     const [isOpenCategoryPanel, setIsOpenCategoryPanel] = useState(false);
     const [catData, setCatData] = useState([]);
 
     const Context = useContext(MyContext);
+
+    useEffect(() => {
+        setIsOpenCategoryPanel(props?.isOpenCatPanel);
+    },[props?.isOpenCatPanel]);
 
     useEffect(() => {
         setCatData(Context?.catData);
@@ -28,12 +33,15 @@ const Navigation = () => {
 
     return (
         <>
-            <nav>
-                <div className='container flex items-center justify-end gap-8'>
-                    <div className='col_1 w-[20%]'>
+            <nav className='navigation'>
+                <div className='container flex items-center justify-start lg:justify-end gap-8'>
+                    {
+                        Context?.windowWidth > 922 &&
+                        <div className='col_1 w-[20%]'>
                         <Button className='!text-black gap-2 w-full' onClick={openCategoryPanel}><RiMenu2Fill className='text-[18px]' /> Shop By Categories<LiaAngleDownSolid className='text-[13px] ml-auto font-bold' /></Button>
                     </div>
-                    <div className='col_2 w-[60%]'>
+                    }
+                    <div className='col_2 w-full lg:w-[60%]'>
                         <ul className='flex items-center gap-3 nav'>
                             <li className='list-none'>
                                 <Link to={"/"} className='link transition text-[14px] font-[500]'>
@@ -99,7 +107,7 @@ const Navigation = () => {
                         </ul>
                     </div>
 
-                    <div className='col_3 w-[20%]'>
+                    <div className='col_3 w-[20%] hidden lg:block'>
                         <p className='text-[14px] font-[500] flex items-center gap-3 mb-0 mt-0'><GoRocket /> Free International Delivery</p>
                     </div>
                 </div>
@@ -111,8 +119,13 @@ const Navigation = () => {
                 <CategoryPanel 
                     isOpenCategoryPanel={isOpenCategoryPanel} 
                     setIsOpenCategoryPanel={setIsOpenCategoryPanel} 
+                    propsSetIsOpenCatPanel={props?.setIsOpenCatPanel}
                     data={catData}
                 />
+            }
+
+            {
+                Context?.windowWidth < 922 && <MobileNav />
             }
             
         </>
