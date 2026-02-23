@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import 'swiper/css/free-mode';
 
 import { FreeMode, Navigation } from 'swiper/modules';
-import { MyContext } from '../../../../Admin/src/App';
+import { MyContext } from '../../App';
 
 const HomeCatSlider = ( props ) => {
 
@@ -44,7 +44,7 @@ const HomeCatSlider = ( props ) => {
             props?.data?.map((cat, index) => {
               return (
                 <SwiperSlide>
-                  <Link to="/">
+                  <Link to={`/products?catId=${cat?._id}`} key={index} className='h-full'>
                     <div className='item py-4 lg:py-7 px-3 bg-white rounded-sm text-center items-center flex justify-center flex-col'>
                       <img src={cat?.images[0]} alt="Category Slide"
                         className='w-[40%] lg:w-[60px] transition-all' />
