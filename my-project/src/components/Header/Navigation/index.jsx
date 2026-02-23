@@ -9,7 +9,7 @@ import CategoryPanel from './CategoryPanel';
 import "../Navigation/style.css";
 import { fetchDataFromApi } from '../../../utils/api';
 import { MyContext } from '../../../App';
-import MobileNav from './mobileNav';
+import MobileNav from './MobileNav';
 
 
 const Navigation = (props) => {
