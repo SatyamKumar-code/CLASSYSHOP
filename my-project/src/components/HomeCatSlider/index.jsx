@@ -25,15 +25,15 @@ const HomeCatSlider = ( props ) => {
                 slidesPerView: 4.6,
                 spaceBetween: 5,
             },
-            650 : {
+            550 : {
                 slidesPerView: 5.6,
                 spaceBetween: 5,
             },
-            768 : {
+            968 : {
                 slidesPerView: 6.6,
                 spaceBetween: 5,
             },
-            922 : {
+            1100 : {
                 slidesPerView: 8.6,
                 spaceBetween: 5,
             },

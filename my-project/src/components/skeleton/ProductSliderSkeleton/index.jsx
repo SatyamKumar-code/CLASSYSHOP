@@ -34,6 +34,32 @@ const ProductSliderSkeleton = ({ items = 6 }) => {
         navigation={true}
         modules={[Navigation]}
         className="mySwiper"
+        breakpoints={{
+          300: {
+            slidesPerView: 2,
+            spaceBetween: 10,
+          },
+          650: {
+            slidesPerView: 3,
+            spaceBetween: 10,
+          },
+          768: {
+            slidesPerView: 4,
+            spaceBetween: 10,
+          },
+          922: {
+            slidesPerView: 4,
+            spaceBetween: 10,
+          },
+          1025: {
+            slidesPerView: 5,
+            spaceBetween: 10,
+          },
+          1222: {
+            slidesPerView: 6,
+            spaceBetween: 10,
+          },
+        }}
       >
         {
           [...Array(items)].map((_, index) => (

@@ -3,17 +3,16 @@ import React from 'react';
 
 const HomeSliderSkeleton = () => {
     return (
-        <div className='homeSlider pb-2 pt-3 md:pt-5 lg:pb-5 absolute top-0 left-0 w-full'>
+        <div className='homeSlider pb-2 pt-3 lg:pt-5 lg:pb-5 absolute top-0 left-0 z-50 w-full'>
             <div className='container'>
-               <div className='flex items-center gap-2 animate-pulse relative'>
+                <div className='flex  min-h-[10vh] sm:min-h-[25vh] md:min-h-[25vh] lg:min-w-[65vh] items-center gap-2 animate-pulse relative'>
                     <img src="/homeBannerPlaceholder.jpg" className='opacity-0' />
                     <div className='flex items-center mb-3 justify-center w-full h-full bg-gray-300 rounded-lg dark:bg-gray-700 absolute top-0 left-0 z-50'>
-                        <svg className='w-20 h-20 text-gray-400 dark:text-gray-600' aria-hidden="true" xmlns='http://www.w3.org/2000/svg'
-                        fill='currentcolor' viewBox='0 0 20 18'>
-                            <path d="М18 022 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 200-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4. 376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.44713.5-7A1 1 0 0 1 7. 468 6a.965.965 0 0 1 .9.512.775 4.757 1.546-1.887a1 1 0 0 1 1.618. 112.541 4a1 1 0 0 1 .028 1.011Z" />
+                        <svg className='w-10 lg:w-20 lg:h-20 h-10 text-gray-400 dark:text-gray-600' aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+                            <path d="M18 2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2zm-2 0v14H4V2h12zm-3 4a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-8 10l3-4 2.25 3 3-4 3.75 5H4z" />
                         </svg>
                     </div>
-               </div>
+                </div>
             </div>
         </div>
   );

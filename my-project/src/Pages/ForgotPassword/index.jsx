@@ -46,12 +46,12 @@ const ForgotPassword = () => {
             return false
         }
         if (formFields.confirmPassword !== formFields.newPassword) {
-            context.alertBox("error", "Passeord and confirm password not matched")
+            context.alertBox("error", "Password and confirm password not matched")
             setIsLoading(false);
             return false
         }
 
-        postData("/api/user/reset-password", formFields ).then((res) => {
+        postData("/api/user/reset-passwordwithotp", formFields ).then((res) => {
             if (res?.error === false) {
                 context.alertBox("Success", res?.message);
                 localStorage.removeItem("userEmail");

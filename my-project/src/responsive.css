@@ -3,6 +3,11 @@
         overflow-x: hidden;
     }
 
+    .btn-sm{padding: 3px 10px !important; font-size: 11px !important;}
+    .btn-lg{padding: 5px 10px !important; font-size:  14px !important;}
+    .btn{padding: 5px 10px !important; font-size: 12px !important;}
+    .btn svg{font-size: 15px !important;}
+
     .mobileNav a.isActive button {
         color: #ff5252 !important;
     }
@@ -12,6 +17,16 @@
 
     .container{width: 95% !important; max-width: 95% !important;}
 
+    .scrollableBox{white-space: nowrap; overflow-x: scroll; overflow-y: hidden; display: block !important;}
+    .scrollableBox::-webkit-scrollbar {display: none !important;}
+    .scrollableBox .box, .scrollableBox .col{display: inline-block !important; vertical-align: top !important; margin-right: 12px !important; width: 300px !important;}
+    .scrollableBox .box .info *{white-space: break-spaces !important;}
 
 
+
+}
+
+@media only screen and (min-width: 320px) and (max-width: 767px) {
+    .MuiTabs-flexContainer button{font-size: 13px !important;}
+    .addToCartBtn{padding: 7px 13px !important;}
 }

@@ -88,10 +88,11 @@ const Home = () => {
 
   return (
     <>
-      <div className='min-h-full relative'>
+      <div className='min-h-[13vh]! sm:min-h-[30vh]! md:min-h-[50vh] lg:min-w-[65vh] relative'>
         {
-          homeSlidesData?.length !== 0  ? <HomeSlider data={homeSlidesData} /> : <HomeSliderSkeleton />
+          homeSlidesData?.length !== 0 ? <HomeSlider data={homeSlidesData} /> :  <HomeSliderSkeleton data={homeSlidesData} />
         }
+       
         
       </div>
 
@@ -101,13 +102,13 @@ const Home = () => {
 
     <section className='bg-white py-8 pb-1'>
       <div className='container'>
-        <div className='flex items-center justify-between'>
-          <div className='leftSec'>
-            <h2 className='text-[20px] font-[600]'>Popular Products</h2>
-            <p className='text-[14px] font-[400] mb-0! mt-0!'>Do not miss the current offers until the end of March.</p>
+        <div className='flex items-center justify-between flex-col lg:flex-row'>
+          <div className='leftSec w-full lg:w-[40%]'>
+            <h2 className='text-[14px] sm:text-[14px] md:text-[16px] lg:text-[20px] font-semibold'>Popular Products</h2>
+            <p className='text-[12px] sm:text-[12px] md:text-[14px] lg:text-[14px] font-normal mb-0! mt-0!'>Do not miss the current offers until the end of March.</p>
           </div>
 
-            <div className='rightSec w-[60%]'>
+            <div className='rightSec w-full lg:w-[60%]'>
               <Tabs
                 value={value}
                 onChange={handleChange}
@@ -135,33 +136,33 @@ const Home = () => {
       </div>
     </section>
 
-    <section className='py-6'>
-      <div className='container flex gap-5'>
-        <div className='part1 w-[70%]'>
+    <section className='py-6 pt-0 bg-white'>
+      <div className='container flex flex-col lg:flex-row gap-5'>
+        <div className='part1 w-full  lg:w-[70%]'>
           {
             productData?.length!== 0 && <HomeBannerV2 data={productData} />
           }
         </div>
 
-        <div className='part2 w-[30%] flex flex-col items-center gap-5 justify-between'>
-          <BannerBoxV2  />
-          <BannerBoxV2 info="right" image={"https://serviceapi.spicezgold.com/download/1741664665391_1741497254110_New_Project_50.jpg"}/>
+        <div className='part2 w-full scrollableBox lg:w-[30%] flex flex-row lg:flex-col items-center gap-5 justify-between'>
+          <BannerBoxV2 info={bannerV1Data[bannerV1Data?.length - 1]?.alignInfo} image={bannerV1Data[bannerV1Data?.length - 1]?.images[0]} item={bannerV1Data[bannerV1Data?.length - 1]} />
+          <BannerBoxV2 info={bannerV1Data[bannerV1Data?.length - 2]?.alignInfo} image={bannerV1Data[bannerV1Data?.length - 2]?.images[0]} item={bannerV1Data[bannerV1Data?.length - 2]} />
         </div>
       </div>
     </section>
 
-    <section className='py-4 pt-2 bg-white'>
+    <section className='py-0 lg:py-4 pt-0 lg:pt-2 bg-white'>
       <div className='container'>
-        <div className='freeShipping w-[80%] m-auto p-4 py-4 border-2 border-[#ff5252] flex items-center justify-between rounded-md mb-7'>
-          <div className='col1 flex items-center gap-4'>
-            <LiaShippingFastSolid className='text-[50px]' />
-            <span className='text-[20px] font-[600] uppercase'>Free Shipping</span>
+        <div className='freeShipping w-full md:w-[80%] m-auto p-2! lg:p-4 border-2 border-[#ff5252] flex items-center justify-center lg:justify-between rounded-md mb-7 flex-col lg:flex-row'>
+          <div className='col1 flex items-center gap-0 lg:gap-4'>
+            <LiaShippingFastSolid className='text-[30px] lg:text-[50px]' />
+            <span className='text-[16px] lg:text-[20px] font-[600] uppercase'>Free Shipping</span>
           </div>
           
           <div className='col2'>
-            <p className='font-[500]'>Free Delivery Now On Your First Order and over $200</p>
+            <p className='font-[500] text-[12px]! lg:text-[20px] -mt-[3px]! lg:mt-3! text-center'>Free Delivery Now On Your First Order and over $200</p>
           </div>
-          <p className='font-bold text-[25px]'>- Only $200</p>
+          <p className='font-bold text-[20px] lg:text-[25px] -mt-[15px]! -mb-[5px]! lg:mb-5! lg:mt-5!'>- Only $200</p>
         </div>
 
         {

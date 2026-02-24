@@ -227,7 +227,7 @@ const ProductItem = (props) => {
     <div className='productItem shadow-lg rounded-md overflow-hidden border-1 border-[rgba(0,0,0,0.1)]'>
       <div className="group imgWrapper w-[100%] overflow-hidden rounded-md relative">
         <Link to={`/product/${props?.item?._id}`}>
-          <div className='img h-[220px] overflow-hidden'>
+          <div className='img h-[180px] lg:h-[220px] overflow-hidden'>
             <img src={props?.item?.images?.[0]} alt="items" className='w-full' />
             <img src={props?.item?.images?.[1]} alt="items"
               className='w-full transition-all duration-700 absolute top-0 left-0 opacity-0 group-hover:opacity-100 group-hover:scale-105' />
@@ -314,24 +314,24 @@ const ProductItem = (props) => {
         </div>
       </div>
 
-      <div className='info p-3 py-5 relative pb-[50px] h-[190px]'>
+      <div className='info p-3 pt-2 lg:p-3 relative pb-[50px] h-[157px] lg:h-[170px]'>
         <h6 className='text-[13px] !font-[400]'>{props?.item?.brand}</h6>
-        <h3 className='text-[13px] title mt-1 font-[500] mb-1 text-[#000]'>
+        <h3 className='text-[12px] sm:text-[13px] title mt-1 font-[500] mb-1 text-[#000]'>
           <Link to={`/product/${props?.item?._id}`}
-            className='link transition-all'>{props?.item?.name?.substr(0, 30) + "..."}
+            className='link transition-all'>{ context?.windowWidth < 922 ? (props?.item?.name?.length > 17 ? props?.item?.name?.substr(0, 17) + "..." : props?.item?.name) : (props?.item?.name?.length > 25 ? props?.item?.name?.substr(0, 25) + "..." : props?.item?.name)}
           </Link></h3>
 
         <Rating name='size-small' defaultValue={props?.item?.rating} size="small" readOnly />
 
-        <div className='flex items-center gap-4'>
-          <span className='oldPrice line-through text-gray-500 text-[15px] font-[500]'>&#x20b9; {props?.item?.oldPrice}</span>
-          <span className='price text-[#ff5252] text-[15px] font-[600]'>&#x20b9; {props?.item?.price}</span>
+        <div className='flex items-center whitespace-nowrap gap-3'>
+          <span className='oldPrice line-through text-gray-500 text-[15px] font-[500]'>&#x20b9;{props?.item?.oldPrice}</span>
+          <span className='price text-[#ff5252] text-[15px] font-[600]'>&#x20b9;{props?.item?.price}</span>
         </div>
 
         <div className=" absolute! bottom-[15px] left-0 px-3 w-full">
           {
             isAdded === false ?
-              <Button className='btn-org btn-border flex w-full btn-sm gap-2' size='small'
+              <Button className='btn-org addToCartBtn btn-border flex w-full font-bold! sm:font-semibold! whitespace-nowrap md:font-normal! btn-sm gap-2' size='small'
                 onClick={() => addToCart(props?.item, quantity)}
               >
                 <MdOutlineShoppingCart className='text-[20px]' /> Add to Cart
