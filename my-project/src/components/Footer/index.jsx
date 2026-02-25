@@ -36,7 +36,7 @@ const Footer = () => {
     <>
     <footer className='py-6 bg-[#fafafa]'>
         <div className='container'>
-            <div className='flex items-center justify-center gap-2 py-8 pb-8'>
+            <div className='flex items-center justify-center gap-2 py-3 lg:py-8 pb-0 lg:pb-8 px-0 lg:px-5 scrollableBox footerBoxWrap'>
                 <div className='col flex items-center justify-center flex-col group w-[15%]'>
                     <LiaShippingFastSolid
                     className='text-[40px] transition-all duration-300 group-hover:text-[#ff5252] group-hover:-translate-y-1'/>
@@ -77,14 +77,14 @@ const Footer = () => {
 
         <hr />
 
-        <div className='footer flex py-8'>
-            <div className='part1 w-[25%] border-r border-[rgba(0,0,0,0.1)]'>
+        <div className='footer flex px-3 lg:px-0 flex-col lg:flex-row py-8'>
+            <div className='part1 w-full lg:w-[25%] border-r border-[rgba(0,0,0,0.1)]'>
                 <h2 className='text-[18px] font-[600] mb-4'>Contact us</h2>
                 <p className='text-[13px] font-[400] pb-4'>CladdyShop -Mega Super Super Store <br/>507-Union Trade Center France</p>
                 <Link to="mailto:satyamkumar59@gmail.com" className='link text-[13px]'>satyamkumar59@gmail.com</Link>
 
                 <span className='text-[22px] font-[600] block w-full mt-3 mb-5 text-[#ff5252]'>
-                    (+91) 9876-543-210
+                    (+91) 70706-62532
                 </span>
 
                     <div className='flex items-center gap-2'>
@@ -93,7 +93,7 @@ const Footer = () => {
                     </div>
             </div>
 
-            <div className='part2 w-[40%] flex pl-5'>
+            <div className='part2 w-full lg:w-[40%] flex pl-0 lg:pl-5 mt-5 lg:mt-0'>
                 <div className='part2_col1 w-[50%]'>
                     <h2 className='text-[18px] font-[600] mb-4'>Products</h2>
 
@@ -145,15 +145,15 @@ const Footer = () => {
                 </div>
             </div>
 
-            <div className='part2 w-[35%] flex pl-8 flex-col pr-8'>
-                    <h2 className='text-[18px] font-[600] mb-4'>Subscribe to newsletter</h2>
+            <div className='part2 w-ful lg:w-[35%] flex pl-0 lg:pl-8 flex-col pr-8 mt-5 lg:mt-0'>
+                    <h2 className='text-[18px] font-[600] mb-2 lg:mb-4'>Subscribe to newsletter</h2>
                     <p className='text-[13px]'>Subcribe to our latest newsletter to get news special discounts.</p>
 
                         <form action="/" className='mt-5'>
                             <input type="text" className='w-full h-[45px] border outline-none pl-4 pr-4 rounded-sm mb-4 focus:border-[rgba(0,0,0,0.30)]' placeholder='Your Email Address' />
-                            <Button className="btn-org">Subscribe</Button>
+                            <Button className="btn-org block!">Subscribe</Button>
 
-                            <FormControlLabel control={<Checkbox />} label="I agree to the terms and conditions and the privacy policy." className='mt-3 text-[13px]' />
+                            <FormControlLabel className='mt-3 lg:mt-0' control={<Checkbox />} label="I agree to the terms and conditions and the privacy policy." className='mt-3 text-[13px]' />
                         </form>
                 </div>
         </div>
@@ -161,8 +161,8 @@ const Footer = () => {
         </div>
     </footer>
 
-    <div className='bottomStrip border-t border-[rgba(0,0,0,0.1)] py-3 bg-white'>
-        <div className='container flex items-center justify-between'>
+    <div className='bottomStrip border-t border-[rgba(0,0,0,0.1)] pt-3 pb-[100px] lg:pb-3 bg-white'>
+        <div className='container flex items-center justify-between flex-col lg:flex-row gap-4 lg:gap-0'>
             <ul className='flex items-center gap-2'>
                 <li className='list-none'>
                     <Link to="/" target='_blank' className='w-[35px] h-[35px] rounded-full border border-[rgba(0,0,0,0.1)] flex items-center justify-center group hover:bg-[#ff5252] transition-all'>
@@ -190,7 +190,7 @@ const Footer = () => {
                 &copy; 2025 - Ecommerce Template
             </p>
 
-            <div className='flex items-center'>
+            <div className='flex items-center gap-5 lg:gap-0'>
                 <img src="https://ecommerce-frontend-view.netlify.app/carte_bleue.png" alt="image" />
                 <img src="https://ecommerce-frontend-view.netlify.app/visa.png" alt="image" />
                 <img src="https://ecommerce-frontend-view.netlify.app/master_card.png" alt="image" />

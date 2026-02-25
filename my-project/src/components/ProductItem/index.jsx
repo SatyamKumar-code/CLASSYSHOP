@@ -29,6 +29,11 @@ const ProductItem = (props) => {
 
   const addToCart = (product, quantity) => {
 
+    if (!context?.isLogin) {
+      context?.alertBox("error", "You are not logged in. Please login first");
+      return;
+    }
+
     const productItem = {
       _id: product?._id,
       name: product?.name,
@@ -339,10 +344,9 @@ const ProductItem = (props) => {
               :
             <>
             {
-                isLoading === true ? <Button className='btn-org btn-border flex w-full btn-sm gap-2' size='small'
-              >
-                <CircularProgress size={20} className='text-primary' />
-              </Button> :
+                isLoading === true ? <Button className='btn-org btn-border flex w-full btn-sm gap-2 items-center justify-center' size='small' style={context?.windowWidth < 922 ? { minHeight: '30px', height: '30px', padding: 0 } : { minHeight: '44px', height: '44px', padding: 0 }}>
+                  <CircularProgress size={16} className='text-primary product-spinner' />
+                </Button> :
 
                 <div className='flex items-center justify-between overflow-hidden rounded-full border border-[rgba(0,0,0,0.1)]'>
                 <Button

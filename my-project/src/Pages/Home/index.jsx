@@ -13,7 +13,8 @@ import ProductsSlider from '../../components/ProductsSlider';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import { Navigation } from 'swiper/modules';
+import 'swiper/css/free-mode';
+import { Navigation, FreeMode } from 'swiper/modules';
 import BlogItem from '../../components/BlogItem';
 import HomeBannerV2 from '../../components/HomeSliderV2';
 import BannerBoxV2 from '../../components/bannerBoxV2';
@@ -200,13 +201,48 @@ const Home = () => {
     <section className='py-5 pb-8 pt-0 bg-white blogSection'>
       <div className='container'>
         <h2 className='text-[20px] font-[600] mb-4'>From The Blog</h2>
-        <Swiper
-          slidesPerView={4}
-          spaceBetween={30}
-          navigation={true}
-          modules={[Navigation]}
-          className="blogSlider"
-        >
+          <Swiper
+            slidesPerView={4}
+            spaceBetween={30}
+            navigation={context?.windowWidth > 922 ? true : false}
+            modules={[Navigation, FreeMode]}
+            freeMode={true}
+            breakpoints={{
+              250: {
+                slidesPerView: 1,
+                spaceBetween: 10,
+              },
+              330: {
+                slidesPerView: 1,
+                spaceBetween: 10,
+              },
+              400: {
+                slidesPerView: 2,
+                spaceBetween: 10,
+              },
+              500: {
+                slidesPerView: 2,
+                spaceBetween: 15,
+              },
+              768: {
+                slidesPerView: 3,
+                spaceBetween: 20,
+              },
+              922: {
+                slidesPerView: 4,
+                spaceBetween: 20,
+              },
+              1025: {
+                slidesPerView: 4,
+                spaceBetween: 30,
+              },
+              1222: {
+                slidesPerView: 5,
+                spaceBetween: 30,
+              },
+            }}
+            className="blogSlider"
+          >
           {
             blogData?.map((item, index) => {
               return (

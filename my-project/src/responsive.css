@@ -28,6 +28,19 @@
     .resBannersSlider .swiper-slide{display: inline-block !important; vertical-align: top !important; margin-right: 12px !important; width: 300px !important; }
     .resBannersSlider .swiper-slide *{white-space: break-spaces !important;}
 
+    .footerBoxWrap{padding-left: 20px !important ;}
+
+    .par2_col1 li a, .part2_col2 li a {font-size: 13px !important;}
+
+    .product-spinner {
+        width: 20px !important;
+        height: 20px !important;
+        min-width: 20px !important;
+        min-height: 20px !important;
+        max-width: 20px !important;
+        max-height: 20px !important;
+    }
+
 }
 
 @media only screen and (min-width: 320px) and (max-width: 767px) {

@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { IoMdTime } from 'react-icons/io';
 import { Link } from 'react-router-dom';
 import { IoIosArrowForward } from 'react-icons/io';
+import { MyContext } from '../../App';
 
 const BlogItem = (props) => {
+    const context = useContext(MyContext);
   return (
     <div className='blogItem group'>
         <div className='imgWrapper w-full overflow-hidden rounded-md cursor-pointer relative'>
@@ -16,10 +18,12 @@ const BlogItem = (props) => {
         </div>
 
         <div className='info py-4'>
-            <h2 className='text-[15px] font-[600] text-black mb-3'>
-                <Link to="/" className='link'>{props?.item?.title}</Link>
+            <h2 className='text-[15px] font-[600] text-black mb-1 lg:mb-3'>
+                <Link to="/" className='link'>{context?.windowWidth < 922 ? (props?.item?.title?.length > 45 ? props?.item?.title?.substring(0,42)+'...' : props?.item?.title) : (props?.item?.title?.length > 25 ? props?.item?.title?.substring(0,22)+'...' : props?.item?.title)}</Link>
             </h2>
-            <div dangerouslySetInnerHTML={{ __html: props?.item?.description?.substr(0,100)+'...'}}></div>
+            <div 
+                className='mb-3 text-[14px] lg:text-[16px]'
+                dangerouslySetInnerHTML={{ __html: props?.item?.description?.substr(0,100)+'...'}}></div>
 
                 <Link className='link font-[500] text-[14px] flex items-center gap-1'>Read More <IoIosArrowForward /></Link>
         </div>
