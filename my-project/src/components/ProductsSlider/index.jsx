@@ -14,7 +14,7 @@ const ProductsSlider = (props) => {
 
     const context = useContext(MyContext);
   return (
-    <div className='productsSlider py-3'>
+    <div className='productsSlider py-0! ml-0! lg:py-2'>
         <Swiper
             slidesPerView={props.items}
             spaceBetween={10}
@@ -23,31 +23,35 @@ const ProductsSlider = (props) => {
             freeMode={true}
             breakpoints={{
                 250: {
-                    slidesPerView: 1.1,
+                    slidesPerView: 1,
                     spaceBetween: 10,
                 },
                 350: {
-                    slidesPerView: 2.13,
+                    slidesPerView: 2,
                     spaceBetween: 10,
                 },
                 400: {
-                    slidesPerView: 2.1,
+                    slidesPerView: 2,
+                    spaceBetween: 10,
+                },
+                500: {
+                    slidesPerView: 3,
                     spaceBetween: 10,
                 },
                 768: {
-                    slidesPerView: 4.1,
+                    slidesPerView: 4,
                     spaceBetween: 10,
                 },
                 922: {
-                    slidesPerView: 4.1,
+                    slidesPerView: 4,
                     spaceBetween: 10,
                 },
                 1025: {
-                    slidesPerView: 5.12,
+                    slidesPerView: 5,    
                     spaceBetween: 10,
                 },
                 1222: {
-                    slidesPerView: 6.09,
+                    slidesPerView: 6,
                     spaceBetween: 10,
                 },
             }}

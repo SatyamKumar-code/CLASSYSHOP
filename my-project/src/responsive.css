@@ -22,7 +22,11 @@
     .scrollableBox .box, .scrollableBox .col{display: inline-block !important; vertical-align: top !important; margin-right: 12px !important; width: 300px !important;}
     .scrollableBox .box .info *{white-space: break-spaces !important;}
 
+    .productSlider .swiper, .blogSection .swiper{overflow: hidden !important;} 
 
+    .resBannersSlider{white-space: nowrap; overflow-x: scroll; overflow-y: hidden !important; display: block !important;}
+    .resBannersSlider .swiper-slide{display: inline-block !important; vertical-align: top !important; margin-right: 12px !important; width: 300px !important; }
+    .resBannersSlider .swiper-slide *{white-space: break-spaces !important;}
 
 }
 

@@ -136,7 +136,7 @@ const Home = () => {
       </div>
     </section>
 
-    <section className='py-6 pt-0 bg-white'>
+    <section className='py-2 lg:py-6 pt-0 bg-white'>
       <div className='container flex flex-col lg:flex-row gap-5'>
         <div className='part1 w-full  lg:w-[70%]'>
           {
@@ -153,7 +153,7 @@ const Home = () => {
 
     <section className='py-0 lg:py-4 pt-0 lg:pt-2 bg-white'>
       <div className='container'>
-        <div className='freeShipping w-full md:w-[80%] m-auto p-2! lg:p-4 border-2 border-[#ff5252] flex items-center justify-center lg:justify-between rounded-md mb-7 flex-col lg:flex-row'>
+        <div className='freeShipping w-full md:w-[80%] m-auto p-2! lg:p-4 border-2 border-[#ff5252] flex items-center justify-center lg:justify-between rounded-md mb-2 lg:mb-3 flex-col lg:flex-row'>
           <div className='col1 flex items-center gap-0 lg:gap-4'>
             <LiaShippingFastSolid className='text-[30px] lg:text-[50px]' />
             <span className='text-[16px] lg:text-[20px] font-[600] uppercase'>Free Shipping</span>

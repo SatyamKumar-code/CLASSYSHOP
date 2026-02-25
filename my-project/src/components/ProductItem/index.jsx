@@ -225,12 +225,12 @@ const ProductItem = (props) => {
 
   return (
     <div className='productItem shadow-lg rounded-md overflow-hidden border-1 border-[rgba(0,0,0,0.1)]'>
-      <div className="group imgWrapper w-[100%] overflow-hidden rounded-md relative">
+      <div className="group imgWrapper w-[100%] overflow-hidden rounded-t-md relative">
         <Link to={`/product/${props?.item?._id}`}>
-          <div className='img h-[180px] lg:h-[220px] overflow-hidden'>
-            <img src={props?.item?.images?.[0]} alt="items" className='w-full' />
+          <div className='img h-[165px] lg:h-[220px] overflow-hidden'>
+            <img src={props?.item?.images?.[0]} alt="items" className='w-full h-[165px] lg:h-[220px]' />
             <img src={props?.item?.images?.[1]} alt="items"
-              className='w-full transition-all duration-700 absolute top-0 left-0 opacity-0 group-hover:opacity-100 group-hover:scale-105' />
+              className='w-full h-[165px] lg:h-[220px] transition-all duration-700 absolute top-0 left-0 opacity-0 group-hover:opacity-100 group-hover:scale-105' />
           </div>
         </Link>
         {
@@ -314,7 +314,7 @@ const ProductItem = (props) => {
         </div>
       </div>
 
-      <div className='info p-3 pt-2 lg:p-3 relative pb-[50px] h-[157px] lg:h-[170px]'>
+      <div className='info p-3 pt-1! lg:p-3 relative pb-[50px] h-[157px] lg:h-[170px]'>
         <h6 className='text-[13px] !font-[400]'>{props?.item?.brand}</h6>
         <h3 className='text-[12px] sm:text-[13px] title mt-1 font-[500] mb-1 text-[#000]'>
           <Link to={`/product/${props?.item?._id}`}
@@ -324,8 +324,8 @@ const ProductItem = (props) => {
         <Rating name='size-small' defaultValue={props?.item?.rating} size="small" readOnly />
 
         <div className='flex items-center whitespace-nowrap gap-3'>
-          <span className='oldPrice line-through text-gray-500 text-[15px] font-[500]'>&#x20b9;{props?.item?.oldPrice}</span>
-          <span className='price text-[#ff5252] text-[15px] font-[600]'>&#x20b9;{props?.item?.price}</span>
+          <span className='oldPrice line-through text-gray-500 text-[12px] lg:text-[14px] font-[500]'>&#x20b9;{props?.item?.oldPrice}</span>
+          <span className='price text-[#ff5252] text-[12px] lg:text-[14px] font-[600]'>&#x20b9;{props?.item?.price}</span>
         </div>
 
         <div className=" absolute! bottom-[15px] left-0 px-3 w-full">
