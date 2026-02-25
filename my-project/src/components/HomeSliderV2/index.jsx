@@ -23,10 +23,10 @@ const HomeBannerV2 = (props) => {
           pagination= {{
             clickable: true,
           }}
-        //   autoplay={{
-        //     delay: 2500,
-        //     disableOnInteraction: false,
-        //   }}
+          autoplay={{
+            delay: 2500,
+            disableOnInteraction: false,
+          }}
           modules={[ EffectFade, Navigation, Pagination, Autoplay]}
           className="HomeSliderV2">
           
