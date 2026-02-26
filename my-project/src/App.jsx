@@ -270,6 +270,7 @@ function App() {
         <Route path={"/order/failed"} exact={true} element={ <OrderFailed />} />
         <Route path={"/address"} exact={true} element={ <Address />} />
         <Route path={"/search"} exact={true} element={ <SearchPage />} />
+        <Route path={"/loaderio-ed2800b5202db4744258b1aacddce079/"} exact={true} element={<Home/>} />
         
       </Routes>
       <Footer />
