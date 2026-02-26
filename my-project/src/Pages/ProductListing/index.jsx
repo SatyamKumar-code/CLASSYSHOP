@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Sidebar } from '../../components/Sidebar';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
@@ -13,6 +13,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Pagination from '@mui/material/Pagination';
 import { useState } from 'react';
 import { postData } from '../../utils/api';
+import { MyContext } from '../../App';
 
 
 
@@ -28,6 +29,12 @@ const ProductListing = () => {
     const [totalPages, setTotalPages] = useState(1);
 
     const [selectedSortVal, setSelectedSortVal] = useState('Name, A to Z');
+
+    const context = useContext(MyContext);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    },[]);
 
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -54,7 +61,7 @@ const ProductListing = () => {
             <div className='bg-white p-2 mt-4'>
                 <div className='container flex gap-3'>
 
-                    <div className='sidebarWrapper fixed top-0 left-0 w-full lg:static h-full lg:w-[20%] bg-white hidden lg:block'>
+                    <div className={`sidebarWrapper fixed -bottom-[100%] left-0 w-full lg:static lg:h-full z-102 lg:w-[20%] bg-white lg:z-1 p-3 lg:p-0 transition-all opacity-0 lg:opacity-100 ${context?.openFilter === true ? 'open' : ''}`}>
                         <Sidebar 
                             productsData={productsData} 
                             setProductsData={setProductsData} 
@@ -64,6 +71,13 @@ const ProductListing = () => {
                             setTotalPages={setTotalPages}
                         />
                     </div>
+
+                    {
+                        context?.windowWidth < 922 && 
+                        <div className={`filter_overlay w-full h-full bg-[rgba(0,0,0,0.5)] fixed top-0 left-0 z-101 ${context?.openFilter === true ? 'block' : 'hidden'}`}
+                            onClick={() => context?.setOpenFilter(false)}
+                        ></div>
+                    }
 
                     <div className='rightContent w-full lg:w-[80%] py-3'>
                         <div className='bg-[#f1f1f1] p-2 w-full mb-4 rounded-md flex items-center justify-between sticky top-[65px] z-60'> 

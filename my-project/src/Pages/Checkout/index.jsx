@@ -50,11 +50,6 @@ const Checkout = () => {
 
         setTotalAmount(newTotal);
 
-        // localStorage.setItem("totalAmount", context?.cartData?.length !== 0 ?
-        //     context?.cartData?.map(item => parseInt(item?.price) * item?.quantity)
-        //         .reduce((total, value) => total + value, 0) : 0)
-        //     ?.toLocaleString('en-US', { style: 'currency', currency: "INR" })
-
     }, [context?.cartData]);
 
     useEffect(() => {
@@ -327,10 +322,10 @@ const Checkout = () => {
 
     
   return (
-    <section className='py-10'>
+    <section className='py-3 lg:py-10 px-3'>
         <form onSubmit={checkout}>
-        <div className='w-[70%] m-auto flex gap-5'>
-            <div className='leftCol w-[60%]'>
+        <div className='w-full lg:w-[70%] m-auto flex flex-col md:flex-row gap-5'>
+            <div className='leftCol w-full md:w-[60%]'>
                 <div className='card bg-white p-5 rounded-md w-full'>
                     <div className="flex justify-between items-center border-b border-[rgba(0,0,0,0.1)] pb-3 mb-5">
                         <h2>Select Delivery Address</h2>
@@ -339,8 +334,9 @@ const Checkout = () => {
                                 context?.setOpenAddressPanel(true);
                                 context?.setAddressMode("add");
                             }}
+                            className='btn'
                         > 
-                            <FaPlus /> ADD NEW ADDRESS
+                            <FaPlus /> ADD {context?.windowWidth < 767 ? '' : 'NEW ADDRESS'}
                         </Button>
                     </div>
 
@@ -395,7 +391,7 @@ const Checkout = () => {
                 </div>
             </div>
 
-            <div className='rightCol w-[40%]'>
+            <div className='rightCol w-full md:w-[40%]'>
                 <div className='card shadow-md bg-white p-5 rounded-md'>
                     <h2 className='mb-4'>Your Order</h2>
 
@@ -439,7 +435,7 @@ const Checkout = () => {
                             <BsFillBagCheckFill className='text-[20px] ' /> Checkout
                         </Button>
 
-                        <div id="paypal-button-container" className={`${userData?.address_details?.length === 0 ? 'pointer-events-none' : ''}`} ref={paypalContainerRef}></div>
+                        <div id="paypal-button-container" className={`${userData?.address_details?.length === 0 ? 'pointer-events-none' : 'z-20'}`} ref={paypalContainerRef}></div>
 
                         <Button type='button' className='btn-dark btn-lg w-full flex gap-2 items-center' onClick={cashOnDelivery} disabled={!context?.cartData?.length}>
                             <BsFillBagCheckFill className='text-[20px]' />

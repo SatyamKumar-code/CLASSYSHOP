@@ -130,127 +130,138 @@ export const ProductDetailsComponent = (props) => {
 
   return (
     <>
-    <h1 className='text-[24px] font-[600] mb-2'>{props.item?.name}</h1>
-            <div className='flex items-center gap-3'>
-              <span className='text-gray-400 text-[13px]'>
-                Brand : <span className='font-[500] text-black opacity-75'>{props.item?.brand}</span>
-              </span>
+      <h1 className='text-[18px] sm:text-[24px] font-[600] mb-2'>{props.item?.name}</h1>
+      <div className='flex items-start sm:items-center flex-col sm:flex-row md:flex-row gap-3 justify-start'>
+        <span className='text-gray-400 text-[13px]'>
+          Brand : <span className='font-[500] text-black opacity-75'>{props.item?.brand}</span>
+        </span>
 
-              <Rating name='size-small' defaultValue={4} size='small' readOnly />
-              <span className='text-[13px] cursor-pointer' onClick={props?.gotoReviews}>Review ({props?.reviewsCount ?? 0})</span>
-            </div>
+        <Rating name='size-small' defaultValue={4} size='small' readOnly />
+        <span className='text-[13px] cursor-pointer' onClick={props?.gotoReviews}>Review ({props?.reviewsCount ?? 0})</span>
+      </div>
 
-            <div className='flex items-center gap-4 mt-4'>
-              <span className='oldPrice line-through text-gray-500 text-[20px] font-[500]'> &#x20b9; {props.item?.oldPrice}</span>
-              <span className='price text-[#ff5252] text-[20px] font-[600]'> &#x20b9; {props.item?.price}</span>
-              <span className='text-[14px]'>Available In Stock: <span className='text-green-600 text-[14px] font-bold'>{props.item?.countInStock} Items</span></span>
-            </div>
+      <div className='flex flex-col sm:flex-row md:flex-row lg:flex-row items-start sm:items-center gap-0 lg:gap-4 mt-0 lg:mt-4'>
 
-            <p className='mt-3 pr-10 mb-5'>{props.item?.description}</p>
+        <div className='flex items-center gap-4'>
+          <span className='oldPrice line-through text-gray-500 text-[20px] font-[500]'> &#x20b9; {props.item?.oldPrice}</span>
+          <span className='price text-[#ff5252] text-[20px] font-[600]'> &#x20b9; {props.item?.price}</span>
+        </div>
 
+        <div className='flex items-center pb-2 lg:pb-0 gap-4'>
+          <span className='text-[14px]'>Available In Stock: <span className='text-green-600 text-[14px] font-bold'>{props.item?.countInStock} Items</span></span>
+        </div>
+
+      </div>
+
+      {
+        context?.windowWidth > 922 && (
+          <p className='mt-3 pr-10 mb-5'>{props.item?.description}</p>
+        )
+      }
+
+      {
+        props?.item?.productRam?.length !== 0 &&
+        <div className='flex items-center gap-3'>
+          <span className='text-[16px]'>RAM: </span>
+          <div className='flex items-center gap-1 actions'>
             {
-              props?.item?.productRam?.length !== 0 &&
-              <div className='flex items-center gap-3'>
-                <span className='text-[16px]'>RAM: </span>
-                <div className='flex items-center gap-1 actions'>
-                  {
-                    props?.item?.productRam?.map((item, index) => {
-                      return (
-                         <Button 
-                          key={index} 
-                          className={`${productActionIndex === index ? 
-                            'bg-primary text-white' : ''
-                          } ${tabError === true && 'border! border-red-500!'}`} 
-                          onClick={() => handleClickActiveTab(index, item)}
-                        >
-                          {item}
-                        </Button>
-                      )
-                    })
-                  }
-                </div>
-              </div>
+              props?.item?.productRam?.map((item, index) => {
+                return (
+                  <Button
+                    key={index}
+                    className={`${productActionIndex === index ?
+                      'bg-primary text-white' : ''
+                      } ${tabError === true && 'border! border-red-500!'}`}
+                    onClick={() => handleClickActiveTab(index, item)}
+                  >
+                    {item}
+                  </Button>
+                )
+              })
             }
+          </div>
+        </div>
+      }
 
+      {
+        props?.item?.size?.length !== 0 &&
+        <div className='flex py-2 items-center gap-3'>
+          <span className='text-[16px]'>Size: </span>
+          <div className='flex items-center gap-1 actions'>
             {
-              props?.item?.size?.length !== 0 &&
-              <div className='flex items-center gap-3 py-1'>
-                <span className='text-[16px]'>Size: </span>
-                <div className='flex items-center gap-1 actions'>
-                  {
-                    props?.item?.size?.map((item, index) => {
-                      return (
-                        <Button 
-                          key={index} 
-                          className={`${productActionIndex === index ? 
-                            'bg-primary text-white' : ''
-                          } ${tabError === true && 'border! border-red-500!'}`} 
-                          onClick={() => handleClickActiveTab(index, item)}
-                        >
-                          {item}
-                        </Button>
-                      )
-                    })
-                  }
-                </div>
-              </div>
+              props?.item?.size?.map((item, index) => {
+                return (
+                  <Button
+                    key={index}
+                    className={`${productActionIndex === index ?
+                      'bg-primary! text-white' : ''
+                      } ${tabError === true && 'border! border-red-500!'}`}
+                    onClick={() => handleClickActiveTab(index, item)}
+                  >
+                    {item}
+                  </Button>
+                )
+              })
             }
+          </div>
+        </div>
+      }
 
+      {
+        props?.item?.productWeight?.length !== 0 &&
+        <div className='flex items-center gap-3'>
+          <span className='text-[16px]'>Weight: </span>
+          <div className='flex items-center gap-1 actions'>
             {
-              props?.item?.productWeight?.length !== 0 &&
-              <div className='flex items-center gap-3'>
-                <span className='text-[16px]'>Weight: </span>
-                <div className='flex items-center gap-1 actions'>
-                  {
-                    props?.item?.productWeight?.map((item, index) => {
-                      return (
-                         <Button 
-                          key={index} 
-                          className={`${productActionIndex === index ? 
-                            'bg-primary text-white' : ''
-                          } ${tabError === true && 'border! border-red-500!'}`} 
-                          onClick={() => handleClickActiveTab(index, item)}
-                        >
-                          {item}
-                        </Button>
-                      )
-                    })
-                  }
-                </div>
-              </div>
+              props?.item?.productWeight?.map((item, index) => {
+                return (
+                  <Button
+                    key={index}
+                    className={`${productActionIndex === index ?
+                      'bg-primary text-white' : ''
+                      } ${tabError === true && 'border! border-red-500!'}`}
+                    onClick={() => handleClickActiveTab(index, item)}
+                  >
+                    {item}
+                  </Button>
+                )
+              })
             }
-            
+          </div>
+        </div>
+      }
 
-            <p className='text-[14px] mt-5 mb-2 text-[#000]'>Free Shipping (Est. Delivery Time 2-3 Days)</p>
-            <div className='flex items-center gap-4 py-4'>
-              <div className='qtyBoxWrapper w-[70px]'>
-                <QtyBox handleSelecteQty={handleSelecteQty} />
-              </div>
 
-              <Button variant='contained' className='btn-org flex gap-2 min-w-[150px]! relative' disabled={isLoading}
-                onClick={() => addToCart(props?.item, quantity)}
-              >
-               {
-                isLoading === true ? <>
-                  <MdOutlineShoppingCart className='text-[22px]' />
-                  <CircularProgress size={1} className='text-white! absolute z-50 items-center justify-center' />
-                </> :
-                <>
-                  <MdOutlineShoppingCart className='text-[22px]' /> Add to Cart
-                </>
-               }
-              </Button>
+      <p className='text-[14px] mt-5 text-[#000]'>Free Shipping (Est. Delivery Time 2-3 Days)</p>
+      <div className='flex items-center gap-4 py-0 lg:py-2 mt-2'>
+        <div className='qtyBoxWrapper w-[70px]'>
+          <QtyBox handleSelecteQty={handleSelecteQty} />
+        </div>
 
-            </div>
+        <Button variant='contained' className='btn-org flex gap-2 min-w-[150px]! relative' disabled={isLoading}
+          onClick={() => addToCart(props?.item, quantity)}
+        >
+          {
+            isLoading === true ? <>
+              <MdOutlineShoppingCart className='text-[22px]' />
+              <CircularProgress size={1} className='text-white! absolute z-50 items-center justify-center' />
+            </> :
+              <>
+                <MdOutlineShoppingCart className='text-[22px]' /> Add to Cart
+              </>
+          }
+        </Button>
 
-            <div className='flex items-center gap-4 mt-4'>
-              <span className='flex items-center gap-2 text-[15px] link cursor-pointer font-[500]'>
-                <FaRegHeart className='text-[18px]' /> Add to Wishlist
-              </span>
-              <span className='flex items-center gap-2 text-[15px] link cursor-pointer font-[500]'>
-                <IoGitCompareOutline className='text-[18px]' /> Add to Compare
-              </span>
-            </div>
+      </div>
+
+      <div className='flex items-center gap-4 mt-4'>
+        <span className='flex items-center gap-2 text-[14px] sm:text-[15px] link cursor-pointer font-[500]'>
+          <FaRegHeart className='text-[18px]' /> Add to Wishlist
+        </span>
+        <span className='flex items-center gap-2 text-[14px] sm:text-[15px] link cursor-pointer font-[500]'>
+          <IoGitCompareOutline className='text-[18px]' /> Add to Compare
+        </span>
+      </div>
     </>
   )
 }

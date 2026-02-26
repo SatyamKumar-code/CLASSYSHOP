@@ -81,7 +81,7 @@ export const Reviews = (props) => {
 
     return (
         <div className='w-full productReviewsContainer'>
-            <h2 className='text-[18px]'>Customer questions & answers</h2>
+            <h2 className=' text-[16px] lg:text-[18px]'>Customer questions & answers</h2>
 
             {
                 reviewsData?.length !== 0 &&
@@ -90,7 +90,7 @@ export const Reviews = (props) => {
                     {
                         reviewsData?.map((review, index) => {
                             return (
-                                <div key={index} className='review pb-5 border-b border-[rgba(0,0,0,0.1)] w-full flex items-center justify-between'>
+                                <div key={index} className='review py-3 border-b border-[rgba(0,0,0,0.1)] w-full flex items-center justify-between'>
                                     <div className='info w-[60%] flex items-center gap-3'>
                                         <div className='img w-[80px] h-[80px] overflow-hidden rounded-full'>
                                             <img src={review?.image} className='w-full' alt="" />
@@ -117,7 +117,7 @@ export const Reviews = (props) => {
 
             <br />
 
-            <div className='reviewForm bg-[#fafafa] p-4 rounded-md'>
+            <div className='reviewForm bg-[#fafafa] p-0 lg:p-4 rounded-md'>
                 <h2 className='text-[18px]'>Add a review</h2>
 
                 <form

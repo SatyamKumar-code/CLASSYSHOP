@@ -34,12 +34,12 @@ const CartPanel = (props) => {
                 </div>
 
                 <div className='info w-[75%] pr-15 relative pt-3'>
-                  <h4 className='text-[14px] font-[500]'>
+                  <h4 className='text-[12px] sm:text-[14px] font-[500]'>
                     <Link to={`/product/${item?._id}`} className='link transition-all'>{item?.productTitle?.length > 40 ? `${item?.productTitle.slice(0, 40)}...` : item?.productTitle}</Link>
                   </h4>
                   <p className='flex items-center gap-3 mt-2 mb-2'>
-                    <span>Qty : <span>{item?.quantity}</span></span>
-                    <span className='text-primary font-bold'>Price : {item?.price?.toLocaleString('en-US', {style: 'currency', currency: "INR"})}</span>
+                    <span className='text-[13px] sm:text-[14px]'>Qty : <span>{item?.quantity}</span></span>
+                    <span className='text-primary font-bold'>{item?.price?.toLocaleString('en-US', {style: 'currency', currency: "INR"})}</span>
                   </p>
 
                   <MdOutlineDeleteOutline

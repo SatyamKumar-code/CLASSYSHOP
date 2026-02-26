@@ -15,6 +15,7 @@ import { MyContext } from '../../App';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { postData } from '../../utils/api';
+import { MdOutlineFilterAlt } from 'react-icons/md';
 
 export const Sidebar = (props) => {
 
@@ -140,7 +141,8 @@ export const Sidebar = (props) => {
   },[price])
 
   return (
-    <aside className='sidebar py-5 sticky top-[60px] z-50'>
+    <aside className='sidebar y-3 lg:py-5 static lg:sticky top-[60px] z-50'>
+      <div className='max-h-[60vh] overflow-auto lg:overflow-hidden w-full'>
         <div className='box'>
             <h3 className=' w-full mb-3 text-[16px] font-[600] flex items-center pr-5'>Shop by Category
               <Button className='!w-[30px] !h-[30px] !min-w-[30px] !rounded-full !ml-auto !text-[#000]' onClick={()=> setIsOpenCategoryFilter(!isOpenCategoryFilter)} >
@@ -197,7 +199,7 @@ export const Sidebar = (props) => {
         <h3 className=' w-full mb-3 text-[16px] font-[600] flex items-center pr-5'>
           Filter By Rating
         </h3>
-        <div className='flex items-center'>
+        <div className='flex items-center pl-2 lg:pl-1'>
           <FormControlLabel 
             value={5}
             control={<Checkbox />} 
@@ -207,7 +209,7 @@ export const Sidebar = (props) => {
           <Rating name="rating" value={5} readOnly size='small' />
         </div>
 
-        <div className='flex items-center'>
+        <div className='flex items-center pl-2 lg:pl-1'>
           <FormControlLabel 
             value={4}
             control={<Checkbox />} 
@@ -216,7 +218,7 @@ export const Sidebar = (props) => {
           />
           <Rating name="rating" value={4} readOnly size='small' />
         </div>
-        <div className='flex items-center'>
+        <div className='flex items-center pl-2 lg:pl-1'>
           <FormControlLabel 
             value={3}
             control={<Checkbox />} 
@@ -225,7 +227,7 @@ export const Sidebar = (props) => {
           />
           <Rating name="rating" value={3} readOnly size='small' />
         </div>
-        <div className='flex items-center'>
+        <div className='flex items-center pl-2 lg:pl-1'>
           <FormControlLabel 
             value={2}
             control={<Checkbox />} 
@@ -234,7 +236,7 @@ export const Sidebar = (props) => {
           />
           <Rating name="rating" value={2} readOnly size='small' />
         </div>
-        <div className='flex items-center'>
+        <div className='flex items-center pl-2 lg:pl-1'>
           <FormControlLabel 
             value={1}
             control={<Checkbox />} 
@@ -243,7 +245,16 @@ export const Sidebar = (props) => {
           />
           <Rating name="rating" value={1} readOnly size='small' />
         </div>
+        
       </div>
+      </div>
+      <br />
+        <Button className='btn-org w-full flex! lg:hidden!'
+          onClick={() => context?.setOpenFilter(false)}
+        >
+          <MdOutlineFilterAlt size={20} /> Filter
+        </Button>
+      
 
     </aside>
   )

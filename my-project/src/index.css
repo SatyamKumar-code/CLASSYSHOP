@@ -58,6 +58,10 @@ h1,h2,h3,h4,h5,h6{
     background: #ff5252 !important;
 }
 
+.border-primary{
+    border: 1px solid #ff5252 !important;
+}
+
 .text-primary{
     color: #ff5252 !important;
 }
@@ -113,9 +117,6 @@ h1,h2,h3,h4,h5,h6{
     border-bottom: 1px solid rgba(0,0,0,0.1);
 } */
 
-.bg-primary{
-    background: #ff5252;
-}
 .link:hover, .Mui-checked{color: #ff5252 !important;}
 
 .MuiBadge-badge{background-color: #ff5252 !important;}

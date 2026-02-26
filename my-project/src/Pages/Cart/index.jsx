@@ -39,9 +39,9 @@ const CartPage = () => {
   }, []);
 
   return (
-    <section className='section py-5 pb-10'>
-        <div className='container w-[80%] max-w-[80%] flex gap-5'>
-            <div className='leftPart w-[70%]'>
+    <section className='section py-4 lg:py-5 pb-10'>
+        <div className='container w-[80%] max-w-[80%] flex gap-5 flex-col lg:flex-row'>
+            <div className='leftPart w-full lg:w-[70%]'>
                 
                 <div className='shadow-md rounded-md bg-white'>
                       <div className='py-2 px-3 border-b border-[rgba(0,0,0,0.1)]'>
@@ -64,7 +64,7 @@ const CartPage = () => {
                             <img src="/empty-cart.png" alt="empty-cart" className='w-[200px]' />
                             <h2 className='text-[20px] font-bold'>Your cart is currently empty</h2>
                             <Link to={"/products"}>
-                                <Button className='btn-org btn-sm'>Continue Shoping</Button>
+                                <Button className='btn-org'>Continue Shoping</Button>
                             </Link>
                          </div>
                         </>
@@ -73,7 +73,7 @@ const CartPage = () => {
                 </div>
             </div>
 
-            <div className='rightPart w-[30%]'>
+            <div className='rightPart w-full lg:w-[30%]'>
                 <div className='shadow-md rounded-md bg-white p-5 sticky top-[75px]! z-90'>
                     <h3>Cart Totals</h3>
                     <hr />

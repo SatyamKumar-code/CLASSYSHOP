@@ -323,9 +323,9 @@ const ProductItem = (props) => {
       </div>
 
       <div className='info p-3 pr-0 relative py-5 px-3 lg:px-8 w-[55%] lg:w-[75%]'>
-        <h6 className='text-[15px] !font-[400]'><Link to={`/product/${props?.item?._id}`} className='link transition-all'>{props?.item?.brand}</Link></h6>
-        <h3 className='text-[18px] title mt-0! font-[500] mb-0! text-[#000]'><Link to={`/product/${props?.item?._id}`} className='link transition-all'>{context?.windowWidth < 1024 ? (props?.item?.name?.length > 20 ? props?.item?.name?.substr(0, 17) + "..." : props?.item?.name) : (props?.item?.name?.length > 60 ? props?.item?.name?.substr(0, 57) + "..." : props?.item?.name)}</Link></h3>
-        <p className='text-[14px] mb-0! mt-0!'>{context?.windowWidth < 1024 ? (props?.item?.description?.length > 25 ? props?.item?.description?.substr(0, 22) + "..." : props?.item?.description) : (props?.item?.description?.length > 60 ? props?.item?.description?.substr(0, 57) + "..." : props?.item?.description)}</p>
+        <h6 className='text-[12px] lg:text-[15px] font-[400]!'><Link to={`/product/${props?.item?._id}`} className='link transition-all'>{props?.item?.brand}</Link></h6>
+        <h3 className='text-[14px] md:text-[16px] lg:text-[18px] title mt-0! font-[500] mb-0! text-[#000]'><Link to={`/product/${props?.item?._id}`} className='link transition-all'>{context?.windowWidth < 1024 ? (props?.item?.name?.length > 20 ? props?.item?.name?.substr(0, 17) + "..." : props?.item?.name) : (props?.item?.name?.length > 60 ? props?.item?.name?.substr(0, 57) + "..." : props?.item?.name)}</Link></h3>
+        <p className='text-[12px] lg:text-[14px] mb-0! mt-0!'>{context?.windowWidth < 1024 ? (props?.item?.description?.length > 25 ? props?.item?.description?.substr(0, 22) + "..." : props?.item?.description) : (props?.item?.description?.length > 60 ? props?.item?.description?.substr(0, 57) + "..." : props?.item?.description)}</p>
 
         <Rating name='size-small' defaultValue={props?.item?.rating} size="small" readOnly />
 
@@ -361,7 +361,7 @@ const ProductItem = (props) => {
                       </Button>
                       <span>{quantity}</span>
                       <Button
-                        className='min-w-[35px]! w-[35px]! h-[30px]! bg-primary rounded-none!'
+                        className='min-w-[35px]! w-[35px]! h-[30px]! bg-primary border-primary! rounded-none!'
                         onClick={plusQty}
                       >
                         <FaPlus

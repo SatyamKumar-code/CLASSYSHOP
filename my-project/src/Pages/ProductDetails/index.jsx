@@ -74,57 +74,28 @@ export const ProductDetails = () => {
   const [activeTab, setActiveTab] = React.useState(0);
   return (
     <>
-      <div className='py-5'>
-
-        <div className='container'>
-          <Breadcrumbs aria-label="breadcrumb">
-            <Link to="/"
-              underline="hover"
-              color="inherit"
-              className='link transition !text-[14px]'>
-              Home
-            </Link>
-            <Link
-              underline="hover"
-              color="inherit"
-              href="/"
-              className='link transition !text-[14px]'
-            >
-              Fashion
-            </Link>
-            <Link
-              underline="hover"
-              color="inherit"
-              className='link transition !text-[14px]'
-            >
-              Cropped Satin Bomber Jacket
-            </Link>
-          </Breadcrumbs>
-        </div>
-      </div>
-
       <section className='bg-white py-5'>
         {isLoading ? (
           <ProductDetailsSkeleton />
         ) : (
           <>
-            <div className='container flex gap-8 items-center'>
-              <div className='productZoomContainer w-[40%]'>
+            <div className='container flex flex-col lg:flex-row gap-0 lg:gap-8 items-start lg:items-center'>
+              <div className='productZoomContainer w-full lg:w-[40%]'>
                 <ProductZoom images={productData?.images} />
               </div>
 
-              <div className='productContent w-[60%] pr-10 pl-10'>
+              <div className='productContent w-full lg:w-[60%] pr-2 pl-2 lg:pr-10 lg:pl-10'>
                 <ProductDetailsComponent item={productData} reviewsCount={reviewsCount} gotoReviews={gotoReviews} />
               </div>
             </div>
 
             <div className='container pt-10'>
-              <div className='flex items-center gap-8 mb-5'>
-                <span className={`link text-[17px] cursor-pointer font-medium ${activeTab === 0 ? 'text-primary border-b-2 border-primary pb-0.5' : 'pb-0.5'}`}
+              <div className='flex gap-8 mb-5'>
+                <span className={`link text-[17px] cursor-pointer font-medium ${activeTab === 0 ? 'text-primary border-b-2 border-[#ff5252]' : ''}`}
                   onClick={() => setActiveTab(0)}>
                   Description
                 </span>
-                <span className={`link text-[17px] cursor-pointer font-medium ${activeTab === 1 ? 'text-primary border-b-2 border-primary pb-0.5' : 'pb-0.5'}`}
+                <span className={`link text-[17px] cursor-pointer font-medium ${activeTab === 1 ? 'text-primary border-b-2 border-[#ff5252]' : ''}`}
                   onClick={() => setActiveTab(1)}
                   ref={reviewSec}
                 >
@@ -134,7 +105,7 @@ export const ProductDetails = () => {
 
           {
             activeTab === 0 && (
-              <div className='shadow-md w-full px-8 py-5 rounded-md'>
+              <div className='shadow-md w-full pl-2 pr-0 sm:px-8 py-0 lg:py-5 rounded-md text-[14px] sm:text-[15px] lg:text-[16px] leading-6'>
               {
                 productData?.description
               }
@@ -144,7 +115,7 @@ export const ProductDetails = () => {
 
           {
             activeTab === 1 && (
-              <div className='shadow-md w-[80%] px-8 py-5 rounded-md'>
+              <div className='shadow-none lg:shadow-md w-full sm:w-[80%] pl-2 pr-0 sm:pr-0 sm:pl-2 lg:py-5 rounded-md'>
                 {
                   productData?.length!==0 && <Reviews productId={productData?._id} setReviewsCount={setReviewsCount} /> 
                 }

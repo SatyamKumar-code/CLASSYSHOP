@@ -153,7 +153,7 @@ const Footer = () => {
                             <input type="text" className='w-full h-[45px] border outline-none pl-4 pr-4 rounded-sm mb-4 focus:border-[rgba(0,0,0,0.30)]' placeholder='Your Email Address' />
                             <Button className="btn-org block!">Subscribe</Button>
 
-                            <FormControlLabel className='mt-3 lg:mt-0' control={<Checkbox />} label="I agree to the terms and conditions and the privacy policy." className='mt-3 text-[13px]' />
+                            <FormControlLabel className='mt-3 lg:mt-0 text-[13px]' control={<Checkbox />} label="I agree to the terms and conditions and the privacy policy." />
                         </form>
                 </div>
         </div>
@@ -232,7 +232,9 @@ const Footer = () => {
                 <IoCloseSharp className='text-[20px] cursor-pointer' onClick={context.toggleAddressPanel(false)} />
             </div>
 
-            <AddAddress /> 
+            <div className='w-full max-h-[100vh] overflow-auto'>
+                <AddAddress /> 
+            </div>
             
 
         </Drawer>
