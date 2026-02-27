@@ -36,7 +36,7 @@ const AddressBox = (props) => {
         <div className="addressBox group relative w-full rounded-md border border-dashed border-[rgba(0,0,0,0.2)] bg-[#fafafa] p-4 cursor-pointer">
             <span className='inline-block p-1 bg-[#e7e7e7] text-[12px] rounded-sm'>{props?.address?.addressType}</span>
 
-            <h4 className='pt-2 flex items-center gap-4'>
+            <h4 className='pt-2 flex items-center text-[14px] sm:text-[16px] gap-4'>
                 <span>{context?.userData?.name}</span>
                 <span>+{props?.address?.mobile}</span>
             </h4>
@@ -54,7 +54,7 @@ const AddressBox = (props) => {
 
 
 
-            <div className='absolute top-[20px] right-[20px]'>
+            <div className='absolute top-2 right-0! sm:right-2'>
                 <IconButton
                     aria-label='more'
                     id='long-button'
@@ -77,7 +77,7 @@ const AddressBox = (props) => {
                         paper: {
                             style: {
                                 maxHeight: ITEM_HEIGHT * 4.5,
-                                width: '20ch',
+                                width: '8ch',
                             },
                         },
                     }}

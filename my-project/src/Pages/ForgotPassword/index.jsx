@@ -69,9 +69,9 @@ const ForgotPassword = () => {
 
 
   return (
-    <section className='section py-10'>
+    <section className='section py-3 sm:py-10'>
         <div className='container'>
-            <div className='card shadow-md w-[400px] m-auto rounded-md bg-white p-5 px-10'>
+            <div className='card shadow-md w-full sm:w-[400px] m-auto rounded-md bg-white p-5 px-10'>
                 <h3 className='text-center text-[18px] text-black'>Forgot Password</h3>
 
                 <form action="/" className='w-full mt-5' onSubmit={handleSubmit}>

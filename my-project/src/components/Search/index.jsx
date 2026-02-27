@@ -53,6 +53,7 @@ const Search = () => {
         postData(`/api/product/get/search`, obj).then((res) => {
           context?.setSearchData(res);
           setIsLoading(false);
+          context?.setOpenSearchPanel(false);
           history('/search');
         })
       }

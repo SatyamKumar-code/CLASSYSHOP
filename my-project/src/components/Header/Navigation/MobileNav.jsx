@@ -47,7 +47,9 @@ const MobileNav = () => {
             </Button>
         }
 
-        <Button className='flex-col w-10! min-w-10! capitalize! text-gray-700!'>
+        <Button className='flex-col w-10! min-w-10! capitalize! text-gray-700!'
+            onClick={() => context?.setOpenSearchPanel(true)}
+        >
             <IoSearch size={18} />
             <span className='text-[12px]'>Search</span>
         </Button>

@@ -36,7 +36,7 @@ const  OtpBox = React.memo(({ lenght, onchange }) => {
                     value={otp[index]}
                     onChange={(e) => handleChange(e.target, index)}
                     onKeyDown={(e) => handleKeyDown(e, index)}
-                    className="w-[45px] h-[45px] text-center text-[17px]"
+                    className="w-[35px] h-[35px] sm:w-[45px] sm:h-[45px] text-center text-[17px]"
                 />
             ))}
         </div>

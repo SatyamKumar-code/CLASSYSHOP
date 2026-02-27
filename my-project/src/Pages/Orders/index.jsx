@@ -27,14 +27,14 @@ const Orders = () => {
     }, [])
 
     return (
-        <section className='py-10 w-full'>
-            <div className='container flex gap-5'>
-                <div className='col1 w-[20%]'>
+        <section className='py-3 lg:py-10 w-full'>
+            <div className='container flex flex-col lg:flex-row gap-5'>
+                <div className='col1 w-full lg:w-[20%] hidden lg:block '>
                     <AccountSidebar />
                 </div>
 
 
-                <div className='col2 w-[80%]'>
+                <div className='col2 w-full lg:w-[80%]'>
                     <div className='shadow-md rounded-md bg-white'>
                         <div className='py-2 px-3 border-b border-[rgba(0,0,0,0.1)]'>
                             <h2>My Orders</h2>

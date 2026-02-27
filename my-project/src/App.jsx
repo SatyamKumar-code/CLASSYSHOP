@@ -54,6 +54,7 @@ function App() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [openFilter, setOpenFilter] = useState(false);
   const [isFilterBtnShow, setIsFilterBtnShow] = useState(false);
+  const [openSearchPanel, setOpenSearchPanel] = useState(false);
 
   const handleOpenProductDetailModel = (status, item) => {
     setOpenProductDetailsModal({
@@ -245,7 +246,9 @@ function App() {
     setOpenFilter,
     openFilter,
     setIsFilterBtnShow,
-    isFilterBtnShow
+    isFilterBtnShow,
+    setOpenSearchPanel,
+    openSearchPanel
   }
 
   return (

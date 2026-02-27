@@ -34,20 +34,22 @@ return (
     props?.data?.length !== 0 && props?.data?.map((cat, index) => {
         return (
             <li className='list-none flex items-center relative flex-col' key={index}>
-                <Link to={"/"} className='w-full'>
+                <Link to={`/products?catId=${cat?._id}`} className='w-full'>
                     <Button className='w-full !text-left !text-[rgba(0,0,0,0.8)] !justify-start px-3'>{cat?.name}</Button>
                 </Link>
-                {
-                    submenuIndex === index ?
-                    <FiMinusSquare
-                        className='absolute top-[10px] right-[15px] cursor-pointer'
-                        onClick={() => openSubmenu(index)}
-                    />
-                    :
-                    <FaRegSquarePlus className='absolute top-[10px] right-[15px] cursor-pointer'
-                        onClick={() => openSubmenu(index)} 
-                    />
-                }
+                <div 
+                    className='absolute w-[30px] h-[30px] top-[10px] flex items-center justify-center right-[15px] cursor-pointer'
+                    onClick={() => openSubmenu(index)}
+                >
+                    {
+                        submenuIndex === index ?
+                            <FiMinusSquare
+                            />
+                            :
+                            <FaRegSquarePlus
+                            />
+                    }
+                </div>
 
                 {
                     submenuIndex === index && (
@@ -56,20 +58,22 @@ return (
                                 cat?.Children?.length !== 0 && cat?.Children?.map((subCat, index_) => {
                                     return (
                                         <li className='list-none relative' key={index_}>
-                                            <Link to={"/"} className='w-full'>
+                                            <Link to={`/products?subCatId=${subCat?._id}`} className='w-full'>
                                                 <Button className='w-full !text-left !text-[rgba(0,0,0,0.8)] !justify-start px-3'>{subCat?.name}</Button>
                                             </Link>
-
-                                            {
-                                                innerSubmenuIndex === index_ ?
-                                                    <FiMinusSquare
-                                                        className='absolute top-[10px] right-[15px] cursor-pointer'
-                                                        onClick={() => openInnerSubmenu(index_)}
-                                                    />
-                                                    :
-                                                    <FaRegSquarePlus className='absolute top-[10px] right-[15px] cursor-pointer'
-                                                        onClick={() => openInnerSubmenu(index_)} />
-                                            }
+                                            <div
+                                                className='absolute w-[30px] h-[30px] top-[10px] flex items-center justify-center right-[15px] cursor-pointer'
+                                                onClick={() => openInnerSubmenu(index_)}
+                                            >
+                                                {
+                                                    innerSubmenuIndex === index_ ?
+                                                        <FiMinusSquare 
+                                                        />
+                                                        :
+                                                        <FaRegSquarePlus 
+                                                        />
+                                                }
+                                            </div>
 
                                             {
                                                 innerSubmenuIndex === index_ && (

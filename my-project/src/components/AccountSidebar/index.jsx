@@ -3,10 +3,10 @@ import React, { useContext, useEffect, useState } from 'react'
 import { FaCloudUploadAlt, FaRegUser } from 'react-icons/fa';
 import { IoIosLogOut, IoMdHeartEmpty } from 'react-icons/io';
 import { IoBagCheckOutline } from 'react-icons/io5';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { MyContext } from '../../App';
 import CircularProgress from '@mui/material/CircularProgress';
-import {  uploadImage } from '../../utils/api';
+import {  fetchDataFromApi, uploadImage } from '../../utils/api';
 import { LuMapPinCheck } from 'react-icons/lu';
 
 const AccountSidebar  = () => {
@@ -15,6 +15,7 @@ const AccountSidebar  = () => {
     const [uploading, setUploading] = useState(false);
 
     const context = useContext(MyContext);
+    const history = useNavigate();
 
     useEffect(() => {
         const userAvtar = [];
@@ -67,6 +68,22 @@ const AccountSidebar  = () => {
         } catch (error) {
             console.log("Error while uploading the image: ", error);
         }
+    }
+
+    const logout = () => {
+        fetchDataFromApi(`/api/user/logout?token=${localStorage.getItem('accesstoken')}`, { withCredentials: true }).then((res) => {
+
+            if (res?.error === false) {
+                localStorage.removeItem("accesstoken");
+                localStorage.removeItem("refreshToken");
+                context?.alertBox("Success", res?.message);
+                context?.setIsLogin(false);
+                context?.setUserData(null);
+                context?.setCartData([]);
+                context?.setMyListData([]);
+                history("/")
+            }
+        })
     }
 
   return (
@@ -159,13 +176,12 @@ const AccountSidebar  = () => {
                         </li>
 
                         <li className='w-full'>
-                            <NavLink to="/logout" exact={true} activeClassName="isActive"
-                            className="relative">
-                            <Button className='w-full !text-left !px-5 !py-2 !justify-start !capitalize !text-[rgba(0,0,0,0.8)] !rounded-none flex items-center gap-2'>
+                            <Button className='w-full !text-left !px-5 !py-2 !justify-start !capitalize !text-[rgba(0,0,0,0.8)] !rounded-none flex items-center gap-2'
+                                onClick={logout}
+                            >
                                 <IoIosLogOut className='text-[18px]' /> 
                                 Logout
                             </Button>
-                            </NavLink>
                         </li>
 
                        

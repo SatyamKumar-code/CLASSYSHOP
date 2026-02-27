@@ -36,7 +36,7 @@ const Footer = () => {
     <>
     <footer className='py-6 bg-[#fafafa]'>
         <div className='container'>
-            <div className='flex items-center justify-center gap-2 py-3 lg:py-8 pb-0 lg:pb-8 px-0 lg:px-5 scrollableBox footerBoxWrap'>
+            <div className='flex items-center justify-center gap-2 py-3 lg:py-8 pb-0 lg:pb-8 px-2! lg:px-5 scrollableBox footerBoxWrap'>
                 <div className='col flex items-center justify-center flex-col group w-[15%]'>
                     <LiaShippingFastSolid
                     className='text-[40px] transition-all duration-300 group-hover:text-[#ff5252] group-hover:-translate-y-1'/>

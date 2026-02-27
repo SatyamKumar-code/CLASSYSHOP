@@ -5,20 +5,15 @@ import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { IoBagCheckOutline, IoGitCompareSharp } from "react-icons/io5";
+import { IoBagCheckOutline } from "react-icons/io5";
 import { FaRegHeart, FaRegUser } from "react-icons/fa";
 import Tooltip from '@mui/material/Tooltip';
 import Navigation from './Navigation';
 import { MyContext } from '../../App';
 import Button from '@mui/material/Button';
 
-import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Divider from '@mui/material/Divider';
-import Typography from '@mui/material/Typography';
 import { IoIosLogOut, IoMdHeartEmpty } from 'react-icons/io';
 import { fetchDataFromApi } from '../../utils/api';
 import { HiOutlineMenu } from 'react-icons/hi';
@@ -105,7 +100,7 @@ const Header = () => {
                         <Link to={"/"}><img src='/logo.jpg' /></Link>
                     </div>
 
-                    <div className='col2 fixed top-0 left-0 w-full lg:w-[45%] lg:static p-2 lg:p-0 z-50 bg-white lg:bg-transparent hidden lg:block'>
+                    <div className={`col2 fixed top-0 left-0 w-full lg:w-[45%] lg:static p-2 lg:p-0 z-50 bg-white lg:bg-transparent ${context?.windowWidth > 922 && 'block!'} ${context?.openSearchPanel === true ? 'block' : 'hidden'}`}>
                         <Search />
                     </div>
 
@@ -113,7 +108,7 @@ const Header = () => {
                         <ul className='flex items-center justify-end gap-0 lg:gap-3 w-full'>
 
                             {
-                                context.isLogin=== false ? (
+                                context.isLogin=== false && context?.windowWidth > 922 ? (
                                 <li className='list-none'>
                                 <Link to={"/login"} className='link transition text-[15px] font-[500]'>Login</Link> |
                                 <Link to={"/register"} className='link transition text-[15px] font-[500]'>Register</Link>

@@ -57,8 +57,8 @@ const ProductListing = () => {
     }
 
     return (
-        <section className='py-5 pb-0'>
-            <div className='bg-white p-2 mt-4'>
+        <section className='py-3 lg:py-5 lg:pb-0'>
+            <div className='bg-white p-2'>
                 <div className='container flex gap-3'>
 
                     <div className={`sidebarWrapper fixed -bottom-[100%] left-0 w-full lg:static lg:h-full z-102 lg:w-[20%] bg-white lg:z-1 p-3 lg:p-0 transition-all opacity-0 lg:opacity-100 ${context?.openFilter === true ? 'open' : ''}`}>
