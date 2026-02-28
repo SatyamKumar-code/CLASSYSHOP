@@ -63,7 +63,6 @@ const columns = [
 ];
 
 const Products = () => {
-
     const [isLoading, setIsLoading] = useState(false);
     const [productCat, setProductCat] = useState('');
     const [page, setPage] = useState(0);
@@ -72,12 +71,23 @@ const Products = () => {
     const [productSubCat, setProductSubCat] = useState('');
     const [productThirdLavelCat, setProductThirdLavelCat] = useState('');
     const [sortedIds, setSortedIds] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [allProducts, setAllProducts] = useState([]);
 
     const context = useContext(MyContext);
 
     useEffect(() => {
         getProducts();
     }, [context?.isOpenFullScreenPanel?.open]);
+
+    // Fetch all products for search
+    useEffect(() => {
+        fetchDataFromApi("/api/product/getAllProducts").then((res) => {
+            if (res?.error === false) {
+                setAllProducts(res?.products || []);
+            }
+        });
+    }, []);
 
     // Handle to toggle all checkboxes
     const handleSelectAll = (e) => {
@@ -152,9 +162,9 @@ const Products = () => {
 
     const handleChangeProductSubCat = (event) => {
         setIsLoading(true);
-        setProductCat('');
         setProductSubCat(event.target.value);
         setProductThirdLavelCat('');
+        // Don't clear productCat here
         fetchDataFromApi(`/api/product/getAllProductsBySubCatid/${event.target.value}`).then((res) => {
             if (res?.error === false) {
                 setTimeout(() => {
@@ -167,11 +177,9 @@ const Products = () => {
 
     const handleChangeProductThirdLavelCat = (event) => {
         setIsLoading(true);
-        setProductCat('');
-        setProductSubCat('');
         setProductThirdLavelCat(event.target.value);
+        // Don't clear productCat or productSubCat here
         fetchDataFromApi(`/api/product/getAllProductsByThirdLavelCat/${event.target.value}`).then((res) => {
-           
             if (res?.error === false) {
                 setTimeout(() => {
                     setProductData(res?.products || []);
@@ -223,149 +231,125 @@ const Products = () => {
     }
 
 
+    // Filtered products for search
+    const isAnyFilterApplied = productCat || productSubCat || productThirdLavelCat;
+    const baseProducts = isAnyFilterApplied ? productData : allProducts;
+    const filteredProducts = searchQuery
+        ? baseProducts.filter((product) => {
+            const q = searchQuery.toLowerCase();
+            return (
+                (product?.name || "").toLowerCase().includes(q) ||
+                (product?.brand || "").toLowerCase().includes(q) ||
+                (product?.catName || "").toLowerCase().includes(q) ||
+                (product?.subCat || "").toLowerCase().includes(q) ||
+                (product?.thirdsubCat || "").toLowerCase().includes(q) ||
+                String(product?.price || "").toLowerCase().includes(q) ||
+                String(product?.oldPrice || "").toLowerCase().includes(q) ||
+                String(product?.discount || "").toLowerCase().includes(q) ||
+                String(product?.countInStock || "").toLowerCase().includes(q) ||
+                String(product?.rating || "").toLowerCase().includes(q) ||
+                (product?._id || "").toLowerCase().includes(q)
+            );
+        })
+        : baseProducts;
+
     return (
         <>
-
             <div className='flex items-center justify-between px-2 py-0 mt-3'>
                 <h2 className='text-[18px] font-[600]'>Products</h2>
-
-                
                 <div className='col w-[45%] ml-auto flex items-center gap-3 justify-end'>
-                    {
-                        sortedIds?.length !== 0 && <Button variant='contained' className='btn-sm' size='small' color='error'
-                            onClick={deleteMultipleProduct}
-                        >
+                    {sortedIds?.length !== 0 && (
+                        <Button variant='contained' className='btn-sm' size='small' color='error' onClick={deleteMultipleProduct}>
                             Delete({sortedIds?.length})
                         </Button>
-                    }
-                    <Button className='btn-blue text-white! btn-sm'
-                        onClick={() => context.setIsOpenFullScreenPanel({
-                            open: true,
-                            model: 'Add Product'
-                        })}
-                    >Add Product</Button>
+                    )}
+                    <Button className='btn-blue text-white! btn-sm' onClick={() => context.setIsOpenFullScreenPanel({ open: true, model: 'Add Product' })}>
+                        Add Product
+                    </Button>
                 </div>
             </div>
 
-
             <div className='card my-4 pt-5 shadow-md sm:rounded-lg bg-white'>
-
-
                 <div className='grid grid-cols-1 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 items-center w-full px-5 justify-between gap-4'>
                     <div className='col'>
                         <h4 className='font-[600] text-[13px] mb-2'>Category By</h4>
-
-                        {
-                            context?.catData?.length !== 0 &&
+                        {context?.catData?.length !== 0 && (
                             <Select
-                                style={{zoom: '80%'}}
+                                style={{ zoom: '80%' }}
                                 labelId="demo-simple-select-label"
                                 id="productCatDrop"
                                 size='small'
                                 className='w-full'
                                 value={productCat}
                                 label="Category"
-                                onChange={handleChangeProductCat}
+                                onChange={(e) => {
+                                    setProductCat(e.target.value);
+                                    setProductSubCat('');
+                                    setProductThirdLavelCat('');
+                                    handleChangeProductCat(e);
+                                }}
                             >
-                                {
-                                    context?.catData?.map((cat, index) => {
-                                        return (
-                                            <MenuItem 
-                                                value={cat?._id}
-                                                // key={index}
-                                            >
-                                                {cat?.name}
-                                            </MenuItem>
-                                        )
-                                    })
-                                }
+                                {context?.catData?.map((cat, index) => (
+                                    <MenuItem value={cat?._id} key={cat?._id}>{cat?.name}</MenuItem>
+                                ))}
                             </Select>
-                        }
+                        )}
                     </div>
-
                     <div className='col'>
                         <h4 className='font-[600] text-[13px] mb-2'>Sub Category By</h4>
-
-                        {
-                            context?.catData?.length !== 0 &&
+                        {context?.catData?.length !== 0 && (
                             <Select
-                                style={{zoom: '80%'}}
+                                style={{ zoom: '80%' }}
                                 labelId="demo-simple-select-label"
-                                id="productCatDrop"
+                                id="productSubCatDrop"
                                 size='small'
                                 className='w-full'
                                 value={productSubCat}
                                 label="Sub Category"
-                                onChange={handleChangeProductSubCat}
+                                onChange={(e) => {
+                                    setProductSubCat(e.target.value);
+                                    setProductThirdLavelCat('');
+                                    handleChangeProductSubCat(e);
+                                }}
+                                disabled={!productCat}
                             >
-                                {
-                                    context?.catData?.map((cat, index) => {
-                                        return (
-                                            cat?.Children?.length !== 0 && cat?.Children?.map((subCat, index_) => {
-                                                return (
-                                                    <MenuItem 
-                                                        value={subCat?._id} 
-                                                        // key={index_}
-                                                    >
-                                                        {subCat?.name}
-                                                    </MenuItem>
-                                                )
-                                            })
-
-                                        )
-                                    })
-                                }
+                                {context?.catData?.find(cat => cat._id === productCat)?.Children?.map((subCat) => (
+                                    <MenuItem value={subCat?._id} key={subCat?._id}>{subCat?.name}</MenuItem>
+                                ))}
                             </Select>
-                        }
+                        )}
                     </div>
-
                     <div className='col'>
                         <h4 className='font-[600] text-[13px] mb-2'>Third Lavel Sub Category By</h4>
-
-                        {
-                            context?.catData?.length !== 0 &&
+                        {context?.catData?.length !== 0 && (
                             <Select
-                                style={{zoom: '80%'}}
+                                style={{ zoom: '80%' }}
                                 labelId="demo-simple-select-label"
-                                id="productCatDrop"
+                                id="productThirdLavelCatDrop"
                                 size='small'
                                 className='w-full'
                                 value={productThirdLavelCat}
-                                label="Sub Category"
+                                label="Third Level Category"
                                 onChange={handleChangeProductThirdLavelCat}
+                                disabled={!productSubCat}
                             >
-                                {
-                                    context?.catData?.map((cat) => {
-                                        return (
-                                            cat?.Children?.length !== 0 && cat?.Children?.map((subCat) => {
-                                                return (
-                                                    subCat?.Children?.length !== 0 && subCat?.Children?.map((thirdsubCat, index) => {
-                                                        return (
-                                                            <MenuItem 
-                                                                value={thirdsubCat?._id} 
-                                                                key={index}
-                                                            >
-                                                                {thirdsubCat?.name}
-                                                            </MenuItem>
-                                                        )
-                                                    })
-                                                )
-                                            })
-
-                                        )
-                                    })
-                                }
+                                {context?.catData?.find(cat => cat._id === productCat)?.Children?.find(subCat => subCat._id === productSubCat)?.Children?.map((thirdsubCat) => (
+                                    <MenuItem value={thirdsubCat?._id} key={thirdsubCat?._id}>{thirdsubCat?.name}</MenuItem>
+                                ))}
                             </Select>
-                        }
+                        )}
                     </div>
-
                     <div className='col w-full ml-auto flex items-center'>
                         <div style={{ alignSelf: 'end' }} className='w-full'>
-                            <SearchBox />
+                            <input
+                                type="text"
+                                className="form-input w-full border px-3 py-2 rounded"
+                                placeholder="Search all fields..."
+                                value={searchQuery}
+                                onChange={e => setSearchQuery(e.target.value)}
+                            />
                         </div>
                     </div>
-
-
                 </div>
                 <br />
 
@@ -395,19 +379,19 @@ const Products = () => {
 
                             {
                                 isLoading === false ?
-                                productData?.length !== 0 && productData?.slice(
+                                filteredProducts?.length !== 0 && filteredProducts?.slice(
                                     page * rowsPerPage,
                                     page * rowsPerPage + rowsPerPage
                                 )?.map((product, index) => {
                                     return (
                                         <TableRow key={index}>
+                                            {/* ...existing code for table row... */}
                                             <TableCell style={{ minWidth: columns.minWidth }}>
                                                 <Checkbox {...label} size='small'
                                                     checked={product?.checked === true ? true : false} 
                                                     onChange={(e) => handleCheckboxChange(e, product._id, index)}
                                                 />
                                             </TableCell>
-
                                             <TableCell style={{ minWidth: columns.minWidth }}>
                                                 <div className='flex items-center gap-4 w-[300px]'>
                                                     <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
@@ -417,10 +401,8 @@ const Products = () => {
                                                              effect="blur"
                                                              className='w-full group-hover:scale-105 transition-all' 
                                                             />
-                                                            
                                                         </Link> 
                                                     </div> 
-
                                                     <div className='info w-[75%]'>
                                                         <h3 className='font-[600] text-[12px] leading-4 hovertext-primary'>
                                                             <Link to={`/product/${product?._id}`} className='hover:text-primary'>
@@ -431,15 +413,12 @@ const Products = () => {
                                                     </div>
                                                 </div>
                                             </TableCell>
-
                                             <TableCell style={{ minWidth: columns.minWidth }}>
                                                 {product?.catName}
                                             </TableCell>
-
                                             <TableCell style={{ minWidth: columns.minWidth }}>
                                                 {product?.subCat}
                                             </TableCell>
-
                                             <TableCell style={{ minWidth: columns.minWidth }}>
                                                 <div className='flex gap-1 flex-col'>
                                                     <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
@@ -450,19 +429,14 @@ const Products = () => {
                                                     </span>
                                                 </div>
                                             </TableCell>
-
                                             <TableCell style={{ minWidth: columns.minWidth }}>
                                                 <p className='text-[14px] w-[100px]'><span className='font-[600]'>{product?.sale}</span> sale</p>
-                                                {/* <Progress type="warning" value={product?.sale} /> */}
                                             </TableCell>
-
                                             <TableCell style={{ minWidth: columns.minWidth }}>
                                                 <p className='text-[14px] w-[100px]'>
                                                     <Rating name="read-only" value={product?.rating} readOnly size="small" precision={0.1} />
                                                 </p>
-                                                
                                             </TableCell>
-
                                             <TableCell style={{ minWidth: columns.minWidth }}>
                                                 <div className='flex items-center gap-1'>
                                                     <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'
@@ -474,50 +448,38 @@ const Products = () => {
                                                     >
                                                         <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
                                                     </Button>
-
                                                     <Link to={`/product/${product?._id}`}>
                                                         <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'>
                                                             <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[18px]' />
                                                         </Button>
                                                     </Link>
-                                                
-
                                                     <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'
                                                         onClick={() => deleteProduct(product?._id)}
                                                     >
                                                         <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
                                                     </Button>
-                                                    
-
-
-
                                                 </div>
                                             </TableCell>
-
                                         </TableRow>
                                     )
                                 })
                                 :
                                 <TableSkeleton rowsPerPage={rowsPerPage} /> 
                             }
-
-
                         </TableBody>
                     </Table>
                 </TableContainer>
                 <TablePagination
                     rowsPerPageOptions={[10, 25, 100]}
                     component="div"
-                    count={productData?.length || 0}
+                    count={filteredProducts?.length || 0}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                     className='paginationSmall'
                 />
-
             </div>
-
         </>
     )
 }

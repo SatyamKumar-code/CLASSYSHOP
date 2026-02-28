@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react'
 import Button from '@mui/material/Button';
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
-import Badge from '../../Components/Badge'
 import SearchBox from '../../Components/SearchBox';
 import { useEffect } from 'react';
 import { editData, fetchDataFromApi } from '../../utils/api';
@@ -15,6 +14,7 @@ const Orders = () => {
   const [isOpenOrderdProduct, setIsOpenOrderdProduct] = useState(null);
   const [orders, setOrders] = useState({});
   const [orderStatus, setOrderStatus] = useState('');
+  const [updatingOrderId, setUpdatingOrderId] = useState(null);
   const [pageOrder, setPageOrder] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [totalOrdersData, setTotalOrdersData] = useState({});
@@ -29,23 +29,49 @@ const Orders = () => {
     }
   };
 
-  const handleChange = (event , id) => {
+  const handleChange = (event, id) => {
     const newStatus = event.target.value;
-    setOrderStatus(newStatus);
-
+    setUpdatingOrderId(id);
     const obj = {
-      id : id,
-      order_status : newStatus
-    }
-
+      id: id,
+      order_status: newStatus
+    };
     editData(`/api/order/order-status/${id}`, obj).then((res) => {
+      setUpdatingOrderId(null);
       if (res?.data?.error === false) {
-        context?.alertBox("Success", res?.data?.message)
-        // Update local state to reflect immediately
-        setOrderStatus(newStatus);
+        context?.alertBox("Success", res?.data?.message);
+        if (searchQuery !== "") {
+          // Refetch all orders and reapply search filter
+          fetchDataFromApi(`/api/order/order-lists?limit=10000`).then((allRes) => {
+            if (allRes?.error === false) {
+              setTotalOrdersData(allRes);
+              const filteredOrders = allRes?.data?.filter((order) => 
+                order?._id?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+                order?.userId?.name?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+                order?.userId?.email?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+                order?.delivery_address?.address_line1?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+                order?.order_status?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+                String(order?.delivery_address?.mobile)?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+                order?.createdAt?.toLowerCase()?.includes(searchQuery)
+              );
+              setOrders({
+                ...allRes,
+                data: filteredOrders,
+                totalResults: filteredOrders?.length
+              });
+            }
+          });
+        } else {
+          // Refetch paginated orders for normal mode
+          fetchDataFromApi(`/api/order/order-lists?page=${pageOrder}&limit=5`).then((res2) => {
+            if (res2?.error === false) {
+              setOrders(res2);
+            }
+          });
+        }
       }
-    })
-  }
+    });
+  };
 
   // Initial load - fetch all orders for search functionality
   useEffect(() => {
@@ -197,14 +223,13 @@ const Orders = () => {
                         <Select
                           labelId="demo-simple-select-label"
                           id="demo-simple-select"
-                          value={
-                            order?.order_status !== null ? order?.order_status : orderStatus
-                          }
+                          value={order?.order_status || ''}
                           label="Status"
                           size='small'
                           style={{ zoom: '80%'}}
                           className='w-full'
                           onChange={(e) => handleChange(e, order?._id)}
+                          disabled={updatingOrderId === order?._id}
                         >
                           <MenuItem value={'pending'}>Pending</MenuItem>
                           <MenuItem value={'confirm'}>Confirm</MenuItem>

@@ -54,58 +54,74 @@ export async function uploadImages(req, res) {
 
 export async function createCategory(req, res) {
     try {
+        // Check for duplicate name under same parentId
+        const existing = await CategoryModel.findOne({
+            name: { $regex: `^${req.body.name.trim()}$`, $options: 'i' },
+            parentId: req.body.parentId || null
+        });
+        if (existing) {
+            return res.status(400).json({
+                message: "Category with this name already exists under the selected parent.",
+                error: true,
+                success: false
+            });
+        }
+
         let category = new CategoryModel({
             name: req.body.name,
             images: imagesArr,
             parentId: req.body.parentId,
             parentCatName: req.body.parentCatName,
-        })
-        if( !category ) {
+        });
+        if (!category) {
             return res.status(400).json({
                 message: "Category not created",
                 error: true,
                 success: false
-            })
+            });
         }
 
         category = await category.save();
-
         imagesArr = [];
-
         return res.status(201).json({
             message: "Category created successfully",
             error: false,
             success: true,
             category,
-        })
-
+        });
     } catch (error) {
         return res.status(500).json({
             messsage: error.message || error,
             error: true,
             success: false
-        })
+        });
     }
 }
 
 export async function getCategories(req, res) {
     try {
-        const categories = await CategoryModel.find();
-        const categoryMap = {};
+        let categories = await CategoryModel.find();
+        // Sort categories by name (A-Z)
+        categories = categories.sort((a, b) => {
+            if (a.name && b.name) {
+                return a.name.localeCompare(b.name);
+            }
+            return 0;
+        });
 
+        const categoryMap = {};
         categories.forEach(cat => {
             categoryMap[cat._id] = { ...cat._doc, Children: [] };
-        })
+        });
 
         const rootCategories = [];
-
         categories.forEach(cat => {
             if (cat.parentId) {
                 categoryMap[cat.parentId].Children.push(categoryMap[cat._id]);
             } else {
                 rootCategories.push(categoryMap[cat._id]);
             }
-        })
+        });
 
         return res.status(200).json({
             error: false,

@@ -1,18 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react'
-import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Rating from '@mui/material/Rating';
 import UploadBox from '../../Components/UploadBox';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import { IoMdClose } from 'react-icons/io';
 import Button from '@mui/material/Button';
 import { FaCloudUploadAlt } from 'react-icons/fa';
 import { MyContext } from '../../App';
-import { deleteImages, editData, fetchDataFromApi, postData } from '../../utils/api';
-import { useNavigate, useParams } from 'react-router-dom';
+import { deleteImages, editData, fetchDataFromApi } from '../../utils/api';
+import { useNavigate } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
 import Switch from '@mui/material/Switch';
 
@@ -415,9 +412,9 @@ const EditProduct = () => {
                         </div>
 
                         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  mb-3 gap-4'>
+
                             <div className='col'>
                                 <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Category</h3>
-
                                 {
                                     context?.catData?.length !== 0 &&
                                     <Select
@@ -427,93 +424,68 @@ const EditProduct = () => {
                                         className='w-full'
                                         value={productCat}
                                         label="Category"
-                                        onChange={handleChangeProductCat}
+                                        onChange={(e) => {
+                                            setProductCat(e.target.value);
+                                            setProductSubCat('');
+                                            setProductThirdLavelCat('');
+                                            handleChangeProductCat(e);
+                                        }}
                                     >
-                                        {
-                                            context?.catData?.map((cat, index) => {
-                                                return (
-                                                    <MenuItem value={cat?._id} key={index}
-                                                        onClick={() => selectCatByName(cat?.name)}
-                                                    >
-                                                        {cat?.name}
-                                                    </MenuItem>
-                                                )
-                                            })
-                                        }
+                                        {context?.catData?.map((cat, index) => (
+                                            <MenuItem value={cat?._id} key={cat?._id} onClick={() => selectCatByName(cat?.name)}>
+                                                {cat?.name}
+                                            </MenuItem>
+                                        ))}
                                     </Select>
                                 }
-
                             </div>
 
                             <div className='col'>
                                 <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Sub Category</h3>
-
                                 {
                                     context?.catData?.length !== 0 &&
                                     <Select
                                         labelId="demo-simple-select-label"
-                                        id="productCatDrop"
+                                        id="productSubCatDrop"
                                         size='small'
                                         className='w-full'
                                         value={productSubCat}
                                         label="Sub Category"
-                                        onChange={handleChangeProductSubCat}
+                                        onChange={(e) => {
+                                            setProductSubCat(e.target.value);
+                                            setProductThirdLavelCat('');
+                                            handleChangeProductSubCat(e);
+                                        }}
+                                        disabled={!productCat}
                                     >
-                                        {
-                                            context?.catData?.map((cat, index) => {
-                                                return (
-                                                    cat?.Children?.length !== 0 && cat?.Children?.map((subCat, index_) => {
-                                                        return (
-                                                            <MenuItem value={subCat?._id} key={index_}
-                                                                onClick={() => selectSubCatByName(subCat?.name)}
-                                                            >
-                                                                {subCat?.name}
-                                                            </MenuItem>
-                                                        )
-                                                    })
-
-                                                )
-                                            })
-                                        }
+                                        {context?.catData?.find(cat => cat._id === productCat)?.Children?.map((subCat) => (
+                                            <MenuItem value={subCat?._id} key={subCat?._id} onClick={() => selectSubCatByName(subCat?.name)}>
+                                                {subCat?.name}
+                                            </MenuItem>
+                                        ))}
                                     </Select>
                                 }
                             </div>
 
-
                             <div className='col'>
                                 <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Third Lavel Category</h3>
-
                                 {
                                     context?.catData?.length !== 0 &&
                                     <Select
                                         labelId="demo-simple-select-label"
-                                        id="productCatDrop"
+                                        id="productThirdLavelCatDrop"
                                         size='small'
                                         className='w-full'
                                         value={productThirdLavelCat}
-                                        label="Sub Category"
+                                        label="Third Level Category"
                                         onChange={handleChangeProductThirdLavelCat}
+                                        disabled={!productSubCat}
                                     >
-                                        {
-                                            context?.catData?.map((cat) => {
-                                                return (
-                                                    cat?.Children?.length !== 0 && cat?.Children?.map((subCat) => {
-                                                        return (
-                                                            subCat?.Children?.length !== 0 && subCat?.Children?.map((thirdsubCat, index) => {
-                                                                return (
-                                                                    <MenuItem value={thirdsubCat?._id} key={index}
-                                                                        onClick={() => selectSubCatByThirdLavel(thirdsubCat?.name)}
-                                                                    >
-                                                                        {thirdsubCat?.name}
-                                                                    </MenuItem>
-                                                                )
-                                                            })
-                                                        )
-                                                    })
-
-                                                )
-                                            })
-                                        }
+                                        {context?.catData?.find(cat => cat._id === productCat)?.Children?.find(subCat => subCat._id === productSubCat)?.Children?.map((thirdsubCat) => (
+                                            <MenuItem value={thirdsubCat?._id} key={thirdsubCat?._id} onClick={() => selectSubCatByThirdLavel(thirdsubCat?.name)}>
+                                                {thirdsubCat?.name}
+                                            </MenuItem>
+                                        ))}
                                     </Select>
                                 }
                             </div>
