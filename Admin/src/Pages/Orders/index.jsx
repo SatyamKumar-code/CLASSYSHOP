@@ -49,7 +49,7 @@ const Orders = () => {
 
   // Initial load - fetch all orders for search functionality
   useEffect(() => {
-    fetchDataFromApi(`/api/order/order-list?limit=10000`).then((res) => {
+    fetchDataFromApi(`/api/order/order-lists?limit=10000`).then((res) => {
       if (res?.error === false) {
         setTotalOrdersData(res)
       }
@@ -59,7 +59,7 @@ const Orders = () => {
   // Fetch paginated orders when not searching
   useEffect(() => {
     if(searchQuery === "") {
-      fetchDataFromApi(`/api/order/order-list?page=${pageOrder}&limit=5`).then((res) => {
+      fetchDataFromApi(`/api/order/order-lists?page=${pageOrder}&limit=5`).then((res) => {
         if (res?.error === false) {
           setOrders(res)
         }

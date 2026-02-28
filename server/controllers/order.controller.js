@@ -54,7 +54,35 @@ export const createOrderController = async (req, res) => {
     }
 }
 
-export async function getOrderDetailsController(req, res) {
+export const getOrderDetailsController = async (req, res) => {
+    try {
+        const userid = req.userId; // order id
+        const orderlist = await OrderModel.find({ userId: userid }).populate('delivery_address userId');
+
+        if (!orderlist) {
+            return res.status(404).json({
+                message: "No orders found for this user",
+                error: true,
+                success: false
+            });
+        }
+
+        return res.status(200).json({
+            message: "Order list",
+            error: false,
+            success: true,
+            data: orderlist
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+export async function getAllOrderDetailsController(req, res) {
     try {
         const userid = req.userId; // order id
 

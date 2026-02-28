@@ -50,7 +50,7 @@ const Dashboard = () => {
 
   // Fetch all orders data and count only once on mount
   useEffect(() => {
-    fetchDataFromApi(`/api/order/order-list?limit=10000`).then((res) => {
+    fetchDataFromApi(`/api/order/order-lists?limit=10000`).then((res) => {
       if (res?.error === false) {
         setTotalOrdersData(res);
       }
@@ -65,7 +65,7 @@ const Dashboard = () => {
   // Fetch paginated orders when page changes
   useEffect(() => {
     if(searchQuery === "") {
-      fetchDataFromApi(`/api/order/order-list?page=${pageOrder}&limit=5`).then((res) => {
+      fetchDataFromApi(`/api/order/order-lists?page=${pageOrder}&limit=5`).then((res) => {
         if (res?.error === false) {
           setOrders(res);
           setOrdersData(res?.data);
