@@ -17,14 +17,15 @@ const auth = getAuth(firebaseApp);
 const googleProvider = new GoogleAuthProvider();
 
 
-const Login = () => {
+const Register = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [formFields, setFormFields] = useState({
         name: '',
         email: '',
-        password: ''
+        password: '',
+        role: "USER",
     });
 
     const context = useContext(MyContext);
@@ -71,7 +72,7 @@ const Login = () => {
                 setFormFields({
                     name: '',
                     email: '',
-                    password: ''
+                    password: '',
                 });
                 history('/verify');
             } else {
@@ -219,4 +220,4 @@ const Login = () => {
   )
 }
 
-export default Login;
+export default Register;

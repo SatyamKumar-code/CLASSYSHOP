@@ -19,7 +19,7 @@ cloudinary.config({
 export async function registerUserController(req, res) {
     try {
         let user;
-        const { name, email, password } = req.body;
+        const { name, email, password, role } = req.body;
         if (!name || !email || !password) {
             return res.status(400).json({
                 message: "provide all required fields",
@@ -49,7 +49,7 @@ export async function registerUserController(req, res) {
             email,
             password: hashedPassword,
             otp: verifyCode,
-            role: "ADMIN",
+            role: role,
             otp_expiry: Date.now() + 10 * 60 * 1000 // 10 minutes from now
         });
 
