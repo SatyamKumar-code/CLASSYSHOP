@@ -92,13 +92,13 @@ export const Reviews = (props) => {
                             return (
                                 <div key={index} className='review py-3 border-b border-[rgba(0,0,0,0.1)] w-full flex items-center justify-between'>
                                     <div className='info w-[60%] flex items-center gap-3'>
-                                        <div className='img w-[80px] h-[80px] overflow-hidden rounded-full'>
+                                        <div className='img w-[80px] min-w-[80px] h-[80px] overflow-hidden rounded-full'>
                                             <img src={review?.image} className='w-full' alt="" />
                                         </div>
 
                                         <div className='w-[80%]'>
-                                            <h4 className='text-[16px]'>{review?.userName}</h4>
-                                            <h5 className='text-[13px] mb-0'>{review?.createdAt?.split("T")[0]}</h5>
+                                            <h4 className='text-[14px] sm:text-[16px]'>{review?.userName}</h4>
+                                            <h5 className='text-[12px] sm:text-[13px] mb-0'>{review?.createdAt?.split("T")[0]}</h5>
                                             <p className='mt-01 mb-0!'>{review?.review}</p>
                                         </div>
                                     </div>

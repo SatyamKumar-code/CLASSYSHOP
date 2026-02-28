@@ -141,7 +141,7 @@ export const Sidebar = (props) => {
   },[price])
 
   return (
-    <aside className='sidebar y-3 lg:py-5 static lg:sticky top-[60px] z-50'>
+    <aside className='sidebar y-3 lg:py-5 static lg:sticky top-[130px] z-50'>
       <div className='max-h-[60vh] overflow-auto lg:overflow-hidden w-full'>
         <div className='box'>
             <h3 className=' w-full mb-3 text-[16px] font-[600] flex items-center pr-5'>Shop by Category

@@ -61,7 +61,7 @@ const ProductListing = () => {
             <div className='bg-white p-2'>
                 <div className='container flex gap-3'>
 
-                    <div className={`sidebarWrapper fixed -bottom-[100%] left-0 w-full lg:static lg:h-full z-102 lg:w-[20%] bg-white lg:z-1 p-3 lg:p-0 transition-all opacity-0 lg:opacity-100 ${context?.openFilter === true ? 'open' : ''}`}>
+                    <div className={`sidebarWrapper fixed -bottom-[100%] left-0 w-full z-102 lg:sticky lg:w-[20%] bg-white lg:z-1 p-3 lg:p-0 transition-all opacity-0 lg:opacity-100 ${context?.openFilter === true ? 'open' : ''}`}>
                         <Sidebar 
                             productsData={productsData} 
                             setProductsData={setProductsData} 
@@ -80,7 +80,7 @@ const ProductListing = () => {
                     }
 
                     <div className='rightContent w-full lg:w-[80%] py-3'>
-                        <div className='bg-[#f1f1f1] p-2 w-full mb-4 rounded-md flex items-center justify-between sticky top-[65px] z-60'> 
+                        <div className='bg-[#f1f1f1] p-2 w-full mb-4 rounded-md flex items-center justify-between sticky top-[140px] z-60'> 
                             <div className='col1 flex items-center itemViewActions'>
                                 <Button className={`!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000] ${itemView === 'list' && 'active'}`}
                                     onClick={()=>setItemView('list')}

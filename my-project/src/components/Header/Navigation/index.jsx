@@ -16,6 +16,9 @@ const Navigation = (props) => {
 
     const [isOpenCategoryPanel, setIsOpenCategoryPanel] = useState(false);
     const [catData, setCatData] = useState([]);
+    // State for hover logic
+    const [hoveredCatIdx, setHoveredCatIdx] = useState(null);
+    const [hoveredSubCatIdx, setHoveredSubCatIdx] = useState(null);
 
     const Context = useContext(MyContext);
 
@@ -52,26 +55,37 @@ const Navigation = (props) => {
                             {
                                 catData?.length !== 0 && catData?.map((cat, index) => {
                                     return (
-                                        <li className='list-none relative' key={index}>
+                                        <li
+                                            className='list-none relative'
+                                            key={index}
+                                            onMouseEnter={() => { setHoveredCatIdx(index); setHoveredSubCatIdx(null); }}
+                                            onMouseLeave={() => { setHoveredCatIdx(null); setHoveredSubCatIdx(null); }}
+                                        >
                                             <Link to={`/products?catId=${cat?._id}`} className='link transition text-[14px] font-[500]'>
                                                 <Button className='link transition !font-[500] !text-[rgba(0,0,0,0.8)] hover:!text-[#ff5252] !py-4'>{cat?.name}</Button>
                                             </Link>
 
                                             {
-                                                cat?.Children?.length !== 0 &&
-                                                <div className='submenu absolute top-[120%] left-[0%] min-w-[150px] bg-white shadow-md opacity-0 transition-all'>
+                                                cat?.Children?.length !== 0 && hoveredCatIdx === index &&
+                                                <div className='submenu absolute top-[120%] left-[0%] min-w-[150px] bg-white shadow-md opacity-1 transition-all z-[1000]'>
                                                     <ul>
                                                         {
                                                             cat?.Children?.map((subCat, index_) => {
                                                                 return (
-                                                                    <li className='list-none w-full' key={index_}>
+                                                                    <li
+                                                                        className='list-none w-full relative'
+                                                                        key={index_}
+                                                                        onMouseEnter={() => setHoveredSubCatIdx(index_)}
+                                                                        onMouseLeave={() => setHoveredSubCatIdx(null)}
+                                                                    >
                                                                         <Link to={`/products?subCatId=${subCat?._id}`} className='w-full block'>
                                                                             <Button className=' !text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none'>{subCat?.name}</Button>
-                                                                            {
-                                                                                subCat?.Children?.length !== 0 &&
-                                                                                <div className='submenu absolute top-[0%] left-[100%] min-w-[150px] bg-white shadow-md opacity-0 transition-all'>
-                                                                                    <ul>
-                                                                                        {
+                                                                        </Link>
+                                                                        {
+                                                                            subCat?.Children?.length !== 0 && hoveredSubCatIdx === index_ &&
+                                                                            <div className='submenu absolute top-[0%] left-[100%] min-w-[150px] bg-white shadow-md opacity-1 transition-all z-[1000]'>
+                                                                                <ul>
+                                                                                    {
                                                                                         subCat?.Children?.map((thirdLavelCat, index__) => {
                                                                                             return (
                                                                                                 <li className='list-none w-full' key={index__}>
@@ -81,14 +95,10 @@ const Navigation = (props) => {
                                                                                                 </li>
                                                                                             )
                                                                                         })
-                                                                                        }
-                                                                                        
-                                                                                    </ul>
-                                                                                </div>
-                                                                            }
-
-
-                                                                        </Link>
+                                                                                    }
+                                                                                </ul>
+                                                                            </div>
+                                                                        }
                                                                     </li>
                                                                 )
                                                             })
@@ -96,14 +106,10 @@ const Navigation = (props) => {
                                                     </ul>
                                                 </div>
                                             }
-
-                                            
                                         </li>
                                     )
                                 })
                             }
-                            
-                            
                         </ul>
                     </div>
 
@@ -127,7 +133,6 @@ const Navigation = (props) => {
             {
                 Context?.windowWidth < 922 && <MobileNav />
             }
-            
         </>
     )
 }

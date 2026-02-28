@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import { Link, useParams } from 'react-router-dom';
 import { ProductZoom } from '../../components/ProductZoom';
@@ -8,6 +8,7 @@ import { fetchDataFromApi } from '../../utils/api';
 import ProductDetailsSkeleton from '../../components/skeleton/ProductDetailsSkeleton';
 import { Reviews } from './reviews';
 import { useRef } from 'react';
+import { MyContext } from '../../App';
 
 export const ProductDetails = () => {
 
@@ -16,8 +17,10 @@ export const ProductDetails = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [reviewsCount, setReviewsCount] = useState(0);
   const [relatedProductData, setRelatedProductData] = useState([]);
+  const [showFullDescription, setShowFullDescription] = useState(false);
 
   const reviewSec = useRef();
+  const context = useContext(MyContext);
 
   useEffect(() => {
     fetchDataFromApi(`/api/user/getReviews?productId=${id}`).then((res) => {
@@ -103,15 +106,43 @@ export const ProductDetails = () => {
                 </span>
               </div>
 
-          {
-            activeTab === 0 && (
-              <div className='shadow-md w-full pl-2 pr-0 sm:px-8 py-0 lg:py-5 rounded-md text-[14px] sm:text-[15px] lg:text-[16px] leading-6'>
               {
-                productData?.description
+                activeTab === 0 && (
+                  <div className='shadow-md w-full pl-2 pr-0 sm:px-8 py-0 lg:py-5 rounded-md text-[14px] sm:text-[15px] lg:text-[16px] leading-6'>
+                    {productData?.description && productData.description.length > (context?.windowWidth < 922 ? 700 : 1200) ? (
+                      <>
+                        <p className='mt-3 pr-10 mb-5'>
+                          {showFullDescription
+                            ? productData.description
+                              : productData.description.slice(0, (context?.windowWidth < 922 ? 700 : 1200)) + '...'}
+                        </p>
+                        <span
+                          className='text-primary cursor-pointer mb-2 inline-block'
+                          onClick={() => setShowFullDescription((prev) => !prev)}
+                        >
+                          {showFullDescription ? 'Read less' : 'Read more'}
+                        </span>
+                      </>
+                    ) : productData?.description && productData.description.length > (context?.windowWidth < 922 ? 700 : 1200) ? (
+                      <>
+                        <p className='mt-3 pr-10 mb-5'>
+                          {showFullDescription
+                            ? productData.description
+                            : productData.description.slice(0, (context?.windowWidth < 922 ? 700 : 1200)) + '...'}
+                        </p>
+                        <span
+                          className='text-primary cursor-pointer mb-2 inline-block'
+                          onClick={() => setShowFullDescription((prev) => !prev)}
+                        >
+                          {showFullDescription ? 'Read less' : 'Read more'}
+                        </span>
+                      </>
+                    ) : (
+                      <p className='mt-3 pr-10 mb-5'>{productData?.description}</p>
+                    )}
+                  </div>
+                )
               }
-              </div>
-            )
-          }
 
           {
             activeTab === 1 && (

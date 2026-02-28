@@ -64,7 +64,7 @@ const Header = () => {
     
 
     return (
-        <header className='bg-white sticky -top-[150px] z-100'>
+        <header className='bg-white sticky -top-[65px] z-100'>
             <div className='top-strip py-2  border-t-[1px] border-gray-250 border-b-[1px]'>
                 <div className='container'>
                     <div className='flex items-center justify-between'>
@@ -122,7 +122,7 @@ const Header = () => {
                                             onClick={handleClick}>
                                             <Button
                                                 className='!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !bg-[#f1f1f1]'>
-                                                <FaRegUser className='text-[16px] text-[rgba(0,0,0,0.7)]' />
+                                                <img src={context?.userData?.avatar} className='!w-[40px] !h-[40px] !min-w-[40px] !rounded-full' />
                                             </Button>
                                             {
                                                 context?.windowWidth > 922 &&

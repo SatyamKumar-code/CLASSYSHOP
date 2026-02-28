@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Button from '@mui/material/Button';
 import { QtyBox } from '../../components/Qt;yBox';
 import { MdOutlineShoppingCart } from 'react-icons/md';
@@ -7,7 +7,8 @@ import { IoGitCompareOutline } from "react-icons/io5";
 import Rating from '@mui/material/Rating';
 import { MyContext } from '../../App';
 import CircularProgress from '@mui/material/CircularProgress';
-import { postData } from '../../utils/api';
+import { deleteData, postData } from '../../utils/api';
+import { IoMdHeart } from 'react-icons/io';
 
 export const ProductDetailsComponent = (props) => {
 
@@ -16,6 +17,8 @@ export const ProductDetailsComponent = (props) => {
     const [selectedTabName, setSelectedTabName] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [tabError, setTabError] = useState(false);
+    const [isAddedInMyList, setIsAddedInMyList] = useState(false);
+    const [showFullDescription, setShowFullDescription] = useState(false);
 
     const context = useContext(MyContext);
 
@@ -127,6 +130,73 @@ export const ProductDetailsComponent = (props) => {
 
   }
 
+  useEffect(() => {
+    const myListItem = context?.myListData?.filter((item) =>
+      item?.productId?.includes(props?.item?._id)
+    );
+
+    if (myListItem?.length !== 0) {
+      setIsAddedInMyList(true);
+    } else {
+      setIsAddedInMyList(false);
+    }
+  },[context?.myListData, props?.item?._id])
+
+  const handleAddToMyList = (item) => {
+    if (!context?.isLogin) {
+      context?.alertBox("error", "You are not logged in. Please login first");
+      return false;
+    }
+
+    const obj = {
+      productTitle: item?.name,
+      image: item?.images?.[0],
+      rating: item?.rating,
+      price: item?.price,
+      oldPrice: item?.oldPrice,
+      discount: item?.discount,
+      productId: item?._id,
+      brand: item?.brand,
+    }
+
+    if (isAddedInMyList === false) {
+      postData("/api/mylist/add", obj).then((res) => {
+        if (res?.error !== false) {
+          context?.alertBox("error", res?.message);
+          return false;
+        }
+        context?.alertBox("Success", res?.message);
+        setIsAddedInMyList(true);
+
+        context?.getMyListData();
+
+      }).catch((error) => {
+        context?.alertBox("error", error?.message || "Failed to add to wishlist");
+      })
+    } else {
+      const myListItem = context?.myListData?.find((listItem) =>
+        listItem?.productId === item?._id
+      );
+
+      if (!myListItem?._id) {
+        context?.alertBox("error", "My List item not found for this product");
+        return;
+      }
+
+      deleteData(`/api/mylist/${myListItem?._id}`).then((res) => {
+        if (res?.error === false) {
+          context?.alertBox("Success", res?.message);
+          setIsAddedInMyList(false);
+          context?.getMyListData();
+        } else {
+          context?.alertBox("error", res?.message || "Failed to remove from wishlist");
+        }
+      }).catch((error) => {
+        context?.alertBox("error", error?.message || "Failed to remove from wishlist");
+      })
+    }
+  }
+
 
   return (
     <>
@@ -155,7 +225,39 @@ export const ProductDetailsComponent = (props) => {
 
       {
         context?.windowWidth > 922 && (
-          <p className='mt-3 pr-10 mb-5'>{props.item?.description}</p>
+          <>
+            {props.item?.description && props.item.description.length > 300 ? (
+              <>
+                <p className='mt-3 pr-10 mb-5'>
+                  {showFullDescription
+                    ? props.item.description
+                    : props.item.description.slice(0, 300) + '...'}
+                </p>
+                <span
+                  className='text-primary cursor-pointer underline mb-2 inline-block'
+                  onClick={() => setShowFullDescription((prev) => !prev)}
+                >
+                  {showFullDescription ? 'Read less' : 'Read more'}
+                </span>
+              </>
+            ) : props.item?.description && props.item.description.length > 300 ? (
+              <>
+                <p className='mt-3 pr-10 mb-5'>
+                  {showFullDescription
+                    ? props.item.description
+                    : props.item.description.slice(0, 300) + '...'}
+                </p>
+                <span
+                  className='text-primary cursor-pointer underline mb-2 inline-block'
+                  onClick={() => setShowFullDescription((prev) => !prev)}
+                >
+                  {showFullDescription ? 'Read less' : 'Read more'}
+                </span>
+              </>
+            ) : (
+              <p className='mt-3 pr-10 mb-5'>{props.item?.description}</p>
+            )}
+          </>
         )
       }
 
@@ -194,7 +296,7 @@ export const ProductDetailsComponent = (props) => {
                   <Button
                     key={index}
                     className={`${productActionIndex === index ?
-                      'bg-primary! text-white' : ''
+                      'bg-primary text-white' : ''
                       } ${tabError === true && 'border! border-red-500!'}`}
                     onClick={() => handleClickActiveTab(index, item)}
                   >
@@ -255,9 +357,21 @@ export const ProductDetailsComponent = (props) => {
       </div>
 
       <div className='flex items-center gap-4 mt-4'>
-        <span className='flex items-center gap-2 text-[14px] sm:text-[15px] link cursor-pointer font-[500]'>
-          <FaRegHeart className='text-[18px]' /> Add to Wishlist
-        </span>
+        {/* <Button className={`wishlist-btn !w-[30px] !h-[30px] !min-w-[30px] !rounded-full !bg-white hover:!bg-[#ff5252] group`} */}
+              {/* onClick={()=> handleAddToMyList(props?.item)} */}
+            {/* > */}
+            {
+            isAddedInMyList === true ?
+              <span className='flex items-center gap-2 text-[14px] sm:text-[15px] link cursor-pointer font-[500]' onClick={()=> handleAddToMyList(props?.item)}>
+                <IoMdHeart className='text-[18px] text-primary' /> Already in Wishlist
+              </span>
+              :
+              <span className='flex items-center gap-2 text-[14px] sm:text-[15px] link cursor-pointer font-[500]'  onClick={()=> handleAddToMyList(props?.item)}>
+                <FaRegHeart className='text-[18px]' /> Add to Wishlist
+              </span>
+            }
+              
+          {/* </Button> */}
         <span className='flex items-center gap-2 text-[14px] sm:text-[15px] link cursor-pointer font-[500]'>
           <IoGitCompareOutline className='text-[18px]' /> Add to Compare
         </span>

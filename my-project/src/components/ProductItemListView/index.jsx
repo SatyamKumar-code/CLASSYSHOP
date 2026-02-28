@@ -133,6 +133,7 @@ const ProductItem = (props) => {
 
     editData(`/api/cart/update-qty`, obj).then((res) => {
       if (res?.data?.success === true) {
+        context?.getCartItems();
         context?.alertBox("Success", res?.data?.message);
       } else {
         context?.alertBox("Error", res?.data?.message || "Failed to update quantity");
@@ -169,6 +170,7 @@ const ProductItem = (props) => {
 
       editData(`/api/cart/update-qty`, obj).then((res) => {
         if (res?.data?.success === true) {
+          context?.getCartItems();
           context?.alertBox("Success", res?.data?.message);
         }
 
