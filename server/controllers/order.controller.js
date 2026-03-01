@@ -346,21 +346,102 @@ export const updateOrderStatusController = async (req, res) => {
     try {
         const { id, order_status } = req.body;
 
+        // Find the order first
+        const order = await OrderModel.findById(id);
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: "Order not found",
+                error: true
+            });
+        }
+
+        // Define allowed transitions based on current status and payment type
+        const statusFlow = ['pending', 'confirm', 'shipped', 'delivered', 'refund'];
+        let allowedNext = [];
+        const curr = order.order_status;
+        const payStatus = order.payment_status;
+
+        if (curr === 'pending') {
+            allowedNext = ['confirm', 'cancelled'];
+        } else if (curr === 'confirm') {
+            allowedNext = ['shipped', 'cancelled'];
+        } else if (curr === 'shipped') {
+            allowedNext = ['delivered', 'cancelled'];
+        } else if (curr === 'delivered') {
+            // Refund logic
+            if (payStatus === 'completed') {
+                allowedNext = ['refund'];
+            } else if (payStatus === 'CASH ON DELIVERY') {
+                allowedNext = [];
+            }
+        } else if (curr === 'cancelled') {
+            // Refund only if prepaid
+            if (payStatus === 'completed') {
+                allowedNext = ['refund'];
+            } else {
+                allowedNext = [];
+            }
+        }
+
+        // Only allow update if requested status is in allowedNext
+        if (!allowedNext.includes(order_status)) {
+            return res.status(400).json({
+                success: false,
+                message: `Invalid status transition from '${curr}' to '${order_status}'.`,
+                error: true,
+                allowedNext
+            });
+        }
+
+        // Increase sales only when status changes to 'delivered' from any other status
+        if (order_status === 'delivered' && order.order_status !== 'delivered') {
+            for (const item of order.products) {
+                await ProductModel.findByIdAndUpdate(
+                    item.productId,
+                    { $inc: { sale: item.quantity } },
+                    { new: true }
+                );
+            }
+        }
+
+        // Decrease sales only if status changes to 'refund' and previous status was 'delivered'
+        if (order_status === 'refund' && order.order_status === 'delivered') {
+            for (const item of order.products) {
+                await ProductModel.findByIdAndUpdate(
+                    item.productId,
+                    { $inc: { sale: -item.quantity } },
+                    { new: true }
+                );
+            }
+        }
+
+        // Update the order status
         const updatedOrder = await OrderModel.findByIdAndUpdate(
-            {
-                _id: id,
-            },
-            {
-                order_status: order_status,
-            },
+            { _id: id },
+            { order_status: order_status },
             { new: true }
         );
+
+        // Return allowed next statuses for UI
+        let nextAllowed = [];
+        if (order_status === 'pending') nextAllowed = ['confirm', 'cancelled'];
+        else if (order_status === 'confirm') nextAllowed = ['shipped', 'cancelled'];
+        else if (order_status === 'shipped') nextAllowed = ['delivered', 'cancelled'];
+        else if (order_status === 'delivered') {
+            if (payStatus === 'completed') nextAllowed = ['refund'];
+            else if (payStatus === 'CASH ON DELIVERY') nextAllowed = [];
+        } else if (order_status === 'cancelled') {
+            if (payStatus === 'completed') nextAllowed = ['refund'];
+            else nextAllowed = [];
+        }
 
         return res.status(200).json({
             success: true,
             error: false,
             message: "Order status updated",
-            data: updatedOrder
+            data: updatedOrder,
+            allowedNext: nextAllowed
         });
 
     } catch (error) {

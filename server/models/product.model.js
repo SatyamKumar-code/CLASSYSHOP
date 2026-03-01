@@ -113,6 +113,40 @@ const productSchema = new mongoose.Schema({
     },
 }, { timestamps: true });
 
+// TEXT SEARCH
+productSchema.index({
+  name: "text",
+  description: "text",
+  brand: "text",
+  catName: "text",
+  subCat: "text",
+  thirdsubCat: "text"
+});
+
+// CATEGORY FILTER
+productSchema.index({ catId: 1 });
+productSchema.index({ subCatId: 1 });
+productSchema.index({ thirdsubCatId: 1 });
+
+// PRICE
+productSchema.index({ price: 1 });
+
+// RATING
+productSchema.index({ rating: -1 });
+
+// LATEST
+productSchema.index({ createdAt: -1 });
+
+// FEATURED
+productSchema.index({ isFeatured: 1 });
+
+// ADVANCED FILTER
+productSchema.index({
+  catId: 1,
+  price: 1,
+  rating: -1
+});
+
 const ProductModel = mongoose.model("Product", productSchema);
 
 export default ProductModel;

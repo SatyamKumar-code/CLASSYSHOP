@@ -48,6 +48,9 @@ const Search = () => {
         limit: 3,
         query: searchQuery
       }
+
+      console.log(context?.catData);
+      
       if (searchQuery !== "") {
         setIsLoading(true);
         postData(`/api/product/get/search`, obj).then((res) => {

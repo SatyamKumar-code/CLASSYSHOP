@@ -46,7 +46,7 @@ const Sidebar = () => {
 
   return (
     <>
-    <div className={`sidebar fixed top-0 left-0 z-60 bg-[#fff] h-full border-r border-[rgba(0,0,0,0.1)] py-2 px-4 w-[${context.isSidebarOpen === true ? `${context?.sidebarWidth/1.5}%` : 'w-[0%] opacity-0'}] transition-all duration-300 overflow-hidden`}>
+    <div className={`sidebar fixed top-0 left-0  bg-[#fff] h-full border-r border-[rgba(0,0,0,0.1)] py-2 px-4 ${context?.isSidebarOpen === true ? " z-60" : "hidden"} w-[${context.isSidebarOpen === true ? `${context?.sidebarWidth/1.5}%` : ''}] transition-all duration-300 overflow-hidden`}>
       <div className='py-2 w-full' 
         onClick={() => {
         context?.windowWidth < 922 && context?.setisSidebarOpen(false)
@@ -416,7 +416,7 @@ const Sidebar = () => {
 
     </div>
     <div 
-      className='sidebarOverlay pointer-events-auto sm:pointer-events-none w-full h-full lg:hidden block fixed top-0 left-0 bg-[rgba(0,0,0,0.5)] z-55 '
+      className={`sidebarOverlay pointer-events-auto sm:pointer-events-none w-full h-full lg:hidden ${context?.isSidebarOpen === true ? " " : "hidden"} block fixed top-0 left-0 bg-[rgba(0,0,0,0.5)] z-55 `}
       onClick={() => {
         context?.setisSidebarOpen(false)
         setSubmenuIndex(null)

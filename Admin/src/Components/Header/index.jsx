@@ -102,7 +102,7 @@ const Header = () => {
                 <div className='rounded-full w-[35px] h-[35px] overflow-hidden cursor-pointer'
                   onClick={handleClickMyAcc}
                 >
-                  <img src="https://up.yimg.com/ib/th/id/OIP.Kk4i-k-7bOfsgPv0SJtj5AHaHa?pid=Api&rs=1&c=1&qlt=95&w=121&h=121"
+                  <img src={context?.userData?.avatar ? context?.userData?.avatar : "https://up.yimg.com/ib/th/id/OIP.Kk4i-k-7bOfsgPv0SJtj5AHaHa?pid=Api&rs=1&c=1&qlt=95&w=121&h=121"}
                     className='w-full h-full object-cover' />
                 </div>
 
@@ -147,7 +147,7 @@ const Header = () => {
                     <div className='flex items-center gap-3'>
                       <div className='rounded-full w-[35px] h-[35px] overflow-hidden cursor-pointer'
                       >
-                        <img src="https://up.yimg.com/ib/th/id/OIP.Kk4i-k-7bOfsgPv0SJtj5AHaHa?pid=Api&rs=1&c=1&qlt=95&w=121&h=121"
+                        <img src={context?.userData?.avatar ? context?.userData?.avatar : "https://up.yimg.com/ib/th/id/OIP.Kk4i-k-7bOfsgPv0SJtj5AHaHa?pid=Api&rs=1&c=1&qlt=95&w=121&h=121"}
                           className='w-full h-full object-cover' />
                       </div>
 

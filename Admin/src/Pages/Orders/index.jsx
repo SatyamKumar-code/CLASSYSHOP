@@ -37,12 +37,12 @@ const Orders = () => {
       order_status: newStatus
     };
     editData(`/api/order/order-status/${id}`, obj).then((res) => {
-      setUpdatingOrderId(null);
       if (res?.data?.error === false) {
         context?.alertBox("Success", res?.data?.message);
+        // Always fetch fresh data from server after update
         if (searchQuery !== "") {
-          // Refetch all orders and reapply search filter
           fetchDataFromApi(`/api/order/order-lists?limit=10000`).then((allRes) => {
+            setUpdatingOrderId(null);
             if (allRes?.error === false) {
               setTotalOrdersData(allRes);
               const filteredOrders = allRes?.data?.filter((order) => 
@@ -62,13 +62,15 @@ const Orders = () => {
             }
           });
         } else {
-          // Refetch paginated orders for normal mode
           fetchDataFromApi(`/api/order/order-lists?page=${pageOrder}&limit=5`).then((res2) => {
+            setUpdatingOrderId(null);
             if (res2?.error === false) {
               setOrders(res2);
             }
           });
         }
+      } else {
+        setUpdatingOrderId(null);
       }
     });
   };
@@ -122,7 +124,7 @@ const Orders = () => {
   return (
     <div className='card my-2 md:mt-4 shadow-md sm:rounded-lg bg-white'>
         <div className='grid grid-col-1 lg:grid-cols-2 px-5 py-5 flex-col sm:flex-row'>
-          <h2 className='text-[18px]  font-[600] text-left mb-2 lg:mb-0'>Recent Orders</h2>
+          <h2 className='text-[18px] font-semibold text-left mb-2 lg:mb-0'>Recent Orders</h2>
           <div className='ml-auto w-full md:w-[45%]'>
             <SearchBox 
               serchQuery={searchQuery}
@@ -187,24 +189,24 @@ const Orders = () => {
                 return (
                   <>
                     <tr className="bg-white border-b">
-                      <td className="px-6 py-4 font-[500]">
-                        <Button className='!w-[35px] !h-[35px] !min-w-[35px] !rounded-full !bg-[#f1f1f1]'
+                      <td className="px-6 py-4 font-medium">
+                        <Button style={{ width: 35, height: 35, minWidth: 35, background: '#f1f1f1', borderRadius: '9999px' }}
                           onClick={() => isShowOrderdProduct(index)}>
                           {
                             isOpenOrderdProduct === index ? <FaAngleUp className='text-[16px] text-[rgba(0,0,0,0.7)]' /> : <FaAngleDown className='text-[16px] text-[rgba(0,0,0,0.7)]' />
                           }
                         </Button>
                       </td>
-                      <td className="px-6 py-4 font-[500]">
+                      <td className="px-6 py-4 font-medium">
                         <span className='text-primary'>{order?._id}</span>
                       </td>
-                      <td className="px-6 py-4 font-[500]">
+                      <td className="px-6 py-4 font-medium">
                         <span className='text-primary'>{order?.paymentId ? order?.paymentId : 'CASH ON DELIVERY'}</span>
                       </td>
-                      <td className="px-6 py-4 font-[500] whitespace-nowrap">{order?.userId?.name}</td>
-                      <td className="px-6 py-4 font-[500]">{order?.delivery_address?.mobile}</td>
-                      <td className="px-6 py-4 font-[500]">
-                        <span className='block w-[400px]'>
+                      <td className="px-6 py-4 font-medium whitespace-nowrap">{order?.userId?.name}</td>
+                      <td className="px-6 py-4 font-medium">{order?.delivery_address?.mobile}</td>
+                      <td className="px-6 py-4 font-medium">
+                        <span className='block w-100'>
                           {order?.delivery_address?.address_line1 + " " +
                             order?.delivery_address?.city + " " +
                             order?.delivery_address?.landmark + " " +
@@ -213,13 +215,13 @@ const Orders = () => {
                           }
                         </span>
                       </td>
-                      <td className="px-6 py-4 font-[500]">{order?.delivery_address?.pincode}</td>
-                      <td className="px-6 py-4 font-[500]">{order?.totalAmt?.toLocaleString('en-US', { style: 'currency', currency: 'INR' })}</td>
-                      <td className="px-6 py-4 font-[500]">{order?.userId?.email}</td>
-                      <td className="px-6 py-4 font-[500]">
+                      <td className="px-6 py-4 font-medium">{order?.delivery_address?.pincode}</td>
+                      <td className="px-6 py-4 font-medium">{order?.totalAmt?.toLocaleString('en-US', { style: 'currency', currency: 'INR' })}</td>
+                      <td className="px-6 py-4 font-medium">{order?.userId?.email}</td>
+                      <td className="px-6 py-4 font-medium">
                         <span className='text-primary'>{order?.userId?._id}</span>
                       </td>
-                      <td className="px-6 py-4 font-[500]">
+                      <td className="px-6 py-4 font-medium">
                         <Select
                           labelId="demo-simple-select-label"
                           id="demo-simple-select"
@@ -231,15 +233,37 @@ const Orders = () => {
                           onChange={(e) => handleChange(e, order?._id)}
                           disabled={updatingOrderId === order?._id}
                         >
-                          <MenuItem value={'pending'}>Pending</MenuItem>
-                          <MenuItem value={'confirm'}>Confirm</MenuItem>
-                          <MenuItem value={'shipped'}>Shipped</MenuItem> 
-                          <MenuItem value={'delivered'}>Delivered</MenuItem>
-                          <MenuItem value={'cancelled'}>Cancelled</MenuItem>
-                          <MenuItem value={'refund'}>Refund</MenuItem>
+                          {/* Only show current status and allowed next statuses */}
+                          <MenuItem value={order?.order_status}>
+                            {order?.order_status?.charAt(0).toUpperCase() + order?.order_status?.slice(1)}
+                          </MenuItem>
+                          {(() => {
+                            // Determine allowed next statuses based on backend logic
+                            const curr = order?.order_status;
+                            const payStatus = order?.payment_status || order?.paymentId || '';
+                            let allowedNext = [];
+                            if (curr === 'pending') {
+                              allowedNext = ['confirm', 'cancelled'];
+                            } else if (curr === 'confirm') {
+                              allowedNext = ['shipped', 'cancelled'];
+                            } else if (curr === 'shipped') {
+                              allowedNext = ['delivered', 'cancelled'];
+                            } else if (curr === 'delivered') {
+                              if (payStatus === 'completed') allowedNext = ['refund'];
+                              else if (payStatus === 'CASH ON DELIVERY') allowedNext = [];
+                            } else if (curr === 'cancelled') {
+                              if (payStatus === 'completed') allowedNext = ['refund'];
+                              else allowedNext = [];
+                            }
+                            return allowedNext.map(status => (
+                              <MenuItem key={status} value={status}>
+                                {status.charAt(0).toUpperCase() + status.slice(1)}
+                              </MenuItem>
+                            ));
+                          })()}
                         </Select>
                       </td>
-                      <td className="px-6 py-4 font-[500] whitespace-nowrap">{order?.createdAt?.split("T")[0]}</td>
+                      <td className="px-6 py-4 font-medium whitespace-nowrap">{order?.createdAt?.split("T")[0]}</td>
 
                     </tr>
 
@@ -278,17 +302,17 @@ const Orders = () => {
                                     order?.products?.length !== 0 && order?.products?.map((item, index) => {
                                       return (
                                         <tr className="bg-white border-b">
-                                          <td className="px-6 py-4 font-[500]">
+                                          <td className="px-6 py-4 font-medium">
                                             <span className='text-gray-600'>{item?._id}</span>
                                           </td>
-                                          <td className="px-6 py-4 font-[500]">
-                                            <div className='w-[200px]'>
+                                          <td className="px-6 py-4 font-medium">
+                                            <div className='w-50'>
                                               {item?.productTitle?.length > 40 ? item?.productTitle?.slice(0, 40) + "..." : item?.productTitle}
                                             </div>
                                           </td>
-                                          <td className="px-6 py-4 font-[500]">
+                                          <td className="px-6 py-4 font-medium">
                                             <img src={item?.image}
-                                              className='w-[40px] h-[40px] object-cover rounded-md' />
+                                              className='w-10 h-10 object-cover rounded-md' />
                                           </td>
                                           <td className="px-6 py-4 font-medium">{item?.quantity}</td>
                                           <td className="px-6 py-4 font-medium">{item?.price?.toLocaleString('en-US', { style: 'currency', currency: 'INR' })}</td>
