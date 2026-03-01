@@ -50,6 +50,11 @@ const orderSchema = new mongoose.Schema({
 
 } , { timestamps : true });
 
+// Add index for createdAt to optimize sorting by date
+orderSchema.index({ userId: 1 });
+orderSchema.index({ createdAt: -1 });
+orderSchema.index({userId: 1, createdAt: -1 });
+
 const OrderModel = mongoose.model("order", orderSchema);
 
 export default OrderModel;

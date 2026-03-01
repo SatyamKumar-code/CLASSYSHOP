@@ -20,8 +20,13 @@ const MobileNav = () => {
             context?.setIsFilterBtnShow(true);
         } else {
             context?.setIsFilterBtnShow(false);
+        } 
+        if (location.pathname === "/search") {
+            context?.setOpenSearchPanel(true);
+        }else {
+            context?.setOpenSearchPanel(false);
         }
-
+ 
     }, [location]);
 
     const openFilters = () => {

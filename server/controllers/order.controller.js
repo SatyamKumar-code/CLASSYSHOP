@@ -56,8 +56,10 @@ export const createOrderController = async (req, res) => {
 
 export const getOrderDetailsController = async (req, res) => {
     try {
-        const userid = req.userId; // order id
-        const orderlist = await OrderModel.find({ userId: userid }).populate('delivery_address userId');
+        const userid = req.userId; // ordeer id
+        const orderlist = await OrderModel.find({ userId: userid })
+            .sort({ createdAt: -1 }).lean()
+            .populate('delivery_address userId');
 
         if (!orderlist) {
             return res.status(404).json({

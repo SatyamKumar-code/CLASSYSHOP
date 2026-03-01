@@ -70,12 +70,6 @@ const Orders = () => {
                                                 Total Amount
                                             </th>
                                             <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                                Email
-                                            </th>
-                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                                User Id
-                                            </th>
-                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
                                                 Order status
                                             </th>
                                             <th scope="col" className="px-6 py-3 whitespace-nowrap">
@@ -118,10 +112,6 @@ const Orders = () => {
                                                             </td>
                                                             <td className="px-6 py-4 font-[500]">{order?.delivery_address?.pincode}</td>
                                                             <td className="px-6 py-4 font-[500]">{order?.totalAmt?.toLocaleString('en-US', { style: 'currency', currency: 'INR'})}</td>
-                                                            <td className="px-6 py-4 font-[500]">{order?.userId?.email}</td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                <span className='text-primary'>{order?.userId?._id}</span>
-                                                            </td>
                                                             <td className="px-6 py-4 font-[500]"><Badge status={order?.order_status} /></td>
                                                             <td className="px-6 py-4 font-[500] whitespace-nowrap">{order?.createdAt?.split("T")[0]}</td>
 

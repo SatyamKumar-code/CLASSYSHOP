@@ -208,10 +208,32 @@ const Checkout = () => {
         }
     }
 
-    const checkout = (e) => {
+    const loadRazorpayScript = () => {
+        return new Promise((resolve, reject) => {
+            if (window.Razorpay) {
+                resolve();
+                return;
+            }
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.async = true;
+            script.onload = resolve;
+            script.onerror = reject;
+            document.body.appendChild(script);
+        });
+    };
+
+    const checkout = async (e) => {
         e.preventDefault();
 
         if(userData?.address_details?.length !== 0){
+        try {
+            await loadRazorpayScript();
+        } catch {
+            context?.alertBox("error", "Unable to load Razorpay. Please try again.");
+            goToFailed("RAZORPAY_SDK_LOAD_FAILED");
+            return;
+        }
         var option = {
             key: VITE_API_RAZORPAY_KEY_ID,
             key_secret: VITE_API_RAZORPAY_KEY_SECRET,
