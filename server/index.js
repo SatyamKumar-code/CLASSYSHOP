@@ -13,9 +13,10 @@ import cartRouter from './router/cart.route.js';
 import mylistRouter from './router/mylist.route.js';
 import addressRouter from './router/address.route.js';
 import homeSlidesRouter from './router/homeSlides.route.js';
-import bannerRouter from './router/bannerV1.route.js';
 import blogRouter from './router/blog.route.js';
 import orderRouter from './router/order.route.js';
+import bannerV2Router from './router/bannerV2.route.js';
+import bannerV1Router from './router/bannerV1.route.js';
 
 const app = express();
 app.use(cors());
@@ -40,7 +41,8 @@ app.use("/api/cart", cartRouter);
 app.use("/api/mylist", mylistRouter);
 app.use("/api/address", addressRouter);
 app.use("/api/homeSlides", homeSlidesRouter);
-app.use("/api/bannerV1", bannerRouter);
+app.use("/api/bannerV1", bannerV1Router);
+app.use("/api/bannerV2", bannerV2Router);
 app.use("/api/blog", blogRouter);
 app.use("/api/order", orderRouter);
 

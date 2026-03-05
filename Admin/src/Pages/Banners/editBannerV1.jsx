@@ -65,6 +65,10 @@ export const EditBannerV1 = () => {
         formFields.catId = event.target.value;
     }
 
+    const selectCatByName = (name) => {
+        formFields.catName = name;
+    }
+
     const handleChangeProductSubCat = (event) => {
         setProductSubCat(event.target.value);
         formFields.subCatId = event.target.value;

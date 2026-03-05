@@ -102,7 +102,6 @@ export async function createProduct( req, res) {
             description: req.body.description,
             images: imagesArr,
             bannerImage: bannerImages,
-            bannerTitlename: req.body.bannerTitlename,
             isDisplayOnHomeBanner: req.body.isDisplayOnHomeBanner,
             brand: req.body.brand,
             price: req.body.price,
@@ -175,7 +174,7 @@ export async function getAllProducts(req, res) {
 
 
 
-        const products = await ProductModel.find().populate("category")
+        const products = await ProductModel.find().sort({ createdAt: -1 }).populate("category")
             .skip((page -1) * perPage)
             .limit(perPage)
             .exec();
@@ -479,7 +478,7 @@ export async function getAllProductsByThirdLavelCatId(req, res) {
 }
 
 //get all products by ThirdLavel category Name
-        export async function getAllProductsByThirdLavelCatName(req, res) {
+export async function getAllProductsByThirdLavelCatName(req, res) {
             try {
 
         const page = parseInt(req.query.page) || 1;
@@ -582,7 +581,7 @@ export async function getAllProductsByPrice(req, res) {
 
 
 //get all products by Rating
-        export async function getAllProductsByRating(req, res) {
+export async function getAllProductsByRating(req, res) {
             try {
 
         const page = parseInt(req.query.page) || 1;
@@ -1535,5 +1534,30 @@ export async function searchProductsController(req, res) {
             error: true,
             success: false
         });
+    }
+}
+
+export const getAllProductsBanner = async (req, res) => {
+    try {
+        const banners = await ProductModel.find({ isDisplayOnHomeBanner: true }).select("bannerImage _id").sort({ createdAt: -1 });
+        if(!banners) {
+            return res.json({
+                message: "No banners found",
+                success: false,
+                error: true
+            })
+        }
+        return res.json({
+            success: true,
+            error: false,
+            banners: banners
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        })
     }
 }

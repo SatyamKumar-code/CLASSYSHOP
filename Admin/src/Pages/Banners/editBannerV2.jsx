@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 import { deleteImages, editData, fetchDataFromApi, postData } from '../../utils/api';
 
-export const BannerList2_Edit_Banner = () => {
+export const EditBannerV2 = () => {
 
     const [formFields, setFormFields] = useState({
         bannerTitle: '',
@@ -35,7 +35,7 @@ export const BannerList2_Edit_Banner = () => {
     useEffect(() => {
         const id = context?.isOpenFullScreenPanel?.id;
 
-        fetchDataFromApi(`/api/bannerV1/${id}`).then((res) => {
+        fetchDataFromApi(`/api/bannerV2/${id}`).then((res) => {
             setFormFields({
                 bannerTitle: res?.banner?.bannerTitle,
                 images: res?.banner?.images,
@@ -65,10 +65,6 @@ export const BannerList2_Edit_Banner = () => {
         formFields.catId = event.target.value;
     }
 
-    const selectCatByName = (name) => {
-        formFields.catName = name;
-    }
-
     const handleChangeProductSubCat = (event) => {
         setProductSubCat(event.target.value);
         formFields.subCatId = event.target.value;
@@ -91,7 +87,7 @@ export const BannerList2_Edit_Banner = () => {
     const removeImg = (image, index) => {
         var imageArr = [];
         imageArr = previews;
-        deleteImages(`/api/bannerV1/deleteImage?img=${image}`).then((res) => {
+        deleteImages(`/api/bannerV2/deleteImage?img=${image}`).then((res) => {
             imageArr.splice(index, 1);
 
             setPreviews([]);
@@ -134,20 +130,20 @@ export const BannerList2_Edit_Banner = () => {
                 return false;
             }
     
-            editData(`/api/bannerV1/${context?.isOpenFullScreenPanel?.id}`, formFields).then((res) => {
+            editData(`/api/bannerV2/${context?.isOpenFullScreenPanel?.id}`, formFields).then((res) => {
                 if (res?.data?.success === true) {
                     setTimeout(() => {
-                        context.alertBox("Success", "Banner created successfully.");
+                        context.alertBox("Success", "Banner updated successfully.");
                         setIsLoading(false);
                         context?.setIsOpenFullScreenPanel({
                             open: false,
                         })
-                        history('/bannerV1/list');
+                        history('/bannerV2/list');
                         context?.getCat();
                     }, 2000)
                     
                 } else {
-                    context.alertBox("error", res?.data?.message || "Failed to create banner.");
+                    context.alertBox("error", res?.data?.message || "Failed to update banner.");
                     setIsLoading(false);
                 }
             })

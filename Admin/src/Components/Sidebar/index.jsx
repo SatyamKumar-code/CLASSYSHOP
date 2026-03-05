@@ -321,6 +321,7 @@ const Sidebar = () => {
 
           <Collapse isOpened={submenuIndex === 5 ? true : false}>
             <ul className='w-full'>
+
               <li className='w-full'>
                 <Link to="/bannerV1/list" onClick={() => {
                   context?.windowWidth < 922 && context?.setisSidebarOpen(false)
@@ -344,6 +345,33 @@ const Sidebar = () => {
                   }}>
                   <span className='block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]'>
                   </span>Add Banner V1
+                </Button>
+
+              </li>
+
+              <li className='w-full'>
+                <Link to="/bannerV2/list" onClick={() => {
+                  context?.windowWidth < 922 && context?.setisSidebarOpen(false)
+                }}>
+                  <Button className='text-[rgba(0,0,0,0.7)]! capitalize! justify-start! w-full! text-[13px]! font-medium! pl-9! flex gap-3'>
+                    <span className='block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]'></span>
+                    Banner V2 List
+                  </Button>
+                </Link>
+              </li>
+
+              <li className='w-full'>
+
+                <Button className='text-[rgba(0,0,0,0.7)]! capitalize! justify-start! w-full! text-[13px]! font-medium! pl-9! flex gap-3'
+                  onClick={() => {
+                    context.setIsOpenFullScreenPanel({
+                      open: true,
+                      model: "Add BannerV2"
+                    })
+                    context?.windowWidth < 922 && context?.setisSidebarOpen(false)
+                  }}>
+                  <span className='block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]'>
+                  </span>Add Banner V2
                 </Button>
 
               </li>

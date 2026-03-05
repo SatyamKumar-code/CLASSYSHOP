@@ -16,11 +16,11 @@ import 'swiper/css/navigation';
 import 'swiper/css/free-mode';
 import { Navigation, FreeMode } from 'swiper/modules';
 import BlogItem from '../../components/BlogItem';
-import HomeBannerV2 from '../../components/HomeSliderV2';
 import BannerBoxV2 from '../../components/bannerBoxV2';
 import { fetchDataFromApi } from '../../utils/api';
 import { MyContext } from '../../App';
 import HomeSliderSkeleton from '../../components/skeleton/BannerLoading';
+import HomeBannerV1 from '../../components/HomeSliderV2';
 
 const Home = () => {
 
@@ -35,6 +35,7 @@ const Home = () => {
   const [popularLoading, setPopularLoading] = useState(true);
   const [productsLoading, setProductsLoading] = useState(true);
   const [featuredLoading, setFeaturedLoading] = useState(true);
+  const [homeBannerDataV1, setHomeBannerDataV1] = useState([]);
 
   const context = useContext(MyContext);
 
@@ -45,6 +46,7 @@ const Home = () => {
     fetchDataFromApi("/api/homeSlides").then((res) => {
       setHomeSlidesData(res?.data);
     });
+    
     fetchDataFromApi("/api/product/getAllProducts").then((res) => {
       setAllProductData(res?.products);
       setProductsLoading(false);
@@ -54,13 +56,21 @@ const Home = () => {
       setFeaturedLoading(false);
     });
 
-    fetchDataFromApi("/api/bannerV1").then((res) => {
-      setBannerV1Data(res?.banners);
+    fetchDataFromApi("/api/bannerV2").then((res) => {
+      setBannerV1Data(res.banners);
     });
     fetchDataFromApi("/api/blog").then((res) => {
       setBlogData(res?.blogs);
     })
     
+  }, []);
+
+  useEffect(() => {
+   fetchDataFromApi("/api/bannerV1").then((res) => {
+      if(res?.error === false){
+        setHomeBannerDataV1(res?.banners);
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -141,7 +151,7 @@ const Home = () => {
       <div className='container flex flex-col lg:flex-row gap-5'>
         <div className='part1 w-full  lg:w-[70%]'>
           {
-            productData?.length!== 0 && <HomeBannerV2 data={productData} />
+            homeBannerDataV1?.length!== 0 && <HomeBannerV1 data={homeBannerDataV1} />
           }
         </div>
 
@@ -180,7 +190,7 @@ const Home = () => {
           productData?.length !== 0 && <ProductsSlider items={6} data={productData} />
         }
 
-        <AdsBannerSlider items={4} />
+        <AdsBannerSlider  />
       </div>
     </section>
 
@@ -192,7 +202,7 @@ const Home = () => {
           featuredProducts?.length !== 0 && <ProductsSlider items={6} data={featuredProducts} />
         }
 
-        <AdsBannerSlider items={4} />
+        <AdsBannerSlider />
       </div>
     </section>
 

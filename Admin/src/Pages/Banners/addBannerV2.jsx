@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 import { deleteImages, postData } from '../../utils/api';
 
-export const BannerList2_AddBanner = () => {
+export const AddBannerV2 = () => {
 
     const [formFields, setFormFields] = useState({
         bannerTitle: '',
@@ -78,7 +78,7 @@ export const BannerList2_AddBanner = () => {
     const removeImg = (image, index) => {
         var imageArr = [];
         imageArr = previews;
-        deleteImages(`/api/bannerV1/deleteImage?img=${image}`).then((res) => {
+        deleteImages(`/api/bannerV2/deleteImage?img=${image}`).then((res) => {
             imageArr.splice(index, 1);
 
             setPreviews([]);
@@ -117,7 +117,7 @@ export const BannerList2_AddBanner = () => {
                 return false;
             }
     
-            postData("/api/bannerV1/add", formFields).then((res) => {
+            postData("/api/bannerV2/add", formFields).then((res) => {
                 if (res?.success === true) {
                     setTimeout(() => {
                         context.alertBox("Success", "Banner created successfully.");
@@ -125,7 +125,7 @@ export const BannerList2_AddBanner = () => {
                         context?.setIsOpenFullScreenPanel({
                             open: false,
                         })
-                        history('/bannerV1/list');
+                        history('/bannerV2/list');
                         context?.getCat();
                     }, 2000)
                     

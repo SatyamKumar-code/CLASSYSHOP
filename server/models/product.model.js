@@ -103,10 +103,6 @@ const productSchema = new mongoose.Schema({
             default: null
         }
     ],
-    bannerTitlename: {
-        type: String,
-        default: null
-    },
     isDisplayOnHomeBanner: {
         type: Boolean,
         default: false

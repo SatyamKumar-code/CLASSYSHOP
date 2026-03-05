@@ -28,10 +28,12 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { IoMdClose } from 'react-icons/io'
 import EditProduct from '../../Pages/Products/editProduct';
-import { AddBannerV1 } from '../../Pages/Banners/addBannerV1';
-import { EditBannerV1 } from '../../Pages/Banners/editBannerV1';
+import { AddBannerV2 } from '../../Pages/Banners/addBannerV2';
+import { EditBannerV2 } from '../../Pages/Banners/editBannerV2';
 import AddBlog from '../../Pages/Blog/addBlog';
 import EditBlog from '../../Pages/Blog/editBlog';
+import { AddBannerV1 } from '../../Pages/Banners/addBannerV1';
+import { EditBannerV1 } from '../../Pages/Banners/editBannerV1';
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -240,6 +242,12 @@ const Header = () => {
         }
         {
           context?.isOpenFullScreenPanel?.model === 'Edit BannerV1' && <EditBannerV1 />
+        }
+        {
+          context?.isOpenFullScreenPanel?.model === 'Add BannerV2' && <AddBannerV2 />
+        }
+        {
+          context?.isOpenFullScreenPanel?.model === 'Edit BannerV2' && <EditBannerV2 />
         }
         {
           context?.isOpenFullScreenPanel?.model === 'Add Blog' && <AddBlog />

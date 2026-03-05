@@ -14,17 +14,16 @@ export const AddBannerV1 = () => {
 
     const [formFields, setFormFields] = useState({
         bannerTitle: '',
+        productName: '',
         catId: '',
         subCatId: '',
         thirdsubCatId: '',
         price: '',
-        alignInfo: '',
     });
 
     const [productCat, setProductCat] = useState('');
     const [productSubCat, setProductSubCat] = useState('');
     const [productThirdLavelCat, setProductThirdLavelCat] = useState('');
-    const [alignInfo, setAlignInfo] = useState('');
     const [previews, setPreviews] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -47,10 +46,6 @@ export const AddBannerV1 = () => {
         formFields.catId = event.target.value;
     }
 
-    const selectCatByName = (name) => {
-        formFields.catName = name;
-    }
-
     const handleChangeProductSubCat = (event) => {
         setProductSubCat(event.target.value);
         formFields.subCatId = event.target.value;
@@ -60,11 +55,6 @@ export const AddBannerV1 = () => {
         setProductThirdLavelCat(event.target.value);
         formFields.thirdsubCatId = event.target.value;
     };
-
-    const handleChangeAlignInfo = (event) => {
-        setAlignInfo(event.target.value);
-        formFields.alignInfo = event.target.value;
-    }
 
 
     const setPreviewsFun = (previewsArr) => {
@@ -97,7 +87,6 @@ export const AddBannerV1 = () => {
             e.preventDefault();
     
             setIsLoading(true);
-            console.log(formFields);
             
     
             if (formFields.bannerTitle === '') {
@@ -148,6 +137,14 @@ export const AddBannerV1 = () => {
                             <input type='text' className='w-full h-10 border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white'
                                 name='bannerTitle'
                                 value={formFields.bannerTitle}
+                                onChange={onChangeInput} />
+                        </div>
+
+                        <div className='col'>
+                            <h3 className='text-[14px] font-medium mb-0 text-black'>Product Name</h3>
+                            <input type='text' className='w-full h-10 border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white'
+                                name='productName'
+                                value={formFields.productName}
                                 onChange={onChangeInput} />
                         </div>
 
@@ -248,25 +245,6 @@ export const AddBannerV1 = () => {
                                             )
                                         })
                                     }
-                                </Select>
-                            }
-                        </div>
-
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Align Info</h3>
-                            {
-                                context?.catData?.length !== 0 &&
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="productCatDrop"
-                                    size='small'
-                                    className='w-full'
-                                    value={alignInfo}
-                                    label="Sub Category"
-                                    onChange={handleChangeAlignInfo}
-                                >
-                                    <MenuItem value={'left'}>Left</MenuItem>
-                                    <MenuItem value={'right'}>Right</MenuItem>  
                                 </Select>
                             }
                         </div>

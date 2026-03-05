@@ -17,6 +17,7 @@ import { deleteData, fetchDataFromApi } from '../../utils/api';
 
 
 
+
 const columns = [
     { id: 'image', label: 'IMAGE', minWidth: 250 },
     { id: 'action', label: 'Action', minWidth: 100 },
@@ -35,6 +36,7 @@ const BannerV1List = () => {
     useEffect(() => {
         getData();
     }, [context?.isOpenFullScreenPanel]);
+
 
     const getData = () => {
         fetchDataFromApi("/api/bannerV1").then((res) => {
@@ -91,7 +93,7 @@ const BannerV1List = () => {
                         open:true,
                         model:'Add BannerV1'
                     })}
-                    >Add Banner V1</Button>
+                    >Add BannerV1</Button>
                 </div>
             </div> 
 

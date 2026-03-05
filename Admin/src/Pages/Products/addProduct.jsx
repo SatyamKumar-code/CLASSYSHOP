@@ -65,7 +65,6 @@ const AddProduct = () => {
         productRam: [],
         size: [],
         productWeight: [],
-        bannerTitlename: '',
         bannerImage: [],
         isDisplayOnHomeBanner: false,
     });
@@ -646,15 +645,7 @@ const AddProduct = () => {
                             </div>
 
                             <br />
-
-                            <h3 className='font-[700] text-[18px] mb-3'>Banner Title</h3>
-                            <input
-                                type='text'
-                                name='bannerTitlename'
-                                value={formFields.bannerTitlename}
-                                onChange={onChangeInput}
-                                className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white'
-                            />
+                            
                         </div>
 
 

@@ -56,12 +56,12 @@ export async function addBanner(req, res) {
     try {
         let banner = new BannerV1Model({
             bannerTitle: req.body.bannerTitle,
+            productName: req.body.productName,
             images: imagesArr,
             catId: req.body.catId,
             subCatId: req.body.subCatId,
             thirdsubCatId: req.body.thirdsubCatId,
             price: req.body.price,
-            alignInfo: req.body.alignInfo,
         })
         if( !banner ) {
             return res.status(400).json({

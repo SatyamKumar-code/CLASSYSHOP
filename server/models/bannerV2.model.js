@@ -1,12 +1,7 @@
 import mongoose from 'mongoose';
 
-const bannerV1Schema = new mongoose.Schema({
+const bannerV2Schema = new mongoose.Schema({
     bannerTitle: {
-        type: String,
-        default: '',
-        required: true,
-    },
-    productName: {
         type: String,
         default: '',
         required: true,
@@ -32,10 +27,15 @@ const bannerV1Schema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    alignInfo : {
+        type: String,
+        default: '',
+        required: true,
+    },
 },{
     timestamps: true,
 })
 
-const BannerV1Model = mongoose.model('BannerV1', bannerV1Schema);
+const BannerV2Model = mongoose.model('BannerV2', bannerV2Schema);
 
-export default BannerV1Model;
+export default BannerV2Model;

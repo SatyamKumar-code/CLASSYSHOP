@@ -17,14 +17,14 @@ import { deleteData, fetchDataFromApi } from '../../utils/api';
 
 
 
-
 const columns = [
     { id: 'image', label: 'IMAGE', minWidth: 250 },
+    { id: 'title', label: 'TITLE', minWidth: 100 },
     { id: 'action', label: 'Action', minWidth: 100 },
    
 ];
 
-const BannerList2 = () => {
+const BannerV2List = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [page, setPage] = useState(0);
@@ -32,14 +32,14 @@ const BannerList2 = () => {
     const [slidesData, setSlidesData] = useState([]);
 
     const context = useContext(MyContext);
+    
 
     useEffect(() => {
         getData();
     }, [context?.isOpenFullScreenPanel]);
 
-
     const getData = () => {
-        fetchDataFromApi("/api/bannerV1").then((res) => {
+        fetchDataFromApi("/api/bannerV2").then((res) => {
             let arr = [];
             if (res?.error === false) {
                 for(let i =0; i< res?.banners?.length; i++) {
@@ -67,7 +67,7 @@ const BannerList2 = () => {
     };
 
     const deleteSlides = (id) => {
-        deleteData(`/api/bannerV1/${id}`).then((res) => {
+        deleteData(`/api/bannerV2/${id}`).then((res) => {
             if (res?.data?.error === false) {
                 context.alertBox("Success", res?.data?.message || "Banner deleted successfully.");
                 getData();
@@ -91,9 +91,9 @@ const BannerList2 = () => {
                     <Button className='btn-blue text-white! btn-sm w-[180px]! min-w-[180px]!'
                     onClick={()=>context.setIsOpenFullScreenPanel({
                         open:true,
-                        model:'Add Home Banner List2'
+                        model:'Add BannerV2'
                     })}
-                    >Add Banner List2</Button>
+                    >Add Banner V2</Button>
                 </div>
             </div> 
 
@@ -121,9 +121,9 @@ const BannerList2 = () => {
                             {
                                 slidesData?.length !== 0 && slidesData?.map((item, index) => {
                                     return (
-                                        <TableRow>
+                                        <TableRow key={index}>
 
-                                            <TableCell width={100} >
+                                            <TableCell width={100}>
                                                 <div className='flex items-center gap-4 w-30 md:w-50 lg:w-62'>
                                                     <div className='img w-full rounded-md overflow-hidden group'>
                                                         <img src={item?.images[0]} alt="product image"
@@ -134,6 +134,9 @@ const BannerList2 = () => {
 
                                                 </div>
                                             </TableCell>
+                                            <TableCell width={200} >
+                                                <p className='text-[14px] font-[500] text-gray-800'>{item?.bannerTitle}</p>
+                                            </TableCell>
 
                                             <TableCell width={100} >
                                                 <div className='flex items-center gap-1'>
@@ -141,7 +144,7 @@ const BannerList2 = () => {
                                                         <Button className='w-[35px]! h-[35px]! min-w-[35px]! bg-[#f1f1f1] border! border-[rgba(0,0,0,0.2)]! rounded-full! hover:bg-[#f1f1f1]!'
                                                             onClick={() => context.setIsOpenFullScreenPanel({
                                                                 open: true,
-                                                                model: 'Edit BannerV1',
+                                                                model: 'Edit BannerV2',
                                                                 id: item?._id
                                                             })}>
                                                             <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
@@ -193,4 +196,4 @@ const BannerList2 = () => {
     )
 }
 
-export default BannerList2;
+export default BannerV2List;
