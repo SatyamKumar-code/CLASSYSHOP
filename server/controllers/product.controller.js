@@ -160,23 +160,37 @@ export async function getAllProducts(req, res) {
 
         const page = parseInt(req.query.page) || 1;
         const perPage = parseInt(req.query.perPage);
-        const totalPosts = await ProductModel.countDocuments();
-        const totalPages = Math.ceil(totalPosts / perPage);
+
+        // If latest=true, only show products created within last 30 days
+        const matchFilter = {};
+        if (req.query.latest === 'true') {
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            matchFilter.createdAt = { $gte: thirtyDaysAgo };
+        }
+
+        const totalPosts = await ProductModel.countDocuments(matchFilter);
+        const totalPages = Math.ceil(totalPosts / (perPage || 20));
 
 
-        if(page > totalPages) {
-            return res.status(404).json({
-                message: "Page not found",
-                success: false,
-                error: true
-            })
+        if(totalPosts === 0) {
+            return res.status(200).json({
+                error: false,
+                success: true,
+                products: [],
+                totalPages: 0,
+                page: page,
+            });
         }
 
 
+        const pipeline = [];
+        if (Object.keys(matchFilter).length > 0) {
+            pipeline.push({ $match: matchFilter });
+        }
+        pipeline.push({ $sample: { size: perPage || 20 } });
 
-        const products = await ProductModel.aggregate([
-            { $sample: { size: perPage || 20 } },
-        ]);
+        const products = await ProductModel.aggregate(pipeline);
 
         const populatedProducts = await ProductModel.populate(products, { path: "category" });
 
@@ -1428,22 +1442,42 @@ export async function filters(req, res) {
     }
 
     try {
-
-        const result = await ProductModel.aggregate([
-            { $match: filter },
-            { $sample: { size: parseInt(limit) || 20 } },
-        ]);
-        const products = await ProductModel.populate(result, { path: "category" });
+        const parsedPage = parseInt(page) || 1;
+        const parsedLimit = parseInt(limit) || 25;
+        const skip = (parsedPage - 1) * parsedLimit;
 
         const total = await ProductModel.countDocuments(filter);
+        const hasFilters = Object.keys(filter).length > 0;
+
+        let products;
+        if (hasFilters) {
+            // Filter selected: fetch with pagination, then shuffle
+            products = await ProductModel.find(filter)
+                .skip(skip)
+                .limit(parsedLimit)
+                .populate("category")
+                .lean();
+            // Shuffle products randomly (Fisher-Yates)
+            for (let i = products.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [products[i], products[j]] = [products[j], products[i]];
+            }
+        } else {
+            // No filter: random products
+            const result = await ProductModel.aggregate([
+                { $skip: skip },
+                { $sample: { size: parsedLimit } },
+            ]);
+            products = await ProductModel.populate(result, { path: "category" });
+        }
 
         return res.status(200).json({
             error: false,
             success: true,
             products: products,
             total: total,
-            page: parseInt(page),
-            totalPages: Math.ceil(total / limit)
+            page: parsedPage,
+            totalPages: Math.ceil(total / parsedLimit)
         })
 
     } catch (error) {
@@ -1487,6 +1521,8 @@ export async function sortBy(req, res) {
 export async function searchProductsController(req, res) {
     try {
         const { query, page = 1, limit = 10 } = req.body;
+        const parsedPage = parseInt(page) || 1;
+        const parsedLimit = parseInt(limit) || 10;
 
         if (!query) {
             return res.status(400).json({
@@ -1496,25 +1532,30 @@ export async function searchProductsController(req, res) {
             });
         }
 
-        const products = await ProductModel.find(
-            { $text: { $search: query } },
-            { score: { $meta: "textScore" } } // relevance score
-        )
-        .sort({ score: { $meta: "textScore" } }) // best match first
-        .skip((page - 1) * limit)
-        .limit(parseInt(limit))
-        .populate("category")
-        .lean();
-
         const total = await ProductModel.countDocuments({
             $text: { $search: query }
         });
 
+        const totalPages = Math.ceil(total / parsedLimit);
+
+        const products = await ProductModel.find(
+            { $text: { $search: query } },
+            { score: { $meta: "textScore" } }
+        )
+        .sort({ score: { $meta: "textScore" } })
+        .skip((parsedPage - 1) * parsedLimit)
+        .limit(parsedLimit)
+        .populate("category")
+        .lean();
+
         if (!products.length) {
-            return res.status(404).json({
-                message: "No products found",
-                error: true,
-                success: false
+            return res.status(200).json({
+                error: false,
+                success: true,
+                products: [],
+                total: total,
+                page: parsedPage,
+                totalPages: totalPages
             });
         }
 
@@ -1523,8 +1564,8 @@ export async function searchProductsController(req, res) {
             success: true,
             products: products,
             total: total,
-            page: parseInt(page),
-            totalPages: Math.ceil(total / limit)
+            page: parsedPage,
+            totalPages: totalPages
         });
 
     } catch (error) {

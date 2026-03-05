@@ -44,11 +44,17 @@ export const AddBannerV1 = () => {
     const handleChangeProductCat = (event) => {
         setProductCat(event.target.value);
         formFields.catId = event.target.value;
+        setProductSubCat('');
+        setProductThirdLavelCat('');
+        formFields.subCatId = '';
+        formFields.thirdsubCatId = '';
     }
 
     const handleChangeProductSubCat = (event) => {
         setProductSubCat(event.target.value);
         formFields.subCatId = event.target.value;
+        setProductThirdLavelCat('');
+        formFields.thirdsubCatId = '';
     };
 
     const handleChangeProductThirdLavelCat = (event) => {
@@ -192,7 +198,7 @@ export const AddBannerV1 = () => {
                                     onChange={handleChangeProductSubCat}
                                 >
                                     {
-                                        context?.catData?.map((cat, index) => {
+                                        context?.catData?.filter((cat) => cat?._id === productCat)?.map((cat) => {
                                             return (
                                                 cat?.Children?.length !== 0 && cat?.Children?.map((subCat, index_) => {
                                                     return (
@@ -203,7 +209,6 @@ export const AddBannerV1 = () => {
                                                         </MenuItem>
                                                     )
                                                 })
-   
                                             )
                                         })
                                     }
@@ -227,9 +232,9 @@ export const AddBannerV1 = () => {
                                     onChange={handleChangeProductThirdLavelCat}
                                 >
                                     {
-                                        context?.catData?.map((cat) => {
+                                        context?.catData?.filter((cat) => cat?._id === productCat)?.map((cat) => {
                                             return (
-                                                cat?.Children?.length !== 0 && cat?.Children?.map((subCat) => {
+                                                cat?.Children?.length !== 0 && cat?.Children?.filter((subCat) => subCat?._id === productSubCat)?.map((subCat) => {
                                                     return (
                                                         subCat?.Children?.length !== 0 && subCat?.Children?.map((thirdsubCat,index) => {
                                                             return (

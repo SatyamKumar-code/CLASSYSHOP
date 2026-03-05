@@ -51,6 +51,7 @@ function App() {
   const [addressId, setAddressId] = useState('');
 
   const [searchData, setSearchData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [openFilter, setOpenFilter] = useState(false);
   const [isFilterBtnShow, setIsFilterBtnShow] = useState(false);
@@ -242,6 +243,8 @@ function App() {
     setAddressId,
     searchData,
     setSearchData,
+    searchQuery,
+    setSearchQuery,
     windowWidth,
     setOpenFilter,
     openFilter,

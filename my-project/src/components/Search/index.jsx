@@ -45,7 +45,7 @@ const Search = () => {
 
       const obj = {
         page: 1,
-        limit: 3,
+        limit: 25,
         query: searchQuery
       }
 
@@ -53,6 +53,7 @@ const Search = () => {
       
       if (searchQuery !== "") {
         setIsLoading(true);
+        context?.setSearchQuery(searchQuery);
         postData(`/api/product/get/search`, obj).then((res) => {
           context?.setSearchData(res);
           setIsLoading(false);

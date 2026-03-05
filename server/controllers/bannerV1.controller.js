@@ -200,12 +200,12 @@ export async function updatedBanner(req, res) {
             req.params.id,
             {
                 bannerTitle: req.body.bannerTitle,
+                productName: req.body.productName,
                 images: imagesArr.length > 0 ? imagesArr[0] : req.body.images,
                 catId: req.body.catId,
                 subCatId: req.body.subCatId,
                 thirdsubCatId: req.body.thirdsubCatId,
                 price: req.body.price,
-                alignInfo: req.body.alignInfo,
             },
             { new: true }
         );

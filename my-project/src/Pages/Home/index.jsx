@@ -54,7 +54,7 @@ const Home = () => {
     fetchDataFromApi("/api/bannerV1").then((res) => {
       setHomeBannerDataV1(res?.banners);
     });
-    fetchDataFromApi("/api/product/getAllProducts").then((res) => {
+    fetchDataFromApi("/api/product/getAllProducts?latest=true").then((res) => {
       setAllProductData(res?.products);
       setProductsLoading(false);
     });

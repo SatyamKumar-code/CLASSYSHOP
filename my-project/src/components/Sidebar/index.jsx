@@ -33,6 +33,9 @@ export const Sidebar = (props) => {
   })
 
   const [price, setPrice] = useState([0, 600000]);
+  const [pageCache, setPageCache] = useState({});
+
+  const [priceChanged, setPriceChanged] = useState(false);
 
   const context = useContext(MyContext);
   
@@ -41,6 +44,7 @@ export const Sidebar = (props) => {
   const handleCheckboxChange = (field, value) => {
 
     context?.setSearchData([]) // to reset search data when we apply any filter from sidebar
+    setPageCache({}); // clear cache when filters change
     const currentValues = filters[field] || []
     const updatedValues = currentValues.includes(value) ?
       currentValues.filter((item) => item !== value) :
@@ -64,61 +68,95 @@ export const Sidebar = (props) => {
 
   useEffect(() => {
     const url = window.location.href;
-
     const queryParameters = new URLSearchParams(window.location.search);
+
+    let newFilters = { ...filters };
 
     if(url.includes('catId')) {
       const catgegoryId = queryParameters.get('catId');
-      const catArr = [];
-      catArr.push(catgegoryId);
-      filters.catId = catArr;
-      filters.subCatId = [];
-      filters.thirdsubCatId = [];
-      filters.rating = [];
-      context?.setSearchData([]) // to reset search data when we apply any filter from sidebar or when we visit category page by clicking on category from homepage
+      newFilters.catId = [catgegoryId];
+      newFilters.subCatId = [];
+      newFilters.thirdsubCatId = [];
+      newFilters.rating = [];
+      context?.setSearchData([]);
     }
 
     if(url.includes('subCatId')) {
       const subcatgegoryId = queryParameters.get('subCatId');
-      const subcatArr = [];
-      subcatArr.push(subcatgegoryId);
-      filters.subCatId = subcatArr;
-      filters.catId = [];
-      filters.thirdsubCatId = [];
-      filters.rating = [];
-      context?.setSearchData([]) // to reset search data when we apply any filter from sidebar or when we visit category page by clicking on category from homepage
+      newFilters.subCatId = [subcatgegoryId];
+      newFilters.catId = [];
+      newFilters.thirdsubCatId = [];
+      newFilters.rating = [];
+      context?.setSearchData([]);
     }
 
     if(url.includes('thirdsubCatId')) {
       const thirdsubCatId = queryParameters.get('thirdsubCatId');
-      const thirdsubCatArr = [];
-      thirdsubCatArr.push(thirdsubCatId);
-      filters.thirdsubCatId = thirdsubCatArr;
-      filters.catId = [];
-      filters.subCatId = [];
-      filters.rating = [];
-      context?.setSearchData([]) // to reset search data when we apply any filter from sidebar or when we visit category page by clicking on category from homepage
+      newFilters.thirdsubCatId = [thirdsubCatId];
+      newFilters.catId = [];
+      newFilters.subCatId = [];
+      newFilters.rating = [];
+      context?.setSearchData([]);
     }
 
-    filters.page = 1;
-
-    setTimeout(() => {
-      filtesData();
-    }, 200);
-
+    newFilters.page = 1;
+    setPageCache({});
+    setFilters(newFilters);
 
   }, [location])
 
   const filtesData = () => {
-    props.setIsLoading(true);
+    const currentPage = props.page || 1;
 
-    if (context?.searchData?.products?.length > 0) {
-      props?.setProductsData(context?.searchData);
-      props?.setIsLoading(false);
-      props?.setTotalPages(context?.searchData?.totalPages);
-      window.scrollTo(0, 0);
+    if (context?.searchData?.products?.length > 0 && context?.searchQuery) {
+      // Check cache first
+      const cacheKey = `search_${context.searchQuery}_${currentPage}`;
+      if (pageCache[cacheKey]) {
+        props?.setProductsData(pageCache[cacheKey]);
+        props?.setTotalPages(pageCache[cacheKey]?.totalPages);
+        window.scrollTo(0, 0);
+        return;
+      }
+
+      props.setIsLoading(true);
+
+      if (currentPage <= 1) {
+        // Page 1: use cached data from Search component, no extra API call
+        setPageCache(prev => ({ ...prev, [cacheKey]: context?.searchData }));
+        props?.setProductsData(context?.searchData);
+        props?.setTotalPages(context?.searchData?.totalPages);
+        props?.setIsLoading(false);
+        window.scrollTo(0, 0);
+      } else {
+        // Page 2+: fetch from API for pagination
+        const obj = {
+          page: currentPage,
+          limit: 25,
+          query: context.searchQuery
+        };
+        postData(`/api/product/get/search`, obj).then((res) => {
+          if (res?.products) {
+            setPageCache(prev => ({ ...prev, [cacheKey]: res }));
+            props?.setProductsData(res);
+            props?.setTotalPages(res?.totalPages);
+          }
+          props?.setIsLoading(false);
+          window.scrollTo(0, 0);
+        });
+      }
     } else {
+      // Check cache for filter results
+      const filterKey = `filter_${JSON.stringify(filters)}`;
+      if (pageCache[filterKey]) {
+        props.setProductsData(pageCache[filterKey]);
+        props.setTotalPages(pageCache[filterKey]?.totalPages);
+        window.scrollTo(0, 0);
+        return;
+      }
+
+      props.setIsLoading(true);
       postData(`/api/product/filters`, filters).then((res) => {
+        setPageCache(prev => ({ ...prev, [filterKey]: res }));
         props.setProductsData(res);
         props.setIsLoading(false);
         props.setTotalPages(res?.totalPages);
@@ -133,6 +171,7 @@ export const Sidebar = (props) => {
   }, [ filters, props.page])
 
   useEffect(() => {
+    if (!priceChanged) return;
     setFilters((prev => ({
       ...prev,
       minPrice: price[0],
@@ -180,7 +219,7 @@ export const Sidebar = (props) => {
 
             <RangeSlider
               value={price}
-              onInput={setPrice}
+              onInput={(val) => { setPriceChanged(true); setPrice(val); }}
               min={100}
               max={600000}
               step={5}

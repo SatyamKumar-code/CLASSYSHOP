@@ -20,6 +20,9 @@ import { deleteData, fetchDataFromApi } from '../../utils/api';
 
 const columns = [
     { id: 'image', label: 'IMAGE', minWidth: 250 },
+    { id: 'bannerTitle', label: 'BANNER TITLE', minWidth: 150 },
+    { id: 'productName', label: 'PRODUCT NAME', minWidth: 150 },
+    { id: 'category', label: 'CATEGORY', minWidth: 150 },
     { id: 'action', label: 'Action', minWidth: 100 },
    
 ];
@@ -124,7 +127,7 @@ const BannerV1List = () => {
                                         <TableRow>
 
                                             <TableCell width={100} >
-                                                <div className='flex items-center gap-4 w-30 md:w-50 lg:w-62'>
+                                                <div className='flex items-center gap-4 w-16 md:w-24 lg:w-30'>
                                                     <div className='img w-full rounded-md overflow-hidden group'>
                                                         <img src={item?.images[0]} alt="product image"
                                                             className='w-full group-hover:scale-105 transition-all'
@@ -133,6 +136,18 @@ const BannerV1List = () => {
 
 
                                                 </div>
+                                            </TableCell>
+
+                                            <TableCell width={150}>
+                                                {item?.bannerTitle}
+                                            </TableCell>
+
+                                            <TableCell width={150}>
+                                                {item?.productName}
+                                            </TableCell>
+
+                                            <TableCell width={150}>
+                                                {context?.catData?.find(c => c?._id === item?.catId)?.name || '-'}
                                             </TableCell>
 
                                             <TableCell width={100} >

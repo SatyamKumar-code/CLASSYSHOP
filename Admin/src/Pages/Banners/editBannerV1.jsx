@@ -14,17 +14,16 @@ export const EditBannerV1 = () => {
 
     const [formFields, setFormFields] = useState({
         bannerTitle: '',
+        productName: '',
         catId: '',
         subCatId: '',
         thirdsubCatId: '',
         price: '',
-        alignInfo: '',
     });
 
     const [productCat, setProductCat] = useState('');
     const [productSubCat, setProductSubCat] = useState('');
     const [productThirdLavelCat, setProductThirdLavelCat] = useState('');
-    const [alignInfo, setAlignInfo] = useState('');
     const [previews, setPreviews] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -38,15 +37,14 @@ export const EditBannerV1 = () => {
         fetchDataFromApi(`/api/bannerV1/${id}`).then((res) => {
             setFormFields({
                 bannerTitle: res?.banner?.bannerTitle,
+                productName: res?.banner?.productName,
                 images: res?.banner?.images,
                 price: res?.banner?.price,
-                alignInfo: res?.banner?.alignInfo,
             });
             setPreviews(res?.banner?.images);
             setProductCat(res?.banner?.catId || '');
             setProductSubCat(res?.banner?.subCatId || '');
             setProductThirdLavelCat(res?.banner?.thirdsubCatId || '');
-            setAlignInfo(res?.banner?.alignInfo || '');
         })
     }, [])
 
@@ -63,6 +61,10 @@ export const EditBannerV1 = () => {
     const handleChangeProductCat = (event) => {
         setProductCat(event.target.value);
         formFields.catId = event.target.value;
+        setProductSubCat('');
+        setProductThirdLavelCat('');
+        formFields.subCatId = '';
+        formFields.thirdsubCatId = '';
     }
 
     const selectCatByName = (name) => {
@@ -72,6 +74,8 @@ export const EditBannerV1 = () => {
     const handleChangeProductSubCat = (event) => {
         setProductSubCat(event.target.value);
         formFields.subCatId = event.target.value;
+        setProductThirdLavelCat('');
+        formFields.thirdsubCatId = '';
     };
 
     const handleChangeProductThirdLavelCat = (event) => {
@@ -104,11 +108,6 @@ export const EditBannerV1 = () => {
             }, 100);
 
         })
-    }
-
-    const handleChangeAlignInfo = (event) => {
-        setAlignInfo(event.target.value);
-        formFields.alignInfo = event.target.value;
     }
 
     const handleSubmit = (e) => {
@@ -169,6 +168,14 @@ export const EditBannerV1 = () => {
                         </div>
 
                         <div className='col'>
+                            <h3 className='text-[14px] font-medium mb-0 text-black'>Product Name</h3>
+                            <input type='text' className='w-full h-10 border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm bg-white'
+                                name='productName'
+                                value={formFields.productName}
+                                onChange={onChangeInput} />
+                        </div>
+
+                        <div className='col'>
                             <h3 className='text-[14px] font-medium mb-1 text-black'>Category</h3>
                             {
                                 context?.catData?.length !== 0 &&
@@ -212,7 +219,7 @@ export const EditBannerV1 = () => {
                                     onChange={handleChangeProductSubCat}
                                 >
                                     {
-                                        context?.catData?.map((cat, index) => {
+                                        context?.catData?.filter((cat) => cat?._id === productCat)?.map((cat) => {
                                             return (
                                                 cat?.Children?.length !== 0 && cat?.Children?.map((subCat, index_) => {
                                                     return (
@@ -223,7 +230,6 @@ export const EditBannerV1 = () => {
                                                         </MenuItem>
                                                     )
                                                 })
-   
                                             )
                                         })
                                     }
@@ -247,9 +253,9 @@ export const EditBannerV1 = () => {
                                     onChange={handleChangeProductThirdLavelCat}
                                 >
                                     {
-                                        context?.catData?.map((cat) => {
+                                        context?.catData?.filter((cat) => cat?._id === productCat)?.map((cat) => {
                                             return (
-                                                cat?.Children?.length !== 0 && cat?.Children?.map((subCat) => {
+                                                cat?.Children?.length !== 0 && cat?.Children?.filter((subCat) => subCat?._id === productSubCat)?.map((subCat) => {
                                                     return (
                                                         subCat?.Children?.length !== 0 && subCat?.Children?.map((thirdsubCat,index) => {
                                                             return (
@@ -265,25 +271,6 @@ export const EditBannerV1 = () => {
                                             )
                                         })
                                     }
-                                </Select>
-                            }
-                        </div>
-
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Align Info</h3>
-                            {
-                                context?.catData?.length !== 0 &&
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="productCatDrop"
-                                    size='small'
-                                    className='w-full'
-                                    value={alignInfo}
-                                    label="Sub Category"
-                                    onChange={handleChangeAlignInfo}
-                                >
-                                    <MenuItem value={'left'}>Left</MenuItem>
-                                    <MenuItem value={'right'}>Right</MenuItem>  
                                 </Select>
                             }
                         </div>
