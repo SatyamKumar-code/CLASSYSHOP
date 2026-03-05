@@ -174,12 +174,13 @@ export async function getAllProducts(req, res) {
 
 
 
-        const products = await ProductModel.find().sort({ createdAt: -1 }).populate("category")
-            .skip((page -1) * perPage)
-            .limit(perPage)
-            .exec();
+        const products = await ProductModel.aggregate([
+            { $sample: { size: perPage || 20 } },
+        ]);
 
-        if(!products) {
+        const populatedProducts = await ProductModel.populate(products, { path: "category" });
+
+        if(!populatedProducts) {
             return res.status(404).json({
                 error: true,
                 success: false
@@ -189,7 +190,7 @@ export async function getAllProducts(req, res) {
         return res.status(200).json({
             error: false,
             success: true,
-            products: products,
+            products: populatedProducts,
             totalPages: totalPages,
             page: page,
         });
@@ -226,14 +227,14 @@ export async function getAllProductsByCatId(req, res) {
 
 
 
-        const products = await ProductModel.find({
-            catId: req.params.id
-        }).populate("category")
-            .skip((page -1) * perPage)
-            .limit(perPage)
-            .exec();
+        const products = await ProductModel.aggregate([
+            { $match: { catId: req.params.id } },
+            { $sample: { size: perPage } },
+        ]);
 
-        if(!products) {
+        const populatedProducts = await ProductModel.populate(products, { path: "category" });
+
+        if(!populatedProducts) {
             return res.status(404).json({
                 error: true,
                 success: false
@@ -243,7 +244,7 @@ export async function getAllProductsByCatId(req, res) {
         return res.status(200).json({
             error: false,
             success: true,
-            products: products,
+            products: populatedProducts,
             totalPages: totalPages,
             page: page,
         });
@@ -280,14 +281,14 @@ export async function getAllProductsByCatName(req, res) {
 
 
 
-        const products = await ProductModel.find({
-            catName: req.query.catName
-        }).populate("category")
-            .skip((page -1) * perPage)
-            .limit(perPage)
-            .exec();
+        const products = await ProductModel.aggregate([
+            { $match: { catName: req.query.catName } },
+            { $sample: { size: perPage } },
+        ]);
 
-        if(!products) {
+        const populatedProducts = await ProductModel.populate(products, { path: "category" });
+
+        if(!populatedProducts) {
             return res.status(404).json({
                 error: true,
                 success: false
@@ -297,7 +298,7 @@ export async function getAllProductsByCatName(req, res) {
         return res.status(200).json({
             error: false,
             success: true,
-            products: products,
+            products: populatedProducts,
             totalPages: totalPages,
             page: page,
         });
@@ -335,14 +336,14 @@ export async function getAllProductsBySubCatId(req, res) {
 
 
 
-        const products = await ProductModel.find({
-            subCatId: req.params.id
-        }).populate("category")
-            .skip((page -1) * perPage)
-            .limit(perPage)
-            .exec();
+        const products = await ProductModel.aggregate([
+            { $match: { subCatId: req.params.id } },
+            { $sample: { size: perPage } },
+        ]);
 
-        if(!products) {
+        const populatedProducts = await ProductModel.populate(products, { path: "category" });
+
+        if(!populatedProducts) {
             return res.status(404).json({
                 error: true,
                 success: false
@@ -352,7 +353,7 @@ export async function getAllProductsBySubCatId(req, res) {
         return res.status(200).json({
             error: false,
             success: true,
-            products: products,
+            products: populatedProducts,
             totalPages: totalPages,
             page: page,
         });
@@ -389,14 +390,14 @@ export async function getAllProductsBySubCatName(req, res) {
 
 
 
-        const products = await ProductModel.find({
-            subCatName: req.query.subCatName
-        }).populate("category")
-            .skip((page -1) * perPage)
-            .limit(perPage)
-            .exec();
+        const products = await ProductModel.aggregate([
+            { $match: { subCatName: req.query.subCatName } },
+            { $sample: { size: perPage } },
+        ]);
 
-        if(!products) {
+        const populatedProducts = await ProductModel.populate(products, { path: "category" });
+
+        if(!populatedProducts) {
             return res.status(404).json({
                 error: true,
                 success: false
@@ -406,7 +407,7 @@ export async function getAllProductsBySubCatName(req, res) {
         return res.status(200).json({
             error: false,
             success: true,
-            products: products,
+            products: populatedProducts,
             totalPages: totalPages,
             page: page,
         });
@@ -445,14 +446,14 @@ export async function getAllProductsByThirdLavelCatId(req, res) {
 
 
 
-        const products = await ProductModel.find({
-            thirdsubCatId: req.params.id
-        }).populate("category")
-            .skip((page -1) * perPage)
-            .limit(perPage)
-            .exec();
+        const products = await ProductModel.aggregate([
+            { $match: { thirdsubCatId: req.params.id } },
+            { $sample: { size: perPage } },
+        ]);
 
-        if(!products) {
+        const populatedProducts = await ProductModel.populate(products, { path: "category" });
+
+        if(!populatedProducts) {
             return res.status(404).json({
                 error: true,
                 success: false
@@ -462,7 +463,7 @@ export async function getAllProductsByThirdLavelCatId(req, res) {
         return res.status(200).json({
             error: false,
             success: true,
-            products: products,
+            products: populatedProducts,
             totalPages: totalPages,
             page: page,
         });
@@ -479,7 +480,7 @@ export async function getAllProductsByThirdLavelCatId(req, res) {
 
 //get all products by ThirdLavel category Name
 export async function getAllProductsByThirdLavelCatName(req, res) {
-            try {
+    try {
 
         const page = parseInt(req.query.page) || 1;
         const perPage = parseInt(req.query.perPage) || 1000;
@@ -499,14 +500,14 @@ export async function getAllProductsByThirdLavelCatName(req, res) {
 
 
 
-        const products = await ProductModel.find({
-            thirdsubCat: req.query.thirdsubCat
-        }).populate("category")
-            .skip((page -1) * perPage)
-            .limit(perPage)
-            .exec();
+        const products = await ProductModel.aggregate([
+            { $match: { thirdsubCat: req.query.thirdsubCat } },
+            { $sample: { size: perPage } },
+        ]);
 
-        if(!products) {
+        const populatedProducts = await ProductModel.populate(products, { path: "category" });
+
+        if(!populatedProducts) {
             return res.status(404).json({
                 error: true,
                 success: false
@@ -516,7 +517,7 @@ export async function getAllProductsByThirdLavelCatName(req, res) {
         return res.status(200).json({
             error: false,
             success: true,
-            products: products,
+            products: populatedProducts,
             totalPages: totalPages,
             page: page,
         });
@@ -536,27 +537,27 @@ export async function getAllProductsByPrice(req, res) {
     let productList = [];
 
     if (req.query.catId !== "" && req.query.catId !== undefined) {
-        const productListArr = await ProductModel.find({
-            catId: req.query.catId,
-        }).populate("category");
-
-        productList = productListArr;
+        const productListArr = await ProductModel.aggregate([
+            { $match: { catId: req.query.catId } },
+            { $sample: { size: 1000 } },
+        ]);
+        productList = await ProductModel.populate(productListArr, { path: "category" });
     }
 
     if (req.query.subCatId !== "" && req.query.subCatId !== undefined) {
-        const productListArr = await ProductModel.find({
-            subCatId: req.query.subCatId,
-        }).populate("category");
-
-        productList = productListArr;
+        const productListArr = await ProductModel.aggregate([
+            { $match: { subCatId: req.query.subCatId } },
+            { $sample: { size: 1000 } },
+        ]);
+        productList = await ProductModel.populate(productListArr, { path: "category" });
     }
 
     if (req.query.thirdsubCatId !== "" && req.query.thirdsubCatId !== undefined) {
-        const productListArr = await ProductModel.find({
-            thirdsubCatId: req.query.thirdsubCatId,
-        }).populate("category");
-
-        productList = productListArr;
+        const productListArr = await ProductModel.aggregate([
+            { $match: { thirdsubCatId: req.query.thirdsubCatId } },
+            { $sample: { size: 1000 } },
+        ]);
+        productList = await ProductModel.populate(productListArr, { path: "category" });
     }
 
     const filteredProducts = productList.filter((product) => {
@@ -604,36 +605,27 @@ export async function getAllProductsByRating(req, res) {
         let products = [];
 
         if (req.query.catId !== undefined) {
-            products = await ProductModel.find({
-                rating: req.query.rating,
-                catId: req.query.catId,
-
-            }).populate("category")
-                .skip((page - 1) * perPage)
-                .limit(perPage)
-                .exec();
+            const result = await ProductModel.aggregate([
+                { $match: { rating: parseInt(req.query.rating), catId: req.query.catId } },
+                { $sample: { size: perPage } },
+            ]);
+            products = await ProductModel.populate(result, { path: "category" });
         }
 
         if (req.query.subCatId !== undefined) {
-            products = await ProductModel.find({
-                rating: req.query.rating,
-                subCatId: req.query.subCatId,
-                
-            }).populate("category")
-                .skip((page - 1) * perPage)
-                .limit(perPage)
-                .exec();
+            const result = await ProductModel.aggregate([
+                { $match: { rating: parseInt(req.query.rating), subCatId: req.query.subCatId } },
+                { $sample: { size: perPage } },
+            ]);
+            products = await ProductModel.populate(result, { path: "category" });
         }
 
         if (req.query.thirdsubCatId !== undefined) {
-            products = await ProductModel.find({
-                rating: req.query.rating,
-                thirdsubCatId: req.query.thirdsubCatId,
-                
-            }).populate("category")
-                .skip((page - 1) * perPage)
-                .limit(perPage)
-                .exec();
+            const result = await ProductModel.aggregate([
+                { $match: { rating: parseInt(req.query.rating), thirdsubCatId: req.query.thirdsubCatId } },
+                { $sample: { size: perPage } },
+            ]);
+            products = await ProductModel.populate(result, { path: "category" });
         }
 
         
@@ -696,11 +688,14 @@ export async function getProductsCount(req, res ) {
 export async function getAllFeaturedProducts(req, res) {
     try {
 
-        const products = await ProductModel.find({
-            isFeatured: true
-        }).populate("category");
+        const products = await ProductModel.aggregate([
+            { $match: { isFeatured: true } },
+            { $sample: { size: 20 } },
+        ]);
 
-        if (!products) {
+        const populatedProducts = await ProductModel.populate(products, { path: "category" });
+
+        if (!populatedProducts) {
             return res.status(404).json({
                 error: true,
                 success: false
@@ -710,7 +705,7 @@ export async function getAllFeaturedProducts(req, res) {
         return res.status(200).json({
             error: false,
             success: true,
-            products: products,
+            products: populatedProducts,
         });
 
 
@@ -1434,7 +1429,11 @@ export async function filters(req, res) {
 
     try {
 
-        const products = await ProductModel.find(filter).populate("category").skip((page - 1) * limit).limit(parseInt(limit));
+        const result = await ProductModel.aggregate([
+            { $match: filter },
+            { $sample: { size: parseInt(limit) || 20 } },
+        ]);
+        const products = await ProductModel.populate(result, { path: "category" });
 
         const total = await ProductModel.countDocuments(filter);
 
@@ -1539,7 +1538,11 @@ export async function searchProductsController(req, res) {
 
 export const getAllProductsBanner = async (req, res) => {
     try {
-        const banners = await ProductModel.find({ isDisplayOnHomeBanner: true }).select("bannerImage _id").sort({ createdAt: -1 });
+        const banners = await ProductModel.aggregate([
+            { $match: { isDisplayOnHomeBanner: true } },
+            { $project: { bannerImage: 1, _id: 1 } },
+            { $sample: { size: 100 } },
+        ]);
         if(!banners) {
             return res.json({
                 message: "No banners found",
@@ -1547,7 +1550,7 @@ export const getAllProductsBanner = async (req, res) => {
                 error: true
             })
         }
-        return res.json({
+        return res.status(200).json({
             success: true,
             error: false,
             banners: banners
@@ -1559,5 +1562,116 @@ export const getAllProductsBanner = async (req, res) => {
             error: true,
             success: false
         })
+    }
+}
+
+export const getAllFashionProducts = async (req, res) => {
+    try {
+        const category = req.query.category;
+        const result = await ProductModel.aggregate([
+            { $match: { catName: category } },
+            { $sample: { size: 50 } },
+        ]);
+        const faishionProducts = await ProductModel.populate(result, { path: "category" });
+        if(!faishionProducts) {
+            return res.json({
+                message: "No fashion products found",
+                success: false,
+                error: true
+            })
+        }
+
+        return res.status(200).json({
+            success: true,
+            error: false,
+            products: faishionProducts
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+
+// Get random category sections with products for home page
+export const getRandomCategorySections = async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 6; // number of sections to show
+
+        // Get all distinct catName, subCat, thirdsubCat from products
+        const [catNames, subCats, thirdSubCats] = await Promise.all([
+            ProductModel.distinct("catName", { catName: { $ne: "", $ne: null } }),
+            ProductModel.distinct("subCat", { subCat: { $ne: "", $ne: null } }),
+            ProductModel.distinct("thirdsubCat", { thirdsubCat: { $ne: "", $ne: null } }),
+        ]);
+
+        // Build all possible sections with type info
+        let allSections = [];
+
+        catNames.forEach((name) => {
+            if (name && name.trim() !== "") {
+                allSections.push({ name, type: "catName", field: "catName" });
+            }
+        });
+
+        subCats.forEach((name) => {
+            if (name && name.trim() !== "") {
+                allSections.push({ name, type: "subCat", field: "subCat" });
+            }
+        });
+
+        thirdSubCats.forEach((name) => {
+            if (name && name.trim() !== "") {
+                allSections.push({ name, type: "thirdsubCat", field: "thirdsubCat" });
+            }
+        });
+
+        // Shuffle array randomly (Fisher-Yates)
+        for (let i = allSections.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [allSections[i], allSections[j]] = [allSections[j], allSections[i]];
+        }
+
+        // Pick limited sections
+        const selectedSections = allSections.slice(0, limit);
+
+        // Fetch products randomly for each selected section using $sample
+        const sectionsWithProducts = await Promise.all(
+            selectedSections.map(async (section) => {
+                const products = await ProductModel.aggregate([
+                    { $match: { [section.field]: section.name } },
+                    { $sample: { size: 15 } },
+                ]);
+
+                // Populate category field after aggregation
+                const populatedProducts = await ProductModel.populate(products, { path: "category" });
+
+                return {
+                    sectionName: section.name,
+                    type: section.type,
+                    products: populatedProducts,
+                };
+            })
+        );
+
+        // Filter out sections with no products
+        const finalSections = sectionsWithProducts.filter(
+            (s) => s.products && s.products.length > 0
+        );
+
+        return res.status(200).json({
+            error: false,
+            success: true,
+            sections: finalSections,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false,
+        });
     }
 }

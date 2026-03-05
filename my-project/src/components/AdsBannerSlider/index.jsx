@@ -18,10 +18,17 @@ const AdsBannerSlider = (props) => {
   const context = useContext(MyContext);
 
   useEffect(() => {
-    fetchDataFromApi("/api/product/getAllProductsBanner").then((res) => {
-      setProductsBanner(res?.banners);
-    });
-  }, []);
+    // If banners are passed as props, use them; otherwise fetch from API
+    if (props.data && props.data.length > 0) {
+      setProductsBanner(props.data);
+    } else if (!props.data) {
+      fetchDataFromApi("/api/product/getAllProductsBanner").then((res) => {
+        setProductsBanner(res?.banners);
+      });
+    }
+  }, [props.data]);
+
+  if (!productsBanner || productsBanner.length === 0) return null;
 
   return (
     <>

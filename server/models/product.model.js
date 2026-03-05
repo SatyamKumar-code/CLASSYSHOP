@@ -124,6 +124,9 @@ productSchema.index({ catId: 1 });
 productSchema.index({ subCatId: 1 });
 productSchema.index({ thirdsubCatId: 1 });
 
+productSchema.index({ isDisplayOnHomeBanner: 1 });
+productSchema.index({ catName: 1 });
+
 // PRICE
 productSchema.index({ price: 1 });
 

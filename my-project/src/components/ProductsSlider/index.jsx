@@ -16,7 +16,6 @@ const ProductsSlider = (props) => {
   return (
     <div className='productsSlider py-0! ml-0! lg:py-2'>
         <Swiper
-            slidesPerView={props.items}
             spaceBetween={10}
             navigation={context?.windowWidth > 922 ? true : false}
             modules={[Navigation, FreeMode]}

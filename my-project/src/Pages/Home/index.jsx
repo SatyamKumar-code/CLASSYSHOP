@@ -21,6 +21,7 @@ import { fetchDataFromApi } from '../../utils/api';
 import { MyContext } from '../../App';
 import HomeSliderSkeleton from '../../components/skeleton/BannerLoading';
 import HomeBannerV1 from '../../components/HomeSliderV2';
+import RandomCategorySections from '../../components/RandomCategorySections';
 
 const Home = () => {
 
@@ -41,12 +42,18 @@ const Home = () => {
 
   useEffect(() => {
 
-    window.scrollTo(0, 0);
+    // Disable browser scroll restoration so page always starts from top
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 
     fetchDataFromApi("/api/homeSlides").then((res) => {
       setHomeSlidesData(res?.data);
     });
-    
+    fetchDataFromApi("/api/bannerV1").then((res) => {
+      setHomeBannerDataV1(res?.banners);
+    });
     fetchDataFromApi("/api/product/getAllProducts").then((res) => {
       setAllProductData(res?.products);
       setProductsLoading(false);
@@ -63,14 +70,6 @@ const Home = () => {
       setBlogData(res?.blogs);
     })
     
-  }, []);
-
-  useEffect(() => {
-   fetchDataFromApi("/api/bannerV1").then((res) => {
-      if(res?.error === false){
-        setHomeBannerDataV1(res?.banners);
-      }
-    });
   }, []);
 
   useEffect(() => {
@@ -182,29 +181,13 @@ const Home = () => {
       </div>
     </section>
 
-    <section className='py-5 pt-0 bg-white'>
-      <div className='container'>
-        <h2 className='text-[20px] font-[600]'>Latest Products</h2>
-        {
-          productsLoading ? <ProductSliderSkeleton items={6} /> :
-          productData?.length !== 0 && <ProductsSlider items={6} data={productData} />
-        }
-
-        <AdsBannerSlider  />
-      </div>
-    </section>
-
-    <section className='py-5 pt-0 bg-white'>
-      <div className='container'>
-        <h2 className='text-[20px] font-[600]'>Featured Products</h2>
-        {
-          featuredLoading ? <ProductSliderSkeleton items={6} /> :
-          featuredProducts?.length !== 0 && <ProductsSlider items={6} data={featuredProducts} />
-        }
-
-        <AdsBannerSlider />
-      </div>
-    </section>
+    {/* Random Category / SubCategory / ThirdLevel Sections with Latest, Featured & Ads mixed in */}
+    <RandomCategorySections 
+      latestProducts={productData} 
+      latestLoading={productsLoading}
+      featuredProducts={featuredProducts}
+      featuredLoading={featuredLoading}
+    />
 
   {
     blogData?.length !== 0 && 
