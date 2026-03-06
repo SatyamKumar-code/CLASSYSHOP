@@ -61,6 +61,7 @@ const ProductItem = (props) => {
       setIsShowTabs(false);
       setTimeout(() => {
         setIsShowTabs(false);
+        setIsLoading(false);
       }, 500)
     }
 
