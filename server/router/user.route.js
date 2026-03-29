@@ -11,7 +11,7 @@ userRouter.post("/login", loginUserController);
 userRouter.post("/authWithGoogle", authWithGoogleController);
 userRouter.get("/logout", auth, logoutController);
 userRouter.put("/user-avatar", auth, upload.array('avatar'), userAvatarController);
-userRouter.delete("/deleteImage", auth, removeImageFromCloudinary);
+userRouter.delete("/deleteImage", auth, removeImageFromCloudinary); 
 userRouter.put("/:id", auth, updateUserDetails);
 userRouter.put("/updateUserStatus/:id", auth, updateUserStatus);
 userRouter.post('/forget-password', forgotPasswordController);

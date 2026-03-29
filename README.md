@@ -339,7 +339,7 @@ shopifyshop/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/shopifyshop.git
+git clone https://github.com/SatyamKumar-code/shopifyshop.git
 cd shopifyshop
 ```
 
